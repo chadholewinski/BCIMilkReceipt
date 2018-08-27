@@ -7,23 +7,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbPlant;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class ReceiveActivity extends AppCompatActivity implements View.OnClickListener
 {
     private Button _receive_save_button, _receive_finishticket_button;
     private TextView _receive_Bottom_Message;
+    private Spinner _receive_plant;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sUsername;
     private Utilities _oUtils;
     private dbProfile _oProfile;
@@ -43,6 +49,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         _receive_save_button = (Button)findViewById(R.id.receive_save_button);
         _receive_finishticket_button = (Button)findViewById(R.id.receive_finishticket_button);
 
+        _receive_plant = (Spinner)findViewById(R.id.receive_plant);
+
         //Instantiate the receive bottom message text view
         _receive_Bottom_Message = (TextView)findViewById(R.id.receive_bottom_message);
 
@@ -55,8 +63,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
         //Get the header, settings and profile id's from the bundle
         _spkHeaderID = oBundle.getString("pkHeaderID");
-        _spkSettingsID = oBundle.getString("pkSettingsID");
         _spkProfileID = oBundle.getString("pkProfileID");
+        _spkSettingsID = oBundle.getString("pkSettingsID");
 
         //Check if the settings id was not passed from receipt page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
@@ -67,6 +75,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
         //Setup the screen
         setupScreen();
+
+        populatePlantSpinner();
     }
 
     /**
@@ -325,6 +335,57 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         {
             //Log error message to activity
             _oUtils.InsertActivity(this, "3", "ReceiveActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * populatePlantSpinner
+     *  - Populates the plant spinner with plant values
+     */
+    private void populatePlantSpinner()
+    {
+        List<String> olPlants = new ArrayList<>();
+
+        try
+        {
+            //Instantiate a new database connection object
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+
+            //Get the list of active plant records from database
+            List<dbPlant> olPlant = oDBHandler.findPlantsActive();
+
+            //Check if plant records were found
+            if (olPlant != null)
+            {
+                //Loop through the plant records
+                for (int i=0; i<olPlant.size(); i++)
+                {
+                    //Get the plant from list of records
+                    dbPlant oPlant = olPlant.get(i);
+
+                    //Add the plant name to the plant array
+                    olPlants.add(oPlant.getPlantName());
+                }
+            }
+            else
+            {
+                //No plant records found
+                olPlants.add("None Available");
+            }
+
+            //Instantiate and setup the array adapter
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, olPlants);
+
+            //Setup the adapter dropdown type
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            //Set the spinner to the adapter to fill dropdown
+            _receive_plant.setAdapter(adapter);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "populatePlantSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

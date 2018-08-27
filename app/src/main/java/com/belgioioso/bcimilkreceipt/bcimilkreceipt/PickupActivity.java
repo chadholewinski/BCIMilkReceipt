@@ -373,6 +373,17 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Instantiate a new intent of ReceiveActivity
                 Intent receive_intent = new Intent(this, ReceiveActivity.class);
 
+                //Instantiate the bundle object
+                Bundle oBundle = new Bundle();
+
+                //Set the headerID, profileID and settingsID in the bundle
+                oBundle.putString("pkHeaderID", _spkHeaderID);
+                oBundle.putString("pkProfileID", _spkProfileID);
+                oBundle.putString("pkSettingsID", _spkSettingsID);
+
+                //Setup bundle into intent
+                receive_intent.putExtras(oBundle);
+
                 //Navigate to the receive screen
                 startActivity(receive_intent);
             }

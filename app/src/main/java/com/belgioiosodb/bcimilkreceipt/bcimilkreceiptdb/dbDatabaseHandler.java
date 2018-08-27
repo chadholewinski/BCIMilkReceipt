@@ -2075,9 +2075,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oPlant.setCityStateZip(cursor.getString(5));
             oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
             oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
-            oPlant.setActive(Integer.parseInt(cursor.getString(11)));
-            oPlant.setInsertDate(cursor.getString(14));
-            oPlant.setModifiedDate(cursor.getString(15));
+            oPlant.setActive(Integer.parseInt(cursor.getString(8)));
+            oPlant.setInsertDate(cursor.getString(9));
+            oPlant.setModifiedDate(cursor.getString(10));
         }
         else
         {
@@ -2090,6 +2090,64 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
         //Return the plant object
         return oPlant;
+    }
+
+    //findPlantsActive
+    // - Get all active plant records
+    public List<dbPlant> findPlantsActive()
+    {
+        String query;
+        List<dbPlant> olPlant = new ArrayList<dbPlant>();
+        dbPlant oPlant = new dbPlant();
+
+        //Create the query string
+        query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_ACTIVE + " = 1";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast())
+            {
+                //Get values from database
+                oPlant.setPkPlantID(cursor.getString(0));
+                oPlant.setPlantName(cursor.getString(1));
+                oPlant.setPlantNumber(cursor.getString(2));
+                oPlant.setBTUNumber(cursor.getString(3));
+                oPlant.setAddress(cursor.getString(4));
+                oPlant.setCityStateZip(cursor.getString(5));
+                oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
+                oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
+                oPlant.setActive(Integer.parseInt(cursor.getString(8)));
+                oPlant.setInsertDate(cursor.getString(8));
+                oPlant.setModifiedDate(cursor.getString(10));
+
+                //Add the plant object to the plant list object
+                olPlant.add(oPlant);
+
+                //Move to the next record from database
+                cursor.moveToNext();
+            }
+        }
+        else
+        {
+            //No records found, set plant object to null
+            olPlant = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the plant list object
+        return olPlant;
     }
 
     //deletePlantByID
