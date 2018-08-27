@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.SettingsActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_spacer1"
+        android:text=""
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_descriptionlabel"
+        android:text="@string/settings_description"
+        android:textStyle="bold"
+        android:textSize="24dp"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer1"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_spacer2"
+        android:text=""
+        android:textSize="10dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_descriptionlabel"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_settingsid"
+        android:text="Settings ID: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer2"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_tabletname"
+        android:text="Tablet Name: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_settingsid"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_machineid"
+        android:text="Machine ID: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_tabletname"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_lastmilkreceiptid"
+        android:text="Last MilkReceipt ID: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_machineid"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_spacer3"
+        android:text=""
+        android:textSize="10dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_lastmilkreceiptid"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_webserviceurllabel"
+        android:text="@string/settings_webserviceurl"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="250dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer3"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_webserviceurl"
+        android:maxLength="500"
+        android:text=""
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:hint="Web Service URL"
+        app:layout_constraintTop_toBottomOf="@id/settings_webserviceurllabel"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_drugtestdevicelabel"
+        android:text="@string/settings_drugtestdevice"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="250dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_webserviceurl"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_drugtestdevice"
+        android:maxLength="150"
+        android:text=""
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:hint="Drug Test Device"
+        app:layout_constraintTop_toBottomOf="@id/settings_drugtestdevicelabel"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_scanlooplabel"
+        android:text="@string/settings_scanloop"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="250dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_drugtestdevice"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_scanloop"
+        android:maxLength="2"
+        android:text=""
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:hint="Scan Loop"
+        app:layout_constraintTop_toBottomOf="@id/settings_scanlooplabel"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_spacer4"
+        android:text=""
+        android:textSize="10dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_scanloop"/>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_trackpickupgeolocation"
+        android:text="@string/settings_trackpickupgeolocation"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer4"/>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_trackroutegeolocation"
+        android:text="@string/settings_trackroutegeolocation"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/settings_trackpickupgeolocation"/>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_enabledebug"
+        android:text="@string/settings_enabledebug"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/settings_trackroutegeolocation"/>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_enableautodbbackup"
+        android:text="@string/settings_enableautodbbackup"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/settings_enabledebug"/>
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_downloadnotcompleteddata"
+        android:text="@string/settings_downloadnotcompleteddata"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/settings_enableautodbbackup"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_spacer5"
+        android:text=""
+        android:textSize="10dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_downloadnotcompleteddata"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_lastuserlogin"
+        android:text="Last User Login: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer5"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_lastuserlogindate"
+        android:text="Last User Login Date: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_lastuserlogin"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_createddate"
+        android:text="Created Date: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_lastuserlogindate"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_modifieddate"
+        android:text="Modified Date: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_createddate"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_spacer6"
+        android:text=""
+        android:textSize="10dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_modifieddate"/>
+
+    <Button
+        android:id="@+id/settings_buttoneditcancel"
+        android:layout_width="258dp"
+        android:layout_height="98dp"
+        android:text="@string/settings_buttoneditcancel"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer6"
+        app:layout_constraintHorizontal_bias="0.501" />
+
+    <Button
+        android:id="@+id/settigns_buttonsave"
+        android:layout_width="258dp"
+        android:layout_height="98dp"
+        android:text="@string/settings_buttonsave"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginRight="30dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_spacer6"
+        app:layout_constraintHorizontal_bias="0.501" />
+
+</android.support.constraint.ConstraintLayout>

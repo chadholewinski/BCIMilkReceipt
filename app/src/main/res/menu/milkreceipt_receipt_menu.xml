@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_receipt_activity"
+        android:title="View Activity" />
+    <item android:id="@+id/menu_receipt_logout"
+        android:title="Log Out" />
+</menu>

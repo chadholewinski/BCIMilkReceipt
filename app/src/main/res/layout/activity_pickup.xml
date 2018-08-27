@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.PickupActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_spacer1"
+                android:text=""
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_descriptionlabel"
+                android:text="@string/pickup_description"
+                android:textStyle="bold"
+                android:textSize="24dp"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_spacer2"
+                android:text=""
+                android:textSize="10dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_descriptionlabel"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/producer_label"
+                android:text="@string/pickup_producer"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="250dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer2"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/producer"
+                android:maxLength="4"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="250dp"
+                android:hint="enter producer"
+                app:layout_constraintTop_toBottomOf="@id/producer_label"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tank_label"
+                android:text="@string/pickup_tank"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="250dp"
+                app:layout_constraintTop_toBottomOf="@id/producer"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tank"
+                android:maxLength="2"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="250dp"
+                android:hint="enter tank"
+                app:layout_constraintTop_toBottomOf="@id/tank_label"/>
+
+            <Button
+                android:id="@+id/pickup_scanproducer_button"
+                android:layout_width="200dp"
+                android:layout_height="140dp"
+                android:text="@string/pickup_scanproducer_button"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginRight="30dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer2"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_spacer3"
+                android:text=""
+                android:textSize="20dp"
+                app:layout_constraintTop_toBottomOf="@id/tank"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/gaugerod_label"
+                android:text="@string/pickup_gaugerod"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer3"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/gaugerodmajor"
+                android:maxLength="3"
+                android:inputType="number"
+                android:text=""
+                android:hint="enter major"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/gaugerod_label"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/gaugerod_spacer"
+                android:text="@string/pickup_gaugerod_spacer"
+                android:textSize="34dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                app:layout_constraintTop_toBottomOf="@id/gaugerod_label"
+                app:layout_constraintLeft_toRightOf="@id/gaugerodmajor"
+                android:layout_marginLeft="70dp"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/gaugerodminor"
+                android:maxLength="2"
+                android:inputType="number"
+                android:text=""
+                android:hint="enter minor"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/gaugerod_label"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/convertedlbs_label"
+                android:text="@string/pickup_convertedlbs"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/gaugerodminor"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/convertedlbs"
+                android:maxLength="5"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:hint="enter converted lbs"
+                app:layout_constraintTop_toBottomOf="@id/convertedlbs_label"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/convertedlbs_spacer"
+                android:text="@string/pickup_gaugerod_spacer"
+                android:textSize="34dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                app:layout_constraintTop_toBottomOf="@id/convertedlbs_label"
+                app:layout_constraintLeft_toRightOf="@id/convertedlbs"
+                android:layout_marginLeft="70dp"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/convertedlbs_confirm"
+                android:maxLength="5"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginRight="30dp"
+                android:hint="enter lbs confirmation"
+                app:layout_constraintTop_toBottomOf="@id/convertedlbs_label"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_spacer4"
+                android:text=""
+                android:textSize="20dp"
+                app:layout_constraintTop_toBottomOf="@id/convertedlbs"/>
+
+            <TextView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/temperature_label"
+                android:text="@string/pickup_temperature"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer4"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/dfa_ticket_label"
+                android:text="@string/pickup_dfanumber"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer4"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/temperature"
+                android:maxLength="3"
+                android:inputType="numberDecimal"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:hint="enter temperature"
+                app:layout_constraintTop_toBottomOf="@id/temperature_label"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <EditText
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/dfa_ticket"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginRight="30dp"
+                android:hint="enter dfa ticket #"
+                app:layout_constraintTop_toBottomOf="@id/dfa_ticket_label"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_spacer5"
+                android:text=""
+                android:textSize="20dp"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/temperature"/>
+
+            <TextView
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/labcode_label"
+                android:text="@string/pickup_labcode"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="28dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer5"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <EditText
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/labcode"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:hint="enter lab code"
+                app:layout_constraintTop_toBottomOf="@id/labcode_label"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <Button
+                android:id="@+id/pickup_scanlabcode_button"
+                android:layout_width="258dp"
+                android:layout_height="98dp"
+                android:text="@string/pickup_scanlabcode_button"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer5"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_spacer6"
+                android:text=""
+                android:textSize="30dp"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_scanlabcode_button"/>
+
+            <Button
+                android:id="@+id/pickup_save_button"
+                android:layout_width="258dp"
+                android:layout_height="98dp"
+                android:text="@string/pickup_save_button"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer6"
+                app:layout_constraintHorizontal_bias="0.501" />
+
+            <Button
+                android:id="@+id/pickup_gotoreceive_button"
+                android:layout_width="258dp"
+                android:layout_height="98dp"
+                android:text="@string/pickup_gotoreceive_button"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginRight="30dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pickup_spacer6"
+                app:layout_constraintHorizontal_bias="0.501" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_bottom_savemessage"
+                android:text=""
+                android:textSize="16dp"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_save_button"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/pickup_bottom_message"
+                android:text="Current User: ssss - Current Pickup Date: xx/xx/xxxx"
+                android:textSize="16dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/pickup_bottom_savemessage"/>
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

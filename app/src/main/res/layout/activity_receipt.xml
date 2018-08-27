@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.ReceiptActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_spacer1"
+        android:text=""
+        android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_descriptionlabel"
+        android:text="@string/receipt_descriptionlabel"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintTop_toBottomOf="@id/receipt_spacer1"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_spacer2"
+        android:text=""
+        android:textSize="30dp"
+        app:layout_constraintTop_toBottomOf="@id/receipt_descriptionlabel"/>
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_newlabel"
+        android:text="@string/receipt_newlabel"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/receipt_spacer2"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Button
+        android:layout_width="350dp"
+        android:layout_height="120dp"
+        android:id="@+id/receipt_new_button"
+        android:text="@string/receipt_new_button"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/receipt_newlabel"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_spacer3"
+        android:text=""
+        android:textSize="60dp"
+        app:layout_constraintTop_toBottomOf="@id/receipt_new_button"/>
+
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_existinglabel"
+        android:text="@string/receipt_existinglabel"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/valueText_Lime"
+        app:layout_constraintTop_toBottomOf="@id/receipt_spacer3"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <Spinner
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_existing_spinner"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/receipt_existinglabel"/>
+
+    <Button
+        android:layout_width="350dp"
+        android:layout_height="120dp"
+        android:id="@+id/receipt_existing_button"
+        android:text="@string/receipt_existing_button"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/receipt_existing_spinner"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_spacer4"
+        android:text=""
+        android:textSize="203dp"
+        app:layout_constraintTop_toBottomOf="@id/receipt_existing_button"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/receipt_bottom_message"
+        android:text="Current User: ssss - Current Date: xx/xx/xxxx"
+        android:textSize="16dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/receipt_spacer4"/>
+
+</android.support.constraint.ConstraintLayout>

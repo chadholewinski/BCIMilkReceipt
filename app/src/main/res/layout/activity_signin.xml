@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.SignInActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin_spacer1"
+        android:text=""
+        android:textSize="30dp"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageviewLogo"
+        android:src="@drawable/logo_wide"
+        app:layout_constraintTop_toBottomOf="@id/signin_spacer1"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin_spacer2"
+        app:layout_constraintTop_toBottomOf="@id/imageviewLogo"
+        android:text=""
+        android:textSize="100dp"/>
+
+    <TextView
+        android:id="@+id/signin_usernamelabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/signin_usernamelabel"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="140dp"
+        android:layout_marginRight="140dp"
+        app:layout_constraintTop_toBottomOf="@id/signin_spacer2"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin_username"
+        android:hint="enter USERNAME"
+        android:layout_marginLeft="140dp"
+        android:layout_marginRight="140dp"
+        app:layout_constraintTop_toBottomOf="@id/signin_usernamelabel"/>
+
+    <TextView
+        android:id="@+id/signin_pinlabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/signin_pinlabel"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:textColor="@color/valueText_Lime"
+        android:layout_marginLeft="140dp"
+        android:layout_marginRight="140dp"
+        app:layout_constraintTop_toBottomOf="@id/signin_username"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin_pin"
+        android:hint="enter PIN"
+        android:inputType="numberPassword"
+        android:layout_marginLeft="140dp"
+        android:layout_marginRight="140dp"
+        app:layout_constraintTop_toBottomOf="@id/signin_pinlabel"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/signin_spacer3"
+        app:layout_constraintTop_toBottomOf="@id/signin_pin"
+        android:text=""
+        android:textSize="75dp"/>
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="120dp"
+        android:layout_margin="50dp"
+        android:id="@+id/signin_login_button"
+        android:text="@string/signin_login_button"
+        android:textSize="30dp"
+        app:layout_constraintTop_toBottomOf="@id/signin_spacer3"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>

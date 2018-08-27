@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.ReceiveActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_spacer1"
+                android:text=""
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_descriptionlabel"
+                android:text="@string/receive_description"
+                android:textStyle="bold"
+                android:textSize="24dp"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_spacer1"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_spacer2"
+                android:text=""
+                android:textSize="10dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_descriptionlabel"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_plantlabel"
+                android:text="@string/receive_plantlabel"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_spacer2"/>
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_plant"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_plantlabel"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_spacer3"
+                android:text=""
+                android:textSize="10dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_plant"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_drugtestlabel"
+                android:text="@string/receive_drugtestlabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_spacer3"/>
+
+            <EditText
+                android:layout_width="275dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_drugtestdevice"
+                android:maxLength="150"
+                android:text=""
+                android:hint="enter test device"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_drugtestlabel"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_drugtest_spacer"
+                android:text="@string/receive_drugtest_spacer"
+                android:textSize="34dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                app:layout_constraintTop_toBottomOf="@id/receive_drugtestlabel"
+                app:layout_constraintLeft_toRightOf="@id/receive_drugtestdevice"
+                android:layout_marginLeft="50dp"/>
+
+            <EditText
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_drugtestresult"
+                android:maxLength="5"
+                android:inputType="number"
+                android:text=""
+                android:hint="enter test result"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_drugtestlabel"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_scalemeterlabel"
+                android:text="@string/receive_scalemeterlabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_drugtestdevice"/>
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_scalemeter"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_scalemeterlabel"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_silolabel"
+                android:text="@string/receive_silolabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_scalemeter"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_silo"
+                android:maxLength="1"
+                android:inputType="number"
+                android:text=""
+                android:hint="enter receive silo"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_silolabel"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_temperaturelabel"
+                android:text="@string/receive_temperaturelabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_silo"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_temperature"
+                android:maxLength="2"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:hint="enter receive temperature"
+                app:layout_constraintTop_toBottomOf="@id/receive_temperaturelabel"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_sealslabel"
+                android:text="@string/receive_sealslabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_temperature"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_topseal"
+                android:maxLength="10"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:hint="enter top seal"
+                app:layout_constraintTop_toBottomOf="@id/receive_sealslabel"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_seals_spacer"
+                android:text="@string/receive_seals_spacer"
+                android:textSize="34dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                app:layout_constraintTop_toBottomOf="@id/receive_sealslabel"
+                app:layout_constraintLeft_toRightOf="@id/receive_topseal"
+                android:layout_marginLeft="70dp"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_bottomseal"
+                android:maxLength="10"
+                android:text=""
+                android:layout_marginRight="30dp"
+                android:hint="enter bottom seal"
+                app:layout_constraintTop_toBottomOf="@id/receive_sealslabel"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_receivelbslabel"
+                android:text="@string/receive_receivelbslabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_topseal"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_receivelbs"
+                android:maxLength="5"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginLeft="30dp"
+                android:hint="enter received lbs"
+                app:layout_constraintTop_toBottomOf="@id/receive_receivelbslabel"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_receivelbs_spacer"
+                android:text="@string/receive_receivelbs_spacer"
+                android:textSize="34dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                app:layout_constraintTop_toBottomOf="@id/receive_receivelbslabel"
+                app:layout_constraintLeft_toRightOf="@id/receive_receivelbs"
+                android:layout_marginLeft="70dp"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_receivelbs_confirm"
+                android:maxLength="5"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginRight="30dp"
+                android:hint="enter lbs confirmation"
+                app:layout_constraintTop_toBottomOf="@id/receive_receivelbslabel"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_receivelbsavailable"
+                android:text="Total LBS available: XX,XXX"
+                android:textSize="16dp"
+                android:textStyle="italic"
+                android:textColor="@color/colorAccent"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_receivelbs"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_spacer8"
+                android:text=""
+                android:textSize="60dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_receivelbsavailable"/>
+
+            <Button
+                android:id="@+id/receive_save_button"
+                android:layout_width="258dp"
+                android:layout_height="98dp"
+                android:text="@string/receive_save_button"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/receive_spacer8"
+                app:layout_constraintHorizontal_bias="0.501" />
+
+            <Button
+                android:id="@+id/receive_finishticket_button"
+                android:layout_width="258dp"
+                android:layout_height="98dp"
+                android:text="@string/receive_finishticket_button"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginRight="30dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/receive_spacer8"
+                app:layout_constraintHorizontal_bias="0.501" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_spacer9"
+                android:text=""
+                android:textSize="20dp"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_save_button"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_bottom_message"
+                android:text="Current User: ssss - Current Receive Date: xx/xx/xxxx"
+                android:textSize="16dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_spacer9"/>
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
