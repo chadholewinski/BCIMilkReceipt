@@ -181,7 +181,7 @@ public class dbReceive
     }
 
     public void setLoadTemp(Integer loadTemp) {
-        LoadTemp = LoadTemp;
+        LoadTemp = loadTemp;
     }
 
     public void setIntakeNumber(Integer intakeNumber) {

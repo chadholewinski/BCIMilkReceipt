@@ -36,7 +36,7 @@ import java.util.UUID;
 public class PickupActivity extends AppCompatActivity implements View.OnClickListener//, LocationListener
 {
     private Button _pickup_scanproducer_button, _pickup_scanlabcode_button, _pickup_save_button, _pickup_gotoreceive_button;
-    private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage;
+    private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals;
     private EditText _pickup_producer, _pickup_tank, _pickup_labcode, _gaugerod_major, _gaugerod_minor, _convertedLBS, _convertedLBS_confirm, _temperature, _dfa_ticket;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sProvider, _sUsername;
     //private LocationManager _oLocationManager;
@@ -68,6 +68,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         //Instantiate the pickup bottom message and savemessage text view
         _pickup_Bottom_Message = (TextView)findViewById(R.id.pickup_bottom_message);
         _pickup_Bottom_SaveMessage = (TextView)findViewById(R.id.pickup_bottom_savemessage);
+        _pickup_Totals = (TextView)findViewById(R.id.pickup_totals);
 
         //Instantiate the pickup edit text boxes
         _pickup_producer = (EditText)findViewById(R.id.producer);
@@ -357,6 +358,20 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                     //Display save successful message on bottom of screen
                     _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
+
+                    //Instantiate the database handler
+                    dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+                    List<dbLine> olLine;
+                    Integer iTotalLBS = 0;
+
+                    //Get the list of lines by header id for current ticket
+                    olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+
+                    //Get the total LBS on ticket
+                    iTotalLBS = getTotalPickupLBS(olLine);
+
+                    //Display the pickup info on UI
+                    _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
                 }
                 else
                 {
@@ -542,6 +557,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void setupScreen()
     {
+        ArrayList<dbLine> olLine;
+        Integer iTotalLBS = 0;
+
         try
         {
             //Instantiate the database handler
@@ -549,6 +567,15 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
+
+            //Get the list of lines by header id for current ticket
+            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+
+            //Get the total LBS on ticket
+            iTotalLBS = getTotalPickupLBS(olLine);
+
+            //Display the pickup info on UI
+            _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
 
             //Check if the profile record was found
             if (_oProfile != null)
@@ -571,6 +598,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //region GPS (COMMENTED OUT)
     /**
      * setupGPS
      *  - initialization of GPS services and listeners
@@ -642,6 +670,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
     //    return _oLocation;
     //}
+    //endregion
 
     /**
      * saveNewPickup
@@ -823,6 +852,46 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
         //Return the check
         return bCheck;
+    }
+
+    /**
+     * getTotalPickupLBS
+     *  - get the total pickup lbs for current ticket
+     * @param polLines
+     * @return (Integer) - returns the total pickup lbs on current ticket
+     */
+    private Integer getTotalPickupLBS(List<dbLine> polLines)
+    {
+        Integer iTotalLBS = 0;
+        dbLine oLine;
+
+        try
+        {
+            //Check that the line list has records
+            if (polLines != null)
+            {
+                //Loop through all pickup lines on ticket
+                for (int i = 0; i < polLines.size(); i++) {
+                    //Instantiate a new line object
+                    oLine = new dbLine();
+
+                    //Get the next line in list
+                    oLine = polLines.get(i);
+
+                    //Add the LBS to the total LBS
+                    iTotalLBS = iTotalLBS + oLine.getConvertedLBS();
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "PickupActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            iTotalLBS = 0;
+        }
+
+        return iTotalLBS;
     }
     //endregion
 }

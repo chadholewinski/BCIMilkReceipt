@@ -9,13 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbPlant;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbReceive;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 
 import java.text.DateFormat;
@@ -28,11 +31,13 @@ import java.util.UUID;
 public class ReceiveActivity extends AppCompatActivity implements View.OnClickListener
 {
     private Button _receive_save_button, _receive_finishticket_button;
-    private TextView _receive_Bottom_Message;
-    private Spinner _receive_plant;
+    private TextView _receive_Bottom_Message, _receive_ReceiveLBSAvailable, _receive_Bottom_SaveMessage;
+    private EditText _receive_DrugTestDevice, _receive_DrugTestResult, _receive_Silo, _receive_Temperature, _receive_TopSeal, _receive_BottomSeal, _receive_ReceivedLBS, _receive_ReceivedLBSConfirmation;
+    private Spinner _receive_plant, _receive_scalemeter;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sUsername;
     private Utilities _oUtils;
     private dbProfile _oProfile;
+    private List<String> _oPlantIDList = new ArrayList<>();
 
     //region Class Constructor Methods
     @Override
@@ -49,10 +54,24 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         _receive_save_button = (Button)findViewById(R.id.receive_save_button);
         _receive_finishticket_button = (Button)findViewById(R.id.receive_finishticket_button);
 
+        //Instantiate the spinners
         _receive_plant = (Spinner)findViewById(R.id.receive_plant);
+        _receive_scalemeter = (Spinner)findViewById(R.id.receive_scalemeter);
 
         //Instantiate the receive bottom message text view
         _receive_Bottom_Message = (TextView)findViewById(R.id.receive_bottom_message);
+        _receive_ReceiveLBSAvailable = (TextView)findViewById(R.id.receive_receivelbsavailable);
+        _receive_Bottom_SaveMessage = (TextView)findViewById(R.id.receive_bottom_savemessage);
+
+        //Instantiate the receive edit text boxes
+        _receive_DrugTestDevice = (EditText)findViewById(R.id.receive_drugtestdevice);
+        _receive_DrugTestResult = (EditText)findViewById(R.id.receive_drugtestresult);
+        _receive_Silo = (EditText)findViewById(R.id.receive_silo);
+        _receive_Temperature = (EditText)findViewById(R.id.receive_temperature);
+        _receive_TopSeal = (EditText)findViewById(R.id.receive_topseal);
+        _receive_BottomSeal = (EditText)findViewById(R.id.receive_bottomseal);
+        _receive_ReceivedLBS = (EditText)findViewById(R.id.receive_receivelbs);
+        _receive_ReceivedLBSConfirmation = (EditText)findViewById(R.id.receive_receivelbs_confirm);
 
         //Set the on click listener for page to the screen buttons
         _receive_save_button.setOnClickListener(this);
@@ -76,7 +95,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         //Setup the screen
         setupScreen();
 
+        //Load the drop down fields
         populatePlantSpinner();
+        populateScaleMeterSpinner();
     }
 
     /**
@@ -207,6 +228,56 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             {
                 //Log message to activity
                 _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_save_button pressed", "");
+
+                //Save the pickup
+                String sReceiveIDSaved = saveNewReceive();
+
+                //Format the date for insert and modified
+                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+                Date dDate = new Date();
+
+                //Check if the record was saved
+                if (sReceiveIDSaved.length() > 0)
+                {
+                    //Clear the screen contents
+                    _receive_DrugTestDevice.setText("");
+                    _receive_DrugTestResult.setText("");
+                    _receive_Silo.setText("");
+                    _receive_Temperature.setText("");
+                    _receive_TopSeal.setText("");
+                    _receive_BottomSeal.setText("");
+                    _receive_ReceivedLBS.setText("");
+                    _receive_ReceivedLBSConfirmation.setText("");
+
+                    //Display save successful message on bottom of screen
+                    _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
+
+                    //Instantiate the database handler
+                    dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+
+                    List<dbLine> olLine;
+                    List<dbReceive> olReceive;
+                    Integer iTotalLBS = 0;
+                    Integer iTotalReceivedLBS = 0;
+                    Integer iTotalReceiveLBSCalculated = 0;
+
+                    //Get the list of lines and receives by header id for current ticket
+                    olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+                    olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+
+                    //Get the total LBS on ticket
+                    iTotalLBS = getTotalPickupLBS(olLine);
+                    iTotalReceivedLBS = getTotalReceiveLBS(olReceive);
+                    iTotalReceiveLBSCalculated = iTotalLBS - iTotalReceivedLBS;
+
+                    //Display the pickup info on UI
+                    _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalReceiveLBSCalculated);
+                }
+                else
+                {
+                    //Display save failed message on bottom of screen
+                    _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate).toString());
+                }
             }
             //Check if the receive finish ticket button was pressed
             else if (v.getId() == R.id.receive_finishticket_button)
@@ -309,6 +380,12 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void setupScreen()
     {
+        List<dbLine> olLine;
+        List<dbReceive> olReceive;
+        Integer iTotalLBS = 0;
+        Integer iTotalReceivedLBS = 0;
+        Integer iTotalReceiveLBSCalculated = 0;
+
         try
         {
             //Instantiate the database handler
@@ -316,6 +393,18 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
+
+            //Get the list of lines and receives by header id for current ticket
+            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+            olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+
+            //Get the total LBS on ticket
+            iTotalLBS = getTotalPickupLBS(olLine);
+            iTotalReceivedLBS = getTotalReceiveLBS(olReceive);
+            iTotalReceiveLBSCalculated = iTotalLBS - iTotalReceivedLBS;
+
+            //Display the pickup info on UI
+            _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalReceiveLBSCalculated);
 
             //Check if the profile record was found
             if (_oProfile != null)
@@ -330,6 +419,12 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Set the username global variable
                 _sUsername = _oProfile.getUsername();
             }
+
+            //Get the settings object
+            dbSettings oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+            //Set the default for the drug test device
+            _receive_DrugTestDevice.setText(oSettings.getDrugTestDevice());
         }
         catch (Exception ex)
         {
@@ -365,6 +460,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                     //Add the plant name to the plant array
                     olPlants.add(oPlant.getPlantName());
+                    _oPlantIDList.add(oPlant.getPkPlantID());
                 }
             }
             else
@@ -387,6 +483,249 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Log error message to activity
             _oUtils.InsertActivity(this, "3", "ReceiveActivity", "populatePlantSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
+    }
+
+    /**
+     * populateScaleMeterSpinner
+     *  - Populates the scalemeter spinner with values
+     */
+    private void populateScaleMeterSpinner()
+    {
+        List<String> olScaleMeter = new ArrayList<>();
+
+        try
+        {
+            //Add the plant name to the scalemeter array
+            olScaleMeter.add("Meter");
+            olScaleMeter.add("Scale");
+
+            //Instantiate and setup the array adapter
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, olScaleMeter);
+
+            //Setup the adapter dropdown type
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            //Set the spinner to the adapter to fill dropdown
+            _receive_scalemeter.setAdapter(adapter);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "populateScaleMeterSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * getTotalPickupLBS
+     *  - get the total pickup lbs for current ticket
+     * @param polLines
+     * @return (Integer) - returns the total pickup lbs on current ticket
+     */
+    private Integer getTotalPickupLBS(List<dbLine> polLines)
+    {
+        Integer iTotalLBS = 0;
+        dbLine oLine;
+
+        try
+        {
+            //Check that the line list has records
+            if (polLines != null)
+            {
+                //Loop through all pickup lines on ticket
+                for (int i = 0; i < polLines.size(); i++) {
+                    //Instantiate a new line object
+                    oLine = new dbLine();
+
+                    //Get the next line in list
+                    oLine = polLines.get(i);
+
+                    //Add the LBS to the total LBS
+                    iTotalLBS = iTotalLBS + oLine.getConvertedLBS();
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            iTotalLBS = 0;
+        }
+
+        return iTotalLBS;
+    }
+
+    /**
+     * getTotalReceiveLBS
+     *  - gets the total received lbs currently on ticket
+     * @param polReceives
+     * @return (Integer) - returns the total LBS of received lbs
+     */
+    private Integer getTotalReceiveLBS(List<dbReceive> polReceives)
+    {
+        Integer iTotalLBS = 0;
+        dbReceive oReceive;
+        
+        try
+        {
+            //Check that the receive list has records
+            if (polReceives != null)
+            {
+                //Loop through all receives on ticket
+                for (int i = 0; i < polReceives.size(); i++) 
+                {
+                    //Instantiate a new receive object
+                    oReceive = new dbReceive();
+
+                    //Get the next receive in list
+                    oReceive = polReceives.get(i);
+
+                    //Add the LBS to the total LBS
+                    iTotalLBS = iTotalLBS + oReceive.getReceivedLBS();
+                }
+            }
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getTotalReceiveLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            iTotalLBS = 0;
+        }
+
+        return iTotalLBS;
+    }
+
+    /**
+     * saveNewReceive
+     *  - save the new receive record to the database
+     * @return (String) - returns the guid of the saved receive record
+     */
+    private String saveNewReceive()
+    {
+        String sReceiveID = null;
+        dbReceive oReceive = new dbReceive();
+        List<dbReceive> olReceive = new ArrayList<>();
+
+        try
+        {
+            //Check if any errors are present for receive
+            if (!checkReceiveForErrors())
+            {
+                //Format the date for insert and modified
+                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+                Date dDate = new Date();
+
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+
+                //Create a new headerID GUID
+                UUID gID = UUID.randomUUID();
+
+                //Get the plant id selected
+                Integer iPosition = _receive_plant.getSelectedItemPosition();
+                String sPlantID = _oPlantIDList.get(iPosition);
+
+                //Setup the new receive object data
+                oReceive.setPkReceiveID(gID.toString());
+                oReceive.setFkHeaderID(_spkHeaderID);
+                oReceive.setFkPlantID(sPlantID);
+                oReceive.setFkPlantOriginalID("");
+                oReceive.setDrugTestDevice(_receive_DrugTestDevice.getText().toString());
+                oReceive.setDrugTestResult(_receive_DrugTestResult.getText().toString());
+                oReceive.setReceiveDateTime(dfDate.format(dDate).toString());
+                oReceive.setTank(_receive_Silo.getText().toString());
+                oReceive.setScaleMeter(getScaleMeterSpinnerSelection());
+                oReceive.setTopSeal(_receive_TopSeal.getText().toString());
+                oReceive.setBottomSeal(_receive_BottomSeal.getText().toString());
+                oReceive.setReceivedLBS(Integer.parseInt(_receive_ReceivedLBS.getText().toString()));
+                oReceive.setLoadTemp(Integer.parseInt(_receive_Temperature.getText().toString()));
+                oReceive.setIntakeNumber(0);
+                oReceive.setFinished(0);
+                oReceive.setWaitingForScaleData(0);
+                oReceive.setTransmitted(0);
+                oReceive.setTransmittedDate("1/1/1900");
+                oReceive.setInsertDate(dfDate.format(dDate).toString());
+                oReceive.setModifiedDate(dfDate.format(dDate).toString());
+
+                //Setup the arraylist for receive insertion
+                olReceive.add(oReceive);
+
+                //Add the receive to the database
+                oDBHandler.addReceive(olReceive);
+
+                //Set the return ReceiveID
+                sReceiveID = gID.toString();
+            }
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "saveNewReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+        
+        return sReceiveID;
+    }
+
+    /**
+     * checkReceiveForErrors
+     *  - checks all fields for errors
+     * @return (boolean) - true/false if errors are present or not
+     */
+    private boolean checkReceiveForErrors()
+    {
+        boolean bCheck = false;
+
+        try
+        {
+            //Check for headerid being blank or null
+            if (_spkHeaderID.length() == 0 || _spkHeaderID == null)
+            {
+                bCheck = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "checkReceiveForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            bCheck = false;
+        }
+
+        //Return the check
+        return bCheck;
+    }
+
+    /**
+     * getScaleMeterSpinnerSelection
+     *  - get the scale meter selection and return value
+     * @return (Integer) - returns the scale or meter value
+     */
+    private Integer getScaleMeterSpinnerSelection()
+    {
+        Integer iScaleMeter = 0;
+
+        try
+        {
+            //Check if scale was selected
+            if (_receive_scalemeter.getSelectedItem().toString() == "Scale")
+            {
+                //Set the scale meter to 1
+                iScaleMeter = 1;
+            }
+            else
+            {
+                //Set the scale meter to 0
+                iScaleMeter = 0;
+            }
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getScaleMeterSpinnerSelection", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        return iScaleMeter;
     }
     //endregion
 }

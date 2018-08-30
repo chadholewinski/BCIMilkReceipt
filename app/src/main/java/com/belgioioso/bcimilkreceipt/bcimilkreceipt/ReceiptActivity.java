@@ -3,6 +3,7 @@ package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
     private Spinner spn_Existing_Tickets;
     private Utilities _oUtils;
     private dbProfile _oProfile;
+    private List<String> _olTicketIDs = new ArrayList<>();
 
     //region Class Constructor Methods
     /**
@@ -222,12 +224,15 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
                 //Get the selected ticket number from spinner
                 String sTicketNumber = spn_Existing_Tickets.getSelectedItem().toString();
+                Integer iPosition = spn_Existing_Tickets.getSelectedItemPosition();
+                String sTicketID = _olTicketIDs.get(iPosition);
 
                 //Instantiate the database handler
                 dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
 
                 //Get the settings object from database
-                dbHeader oHeader = oDBHandler.findHeaderByTicketNumber(sTicketNumber);
+                //dbHeader oHeader = oDBHandler.findHeaderByTicketNumber(sTicketNumber);
+                dbHeader oHeader = oDBHandler.findHeaderByID(sTicketID);
 
                 //Check if the header record was found
                 if (oHeader != null)
@@ -351,6 +356,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
     private void populateExistingTicketSpinner()
     {
         List<String> olTickets = new ArrayList<>();
+        dbHeader oHeader = new dbHeader();
 
         try
         {
@@ -367,10 +373,11 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                 for (int i=0; i<olHeader.size(); i++)
                 {
                     //Get the receipt header record from list of records
-                    dbHeader oHeader = olHeader.get(i);
+                    oHeader = olHeader.get(i);
 
                     //Add the ticket number to the ticket array
-                    olTickets.add(oHeader.getTicketNumber());
+                    olTickets.add(oHeader.getTicketNumber() + " - " + oHeader.getRouteIdentifier() + " - " + oHeader.getInsertDate());
+                    _olTicketIDs.add(oHeader.getPkHeaderID());
                 }
             }
             else

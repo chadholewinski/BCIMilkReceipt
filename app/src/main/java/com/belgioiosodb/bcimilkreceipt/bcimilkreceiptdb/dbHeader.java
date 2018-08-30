@@ -113,9 +113,7 @@ public class dbHeader
         RouteIdentifier = routeIdentifier;
     }
 
-    public void setTruckLicenseNumber(String truckLicenseNumber) {
-        TruckLicenseNumber = truckLicenseNumber;
-    }
+    public void setTruckLicenseNumber(String truckLicenseNumber) { TruckLicenseNumber = truckLicenseNumber; }
 
     public void setStartMileage(Integer startMileage) {
         StartMileage = startMileage;
@@ -133,9 +131,7 @@ public class dbHeader
         Finished = finished;
     }
 
-    public void setWaitingForScaleData(Integer waitingForScaleData) {
-        WaitingForScaleData = waitingForScaleData;
-    }
+    public void setWaitingForScaleData(Integer waitingForScaleData) { WaitingForScaleData = waitingForScaleData; }
 
     public void setTransmitted(Integer transmitted) {
         Transmitted = transmitted;

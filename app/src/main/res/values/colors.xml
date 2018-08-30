@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="valueText_Blue">#0000FF</color>
     <color name="valueText_Lime">#00FF00</color>
+    <color name="valueText_Red">#FF0000</color>
+    <color name="valueText_Yellow">#FFFF00</color>
 </resources>

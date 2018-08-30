@@ -10,6 +10,8 @@ import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -530,6 +532,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
             while(!cursor.isAfterLast())
             {
+                //Create a fresh instance of the object
+                oHeader = new dbHeader();
+
                 //Get values from database
                 oHeader.setPkHeaderID(cursor.getString(0));
                 oHeader.setFkProfileID(cursor.getString(1));
@@ -862,13 +867,16 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         Cursor cursor = db.rawQuery(query, null);
 
         //Check if cursor has records from database
-        if (cursor.moveToFirst()) {
+        if (cursor.moveToFirst())
+        {
             //Move to the first record
             cursor.moveToFirst();
 
-            //Loop through all cursor records
-            for (Integer i = 0; i <= cursor.getCount(); i++)
+            while(!cursor.isAfterLast())
             {
+                //Instantiate new line object
+                oLine = new dbLine();
+
                 //Get values from database
                 oLine.setPkLineID(cursor.getString(0));
                 oLine.setFkHeaderID(cursor.getString(1));
@@ -896,9 +904,6 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
                 //Add line object to array of line objects
                 oLines.add(oLine);
-
-                //Clear the line object
-                oLine = null;
 
                 //Move to the next record in cursor
                 cursor.moveToNext();
@@ -1054,10 +1059,10 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     //region Receive Methods
     //addReceive
     // - Add receive record(s) to SQLite database
-    public void addReceive(dbReceive[] poaReceive)
+    public void addReceive(List<dbReceive> polReceive)
     {
         //Loop through all receive objects in array
-        for (dbReceive oReceive : poaReceive)
+        for (dbReceive oReceive : polReceive)
         {
             //Instantiate a content value object
             ContentValues values = new ContentValues();
@@ -1214,8 +1219,11 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Move to the first record
             cursor.moveToFirst();
 
-            //Loop through all cursor records
-            for (Integer i = 0; i <= cursor.getCount(); i++) {
+            while(!cursor.isAfterLast())
+            {
+                //Instantiate new receive object
+                oReceive = new dbReceive();
+
                 //Get values from database
                 oReceive.setPkReceiveID(cursor.getString(0));
                 oReceive.setFkHeaderID(cursor.getString(1));
@@ -1237,9 +1245,6 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
                 //Add receive object to array of receive objects
                 oReceives.add(oReceive);
-
-                //Clear the receive object
-                oReceive = null;
 
                 //Move to the next record in cursor
                 cursor.moveToNext();
@@ -2011,7 +2016,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     }
 
     //updatePlant
-    // - Update profile record(s) to SQLite database
+    // - Update plant record(s) to SQLite database
     public void updatePlant(dbPlant poPlant)
     {
         //Check if profile object is null
@@ -2045,7 +2050,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     }
 
     //findPlantByID
-    // - Get a profile record by ID
+    // - Get a plant record by ID
     public dbPlant findPlantByID(String psPlantID)
     {
         String query;
@@ -2117,6 +2122,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
             while(!cursor.isAfterLast())
             {
+                //Create new instance of the plant object
+                oPlant = new dbPlant();
+
                 //Get values from database
                 oPlant.setPkPlantID(cursor.getString(0));
                 oPlant.setPlantName(cursor.getString(1));
@@ -2127,7 +2135,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
                 oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
                 oPlant.setActive(Integer.parseInt(cursor.getString(8)));
-                oPlant.setInsertDate(cursor.getString(8));
+                oPlant.setInsertDate(cursor.getString(9));
                 oPlant.setModifiedDate(cursor.getString(10));
 
                 //Add the plant object to the plant list object
@@ -2148,6 +2156,54 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
         //Return the plant list object
         return olPlant;
+    }
+
+    //findPlantByName
+    // - Get a plant record by name
+    public dbPlant findPlantByName(String psPlantName)
+    {
+        String query;
+        dbPlant oPlant = new dbPlant();
+
+        //Create the query string
+        query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_PLANTNAME + " = \"" + psPlantName + "\"";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            //Get values from database
+            oPlant.setPkPlantID(cursor.getString(0));
+            oPlant.setPlantName(cursor.getString(1));
+            oPlant.setPlantNumber(cursor.getString(2));
+            oPlant.setBTUNumber(cursor.getString(3));
+            oPlant.setAddress(cursor.getString(4));
+            oPlant.setCityStateZip(cursor.getString(5));
+            oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
+            oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
+            oPlant.setActive(Integer.parseInt(cursor.getString(8)));
+            oPlant.setInsertDate(cursor.getString(9));
+            oPlant.setModifiedDate(cursor.getString(10));
+        }
+        else
+        {
+            //No records found, set plant object to null
+            oPlant = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the plant object
+        return oPlant;
     }
 
     //deletePlantByID
