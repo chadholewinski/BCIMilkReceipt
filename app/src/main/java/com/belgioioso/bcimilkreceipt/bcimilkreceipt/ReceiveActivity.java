@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbPlant;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
@@ -252,26 +253,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     //Display save successful message on bottom of screen
                     _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
 
-                    //Instantiate the database handler
-                    dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
-
-                    List<dbLine> olLine;
-                    List<dbReceive> olReceive;
-                    Integer iTotalLBS = 0;
-                    Integer iTotalReceivedLBS = 0;
-                    Integer iTotalReceiveLBSCalculated = 0;
-
-                    //Get the list of lines and receives by header id for current ticket
-                    olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
-                    olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
-
-                    //Get the total LBS on ticket
-                    iTotalLBS = getTotalPickupLBS(olLine);
-                    iTotalReceivedLBS = getTotalReceiveLBS(olReceive);
-                    iTotalReceiveLBSCalculated = iTotalLBS - iTotalReceivedLBS;
-
                     //Display the pickup info on UI
-                    _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalReceiveLBSCalculated);
+                    _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + getTotalLBSLeftOnTicket());
                 }
                 else
                 {
@@ -284,6 +267,30 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             {
                 //Log message to activity
                 _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_finishticket_button pressed", "");
+
+                //Check if the total receive LBS is the sames as total pickup LBS
+                if (getTotalLBSLeftOnTicket() == 0)
+                {
+                    //Flag header, line and receive records as finished and check status returned
+                    if (setTicketAsFinished())
+                    {
+                        //Instantiate a new intent of SignInActivity
+                        Intent signin_intent = new Intent(this, SignInActivity.class);
+
+                        //Navigate to the signin screen
+                        startActivity(signin_intent);
+                    }
+                    else
+                    {
+                        //Display finished failed message on bottom of screen
+                        _receive_Bottom_SaveMessage.setText("Receive finish failed");
+                    }
+                }
+                else
+                {
+                    //Display finished failed message on bottom of screen
+                    _receive_Bottom_SaveMessage.setText("Receive finish failed because not all pickup LBS are used");
+                }
             }
         }
         catch (Exception ex)
@@ -380,12 +387,6 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void setupScreen()
     {
-        List<dbLine> olLine;
-        List<dbReceive> olReceive;
-        Integer iTotalLBS = 0;
-        Integer iTotalReceivedLBS = 0;
-        Integer iTotalReceiveLBSCalculated = 0;
-
         try
         {
             //Instantiate the database handler
@@ -394,17 +395,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
 
-            //Get the list of lines and receives by header id for current ticket
-            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
-            olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
-
-            //Get the total LBS on ticket
-            iTotalLBS = getTotalPickupLBS(olLine);
-            iTotalReceivedLBS = getTotalReceiveLBS(olReceive);
-            iTotalReceiveLBSCalculated = iTotalLBS - iTotalReceivedLBS;
-
             //Display the pickup info on UI
-            _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalReceiveLBSCalculated);
+            _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + getTotalLBSLeftOnTicket());
 
             //Check if the profile record was found
             if (_oProfile != null)
@@ -726,6 +718,122 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return iScaleMeter;
+    }
+
+    /**
+     * getTotalLBSLeftOnTicket
+     *  - get the total LBS left on ticket TotalPickupLBS - TotalReceiveLBS
+     * @return (Integer) - returns the total LBS left on ticket
+     */
+    private Integer getTotalLBSLeftOnTicket()
+    {
+        Integer iTotalLBSLeft = 99999;
+        List<dbLine> olLine;
+        List<dbReceive> olReceive;
+        Integer iTotalLBS = 0;
+        Integer iTotalReceivedLBS = 0;
+
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+
+            //Get the list of lines and receives by header id for current ticket
+            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+            olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+
+            //Get the total LBS on ticket
+            iTotalLBS = getTotalPickupLBS(olLine);
+            iTotalReceivedLBS = getTotalReceiveLBS(olReceive);
+            iTotalLBSLeft = iTotalLBS - iTotalReceivedLBS;
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getTotalLBSLeftOnTicket", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            //Set total LBS to 99999
+            iTotalLBSLeft = 99999;
+        }
+
+        return iTotalLBSLeft;
+    }
+
+    /**
+     * setTicketAsFinished
+     *  - sets the ticket finished flags in header, line and receive records
+     * @return (Boolean) - true/false if the flags are set properly
+     */
+    private boolean setTicketAsFinished()
+    {
+        boolean bFinished = false;
+        dbHeader oHeader;
+        List<dbLine> olLine;
+        List<dbReceive> olReceive;
+
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+
+            //Get the header record
+            oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
+
+            //Get the list of lines and receives by header id for current ticket
+            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+            olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+
+            //Check if the header id is valid
+            if (oHeader.getPkHeaderID() != "")
+            {
+                //Update the finished flag
+                oHeader.setFinished(1);
+
+                //Update the header record in database
+                oDBHandler.updateHeader(oHeader);
+            }
+
+            //Check if lines have been retrieved
+            if (olLine.size() > 0)
+            {
+                //Loop through all lines in list
+                for (dbLine oLine : olLine) 
+                {
+                    //Update the finished flag
+                    oLine.setFinished(1);
+
+                    //Update the line record in database
+                    oDBHandler.updateLine(oLine);
+                }
+            }
+
+            //Check if receive have been retrieved
+            if (olReceive.size() > 0)
+            {
+                //Loop through all receives in list
+                for (dbReceive oReceive : olReceive)
+                {
+                    //Update the finished flag
+                    oReceive.setFinished(1);
+
+                    //Update the receive record in database
+                    oDBHandler.updateReceive(oReceive);
+                }
+            }
+
+            //Set the finished flag
+            bFinished = true;
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "setTicketAsFinished", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            //Set finished flag to false
+            bFinished = false;
+        }
+
+        return bFinished;
     }
     //endregion
 }

@@ -1177,12 +1177,15 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
             oReceive.setTopSeal(cursor.getString(9));
             oReceive.setBottomSeal(cursor.getString(10));
-            oReceive.setFinished(Integer.parseInt(cursor.getString(11)));
-            oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(12)));
-            oReceive.setTransmitted(Integer.parseInt(cursor.getString(13)));
-            oReceive.setTransmittedDate(cursor.getString(14));
-            oReceive.setInsertDate(cursor.getString(15));
-            oReceive.setModifiedDate(cursor.getString(16));
+            oReceive.setReceivedLBS(Integer.parseInt(cursor.getString(11)));
+            oReceive.setLoadTemp(Integer.parseInt(cursor.getString(12)));
+            oReceive.setIntakeNumber(Integer.parseInt(cursor.getString(13)));
+            oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
+            oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
+            oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
+            oReceive.setTransmittedDate(cursor.getString(17));
+            oReceive.setInsertDate(cursor.getString(18));
+            oReceive.setModifiedDate(cursor.getString(19));
         }
         else
         {
@@ -1236,12 +1239,15 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
                 oReceive.setTopSeal(cursor.getString(9));
                 oReceive.setBottomSeal(cursor.getString(10));
-                oReceive.setFinished(Integer.parseInt(cursor.getString(11)));
-                oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(12)));
-                oReceive.setTransmitted(Integer.parseInt(cursor.getString(13)));
-                oReceive.setTransmittedDate(cursor.getString(14));
-                oReceive.setInsertDate(cursor.getString(15));
-                oReceive.setModifiedDate(cursor.getString(16));
+                oReceive.setReceivedLBS(Integer.parseInt(cursor.getString(11)));
+                oReceive.setLoadTemp(Integer.parseInt(cursor.getString(12)));
+                oReceive.setIntakeNumber(Integer.parseInt(cursor.getString(13)));
+                oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
+                oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
+                oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
+                oReceive.setTransmittedDate(cursor.getString(17));
+                oReceive.setInsertDate(cursor.getString(18));
+                oReceive.setModifiedDate(cursor.getString(19));
 
                 //Add receive object to array of receive objects
                 oReceives.add(oReceive);
@@ -1300,12 +1306,15 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
                 oReceive.setTopSeal(cursor.getString(9));
                 oReceive.setBottomSeal(cursor.getString(10));
-                oReceive.setFinished(Integer.parseInt(cursor.getString(11)));
-                oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(12)));
-                oReceive.setTransmitted(Integer.parseInt(cursor.getString(13)));
-                oReceive.setTransmittedDate(cursor.getString(14));
-                oReceive.setInsertDate(cursor.getString(15));
-                oReceive.setModifiedDate(cursor.getString(16));
+                oReceive.setReceivedLBS(Integer.parseInt(cursor.getString(11)));
+                oReceive.setLoadTemp(Integer.parseInt(cursor.getString(12)));
+                oReceive.setIntakeNumber(Integer.parseInt(cursor.getString(13)));
+                oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
+                oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
+                oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
+                oReceive.setTransmittedDate(cursor.getString(17));
+                oReceive.setInsertDate(cursor.getString(18));
+                oReceive.setModifiedDate(cursor.getString(19));
 
                 //Add the receive object to the receive list object
                 olReceive.add(oReceive);
