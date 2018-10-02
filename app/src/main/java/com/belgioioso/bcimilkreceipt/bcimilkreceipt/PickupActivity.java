@@ -151,7 +151,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 //        try
 //        {
 //            //Instantiate the database handler
-//            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+//            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 //
 //            //Format the date for insert and modified
 //            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
@@ -360,7 +360,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
 
                     //Instantiate the database handler
-                    dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+                    dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
                     List<dbLine> olLine;
                     Integer iTotalLBS = 0;
 
@@ -485,7 +485,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the settings object from database
             dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
@@ -563,7 +563,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
@@ -692,7 +692,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 Date dDate = new Date();
 
                 //Instantiate the database handler
-                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
                 //Create a new headerID GUID
                 UUID gID = UUID.randomUUID();

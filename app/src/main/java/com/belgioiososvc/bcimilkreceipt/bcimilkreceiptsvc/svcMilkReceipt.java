@@ -101,13 +101,13 @@ public class svcMilkReceipt
         try
         {
             //Check if the JSON string is empty
-            if (psJSONStr != null)
+            if (psJSONStr != null && psJSONStr.length() > 35)
             {
                 //Instantiate a new JSON object from JSON string
                 JSONObject objSettings = new JSONObject(psJSONStr);
 
                 //Instantiate a new JSON array from the JSON object
-                JSONArray arrSettings = objSettings.getJSONArray("settings");
+                JSONArray arrSettings = objSettings.getJSONArray("GetSettingsDataJSONResult");
 
                 //Loop through all of the settings objects in the JSON array
                 for (int i = 0; i < arrSettings.length(); i++)
@@ -125,6 +125,7 @@ public class svcMilkReceipt
                     oSettings.setTrackPickupGeoLocation(objSettingsSingle.getInt("TrackPickupGeoLocation"));
                     oSettings.setTrackRouteGeoLocation(objSettingsSingle.getInt("TrackRouteGeoLocation"));
                     oSettings.setDebug(objSettingsSingle.getInt("Debug"));
+                    oSettings.setDownloadNotCompletedData(objSettingsSingle.getInt("DownloadNotCompletedData"));
                     oSettings.setAutoDBBackup(objSettingsSingle.getInt("AutoDBBackup"));
                     oSettings.setLastUserLoginID(objSettingsSingle.getString("LastUserLoginID"));
                     oSettings.setLastUserLoginDate(objSettingsSingle.getString("LastUserLoginDate"));

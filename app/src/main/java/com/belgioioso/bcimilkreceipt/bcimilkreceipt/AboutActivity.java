@@ -87,7 +87,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Delete all user created data from database
             oDBHandler.deleteHeaderAll();

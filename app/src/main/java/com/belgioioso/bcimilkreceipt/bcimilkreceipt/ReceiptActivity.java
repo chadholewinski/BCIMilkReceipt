@@ -228,7 +228,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                 String sTicketID = _olTicketIDs.get(iPosition);
 
                 //Instantiate the database handler
-                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
                 //Get the settings object from database
                 //dbHeader oHeader = oDBHandler.findHeaderByTicketNumber(sTicketNumber);
@@ -283,7 +283,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the settings object from database
             dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
@@ -361,7 +361,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate a new database connection object
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the list of non finished receipt header records from database
             List<dbHeader> olHeader = oDBHandler.findHeadersNonFinished();
@@ -411,7 +411,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);

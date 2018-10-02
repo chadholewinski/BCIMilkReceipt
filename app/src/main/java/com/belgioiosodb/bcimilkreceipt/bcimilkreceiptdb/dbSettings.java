@@ -13,6 +13,7 @@ public class dbSettings
     public String SETTINGS_COLUMN_TRACKPICKUPGEOLOCATION = "TrackPickupGeoLocation";
     public String SETTINGS_COLUMN_TRACKROUTEGEOLOCATION = "TrackRouteGeoLocation";
     public String SETTINGS_COLUMN_DEBUG = "Debug";
+    public String SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA = "DownloadNotCompletedData";
     public String SETTINGS_COLUMN_AUTODBBACKUP = "AutoDBBackup";
     public String SETTINGS_COLUMN_LASTUSERLOGINID = "LastUserLoginID";
     public String SETTINGS_COLUMN_LASTUSERLOGINDATE = "LastUserLoginDate";
@@ -22,7 +23,7 @@ public class dbSettings
     public String SETTINGS_COLUMN_LASTPROFILEUPDATE = "LastProfileUpdate";
     public String SETTINGS_COLUMN_UPDATEAVAILABLE = "UpdateAvailable";
     public String SETTINGS_COLUMN_UPDATEAVAILABLEDATE = "UpdateAvailableDate";
-    public String SETTINGS_COLUMN_DRUGTESTDEVICE = "DrugTestResult";
+    public String SETTINGS_COLUMN_DRUGTESTDEVICE = "DrugTestDevice";
     public String SETTINGS_COLUMN_WEBSERVICEURL = "WebServiceURL";
     public String SETTINGS_COLUMN_INSERTDATE = "InsertDate";
     public String SETTINGS_COLUMN_MODIFIEDDATE = "ModifiedDate";
@@ -33,6 +34,7 @@ public class dbSettings
     Integer TrackPickupGeoLocation;
     Integer TrackRouteGeoLocation;
     Integer Debug;
+    Integer DownloadNotCompletedData;
     Integer AutoDBBackup;
     String LastUserLoginID;
     String LastUserLoginDate;
@@ -74,6 +76,10 @@ public class dbSettings
 
     public Integer getDebug() {
         return Debug;
+    }
+
+    public Integer getDownloadNotCompletedData() {
+        return DownloadNotCompletedData;
     }
 
     public Integer getAutoDBBackup() {
@@ -143,6 +149,8 @@ public class dbSettings
     public void setDebug(Integer debug) {
         Debug = debug;
     }
+
+    public void setDownloadNotCompletedData(Integer downloadNotCompletedData) { DownloadNotCompletedData = downloadNotCompletedData; }
 
     public void setAutoDBBackup(Integer autoDBBackup) {
         AutoDBBackup = autoDBBackup;

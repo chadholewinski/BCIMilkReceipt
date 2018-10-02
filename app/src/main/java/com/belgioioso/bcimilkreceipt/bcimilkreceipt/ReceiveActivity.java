@@ -315,7 +315,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the settings object from database
             dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
@@ -390,7 +390,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
@@ -436,7 +436,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate a new database connection object
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the list of active plant records from database
             List<dbPlant> olPlant = oDBHandler.findPlantsActive();
@@ -609,7 +609,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 Date dDate = new Date();
 
                 //Instantiate the database handler
-                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
                 //Create a new headerID GUID
                 UUID gID = UUID.randomUUID();
@@ -736,7 +736,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the list of lines and receives by header id for current ticket
             olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
@@ -774,7 +774,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the header record
             oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
@@ -797,7 +797,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             if (olLine.size() > 0)
             {
                 //Loop through all lines in list
-                for (dbLine oLine : olLine) 
+                for (dbLine oLine : olLine)
                 {
                     //Update the finished flag
                     oLine.setFinished(1);

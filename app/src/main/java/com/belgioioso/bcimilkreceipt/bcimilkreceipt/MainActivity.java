@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the settings object from database
             dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
             //Create a new headerID GUID
             UUID gID = UUID.randomUUID();

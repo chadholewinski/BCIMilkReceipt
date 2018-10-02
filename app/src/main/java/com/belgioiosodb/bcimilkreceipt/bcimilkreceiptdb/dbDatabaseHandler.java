@@ -17,11 +17,12 @@ import java.util.List;
 
 public class dbDatabaseHandler extends SQLiteOpenHelper
 {
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "MilkReceipt.db";
 
     //region Class Constructor Methods
-    public dbDatabaseHandler(Context context, SQLiteDatabase.CursorFactory factory, int version)
+    //public dbDatabaseHandler(Context context, SQLiteDatabase.CursorFactory factory, int version)
+    public dbDatabaseHandler(Context context, SQLiteDatabase.CursorFactory factory)
     {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
@@ -58,15 +59,15 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         dbGeoLocation oGeoLocation = new dbGeoLocation();
 
         //If table exists, delete the table
-        db.execSQL("DROP TABLE IF EXISTS" + oHeader.TABLE_HEADER);
-        db.execSQL("DROP TABLE IF EXISTS" + oLine.TABLE_LINE);
-        db.execSQL("DROP TABLE IF EXISTS" + oReceive.TABLE_RECEIVE);
-        db.execSQL("DROP TABLE IF EXISTS" + oProfile.TABLE_PROFILE);
-        db.execSQL("DROP TABLE IF EXISTS" + oSettings.TABLE_SETTINGS);
-        db.execSQL("DROP TABLE IF EXISTS" + oPlant.TABLE_PLANT);
-        db.execSQL("DROP TABLE IF EXISTS" + oActHeader.TABLE_ACTIVITYHEADER);
-        db.execSQL("DROP TABLE IF EXISTS" + oVersion.TABLE_VERSION);
-        db.execSQL("DROP TABLE IF EXISTS" + oGeoLocation.TABLE_GEOLOCATION);
+        db.execSQL("DROP TABLE IF EXISTS " + oHeader.TABLE_HEADER);
+        db.execSQL("DROP TABLE IF EXISTS " + oLine.TABLE_LINE);
+        db.execSQL("DROP TABLE IF EXISTS " + oReceive.TABLE_RECEIVE);
+        db.execSQL("DROP TABLE IF EXISTS " + oProfile.TABLE_PROFILE);
+        db.execSQL("DROP TABLE IF EXISTS " + oSettings.TABLE_SETTINGS);
+        db.execSQL("DROP TABLE IF EXISTS " + oPlant.TABLE_PLANT);
+        db.execSQL("DROP TABLE IF EXISTS " + oActHeader.TABLE_ACTIVITYHEADER);
+        db.execSQL("DROP TABLE IF EXISTS " + oVersion.TABLE_VERSION);
+        db.execSQL("DROP TABLE IF EXISTS " + oGeoLocation.TABLE_GEOLOCATION);
 
         //Create the tables
         onCreate(db);
@@ -218,6 +219,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oSettings.SETTINGS_COLUMN_TRACKPICKUPGEOLOCATION + " INTEGER, " +
                 oSettings.SETTINGS_COLUMN_TRACKROUTEGEOLOCATION + " INTEGER, " +
                 oSettings.SETTINGS_COLUMN_DEBUG + " INTEGER, " +
+                oSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA + " INTEGER, " +
                 oSettings.SETTINGS_COLUMN_AUTODBBACKUP + " INTEGER, " +
                 oSettings.SETTINGS_COLUMN_LASTUSERLOGINID + " TEXT, " +
                 oSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE + " TEXT, " +
@@ -947,6 +949,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
             while(!cursor.isAfterLast())
             {
+                //Instantiate new line object
+                oLine = new dbLine();
+
                 //Get values from database
                 oLine.setPkLineID(cursor.getString(0));
                 oLine.setFkHeaderID(cursor.getString(1));
@@ -1294,6 +1299,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
             while(!cursor.isAfterLast())
             {
+                //Instantiate new receive object
+                oReceive = new dbReceive();
+
                 //Get values from database
                 oReceive.setPkReceiveID(cursor.getString(0));
                 oReceive.setFkHeaderID(cursor.getString(1));
@@ -1679,6 +1687,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poSettings.SETTINGS_COLUMN_TRACKPICKUPGEOLOCATION, poSettings.getTrackPickupGeoLocation());
             values.put(poSettings.SETTINGS_COLUMN_TRACKROUTEGEOLOCATION, poSettings.getTrackRouteGeoLocation());
             values.put(poSettings.SETTINGS_COLUMN_DEBUG, poSettings.getDebug());
+            values.put(poSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA, poSettings.getDownloadNotCompletedData());
             values.put(poSettings.SETTINGS_COLUMN_AUTODBBACKUP, poSettings.getAutoDBBackup());
             values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINID, poSettings.getLastUserLoginID());
             values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, poSettings.getLastUserLoginDate());
@@ -1721,6 +1730,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poSettings.SETTINGS_COLUMN_TRACKPICKUPGEOLOCATION, poSettings.getTrackPickupGeoLocation());
             values.put(poSettings.SETTINGS_COLUMN_TRACKROUTEGEOLOCATION, poSettings.getTrackRouteGeoLocation());
             values.put(poSettings.SETTINGS_COLUMN_DEBUG, poSettings.getDebug());
+            values.put(poSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA, poSettings.getDownloadNotCompletedData());
             values.put(poSettings.SETTINGS_COLUMN_AUTODBBACKUP, poSettings.getAutoDBBackup());
             values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINID, poSettings.getLastUserLoginID());
             values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, poSettings.getLastUserLoginDate());
@@ -1775,19 +1785,20 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oSettings.setTrackPickupGeoLocation(Integer.parseInt(cursor.getString(3)));
             oSettings.setTrackRouteGeoLocation(Integer.parseInt(cursor.getString(4)));
             oSettings.setDebug(Integer.parseInt(cursor.getString(5)));
-            oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(6)));
-            oSettings.setLastUserLoginID(cursor.getString(7));
-            oSettings.setLastUserLoginDate(cursor.getString(8));
-            oSettings.setLastMilkReceiptID(cursor.getString(9));
-            oSettings.setScanLoop(Integer.parseInt(cursor.getString(10)));
-            oSettings.setLastSettingsUpdate(cursor.getString(11));
-            oSettings.setLastProfileUpdate(cursor.getString(12));
-            oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(13)));
-            oSettings.setUpdateAvailableDate(cursor.getString(14));
-            oSettings.setDrugTestDevice(cursor.getString(15));
-            oSettings.setWebServiceURL(cursor.getString(16));
-            oSettings.setInsertDate(cursor.getString(17));
-            oSettings.setModifiedDate(cursor.getString(18));
+            oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6)));
+            oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(7)));
+            oSettings.setLastUserLoginID(cursor.getString(8));
+            oSettings.setLastUserLoginDate(cursor.getString(9));
+            oSettings.setLastMilkReceiptID(cursor.getString(10));
+            oSettings.setScanLoop(Integer.parseInt(cursor.getString(11)));
+            oSettings.setLastSettingsUpdate(cursor.getString(12));
+            oSettings.setLastProfileUpdate(cursor.getString(13));
+            oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(14)));
+            oSettings.setUpdateAvailableDate(cursor.getString(15));
+            oSettings.setDrugTestDevice(cursor.getString(16));
+            oSettings.setWebServiceURL(cursor.getString(17));
+            oSettings.setInsertDate(cursor.getString(18));
+            oSettings.setModifiedDate(cursor.getString(19));
         }
         else
         {
@@ -1831,19 +1842,20 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oSettings.setTrackPickupGeoLocation(Integer.parseInt(cursor.getString(3)));
             oSettings.setTrackRouteGeoLocation(Integer.parseInt(cursor.getString(4)));
             oSettings.setDebug(Integer.parseInt(cursor.getString(5)));
-            oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(6)));
-            oSettings.setLastUserLoginID(cursor.getString(7));
-            oSettings.setLastUserLoginDate(cursor.getString(8));
-            oSettings.setLastMilkReceiptID(cursor.getString(9));
-            oSettings.setScanLoop(Integer.parseInt(cursor.getString(10)));
-            oSettings.setLastSettingsUpdate(cursor.getString(11));
-            oSettings.setLastProfileUpdate(cursor.getString(12));
-            oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(13)));
-            oSettings.setUpdateAvailableDate(cursor.getString(14));
-            oSettings.setDrugTestDevice(cursor.getString(15));
-            oSettings.setWebServiceURL(cursor.getString(16));
-            oSettings.setInsertDate(cursor.getString(17));
-            oSettings.setModifiedDate(cursor.getString(18));
+            oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6)));
+            oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(7)));
+            oSettings.setLastUserLoginID(cursor.getString(8));
+            oSettings.setLastUserLoginDate(cursor.getString(9));
+            oSettings.setLastMilkReceiptID(cursor.getString(10));
+            oSettings.setScanLoop(Integer.parseInt(cursor.getString(11)));
+            oSettings.setLastSettingsUpdate(cursor.getString(12));
+            oSettings.setLastProfileUpdate(cursor.getString(13));
+            oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(14)));
+            oSettings.setUpdateAvailableDate(cursor.getString(15));
+            oSettings.setDrugTestDevice(cursor.getString(16));
+            oSettings.setWebServiceURL(cursor.getString(17));
+            oSettings.setInsertDate(cursor.getString(18));
+            oSettings.setModifiedDate(cursor.getString(19));
         }
         else
         {
@@ -2115,7 +2127,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         dbPlant oPlant = new dbPlant();
 
         //Create the query string
-        query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_ACTIVE + " = 1";
+        query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_ACTIVE + " = 1 ORDER BY " + oPlant.PLANT_COLUMN_PLANTNAME + " ASC";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();

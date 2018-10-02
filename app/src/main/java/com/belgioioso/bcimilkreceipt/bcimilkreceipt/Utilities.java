@@ -35,7 +35,7 @@ public class Utilities
         try
         {
             //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(poContext, null, 1);
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(poContext, null);
 
             //Instantiate new activity object
             dbActivityHeader oActivity = new dbActivityHeader();
@@ -68,6 +68,18 @@ public class Utilities
         catch(Exception ex)
         {
             Toast.makeText(poContext, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public String CheckNullString(String psString)
+    {
+        if (psString == null)
+        {
+            return "";
+        }
+        else
+        {
+            return psString;
         }
     }
     //endregion
