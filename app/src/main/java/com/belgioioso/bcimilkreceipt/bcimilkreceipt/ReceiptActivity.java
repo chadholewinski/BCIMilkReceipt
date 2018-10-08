@@ -379,11 +379,17 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     olTickets.add(oHeader.getTicketNumber() + " - " + oHeader.getRouteIdentifier() + " - " + oHeader.getInsertDate());
                     _olTicketIDs.add(oHeader.getPkHeaderID());
                 }
+
+                spn_Existing_Tickets.setEnabled(true);
+                _receipt_existing_button.setEnabled(true);
             }
             else
             {
                 //No receipt header records found
                 olTickets.add("None Available");
+
+                spn_Existing_Tickets.setEnabled(false);
+                _receipt_existing_button.setEnabled(false);
             }
 
             //Instantiate and setup the array adapter

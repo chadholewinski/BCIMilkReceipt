@@ -2,6 +2,9 @@ package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -143,6 +146,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         Toast.makeText(PickupActivity.this, "Back button pressed: NOT ALLOWED!", Toast.LENGTH_SHORT).show();
     }
 
+    //region GPS (Commented Out)
 //    @Override
 //    public void onLocationChanged(Location location)
 //    {
@@ -342,36 +346,38 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
                 Date dDate = new Date();
 
-                //Check if the record was saved
-                if (sLineIDSaved.length() > 0)
+                //Check if the line id string is null
+                if (sLineIDSaved != null)
                 {
-                    //Clear the screen contents
-                    _pickup_producer.setText("");
-                    _pickup_tank.setText("");
-                    _pickup_labcode.setText("");
-                    _gaugerod_major.setText("");
-                    _gaugerod_minor.setText("");
-                    _convertedLBS.setText("");
-                    _convertedLBS_confirm.setText("");
-                    _temperature.setText("");
-                    _dfa_ticket.setText("");
+                    //Check if the record was saved
+                    if (sLineIDSaved.length() > 0)
+                    {
+                        //Clear the screen contents/colors
+                        clearScreenValues();
+                        clearScreenColors();
 
-                    //Display save successful message on bottom of screen
-                    _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
+                        //Display save successful message on bottom of screen
+                        _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
 
-                    //Instantiate the database handler
-                    dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-                    List<dbLine> olLine;
-                    Integer iTotalLBS = 0;
+                        //Instantiate the database handler
+                        dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+                        List<dbLine> olLine;
+                        Integer iTotalLBS = 0;
 
-                    //Get the list of lines by header id for current ticket
-                    olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+                        //Get the list of lines by header id for current ticket
+                        olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
 
-                    //Get the total LBS on ticket
-                    iTotalLBS = getTotalPickupLBS(olLine);
+                        //Get the total LBS on ticket
+                        iTotalLBS = getTotalPickupLBS(olLine);
 
-                    //Display the pickup info on UI
-                    _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
+                        //Display the pickup info on UI
+                        _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
+                    }
+                    else
+                    {
+                        //Display save failed message on bottom of screen
+                        _pickup_Bottom_SaveMessage.setText("Pickup saved failed at: " + dfDate.format(dDate).toString());
+                    }
                 }
                 else
                 {
@@ -559,6 +565,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     {
         ArrayList<dbLine> olLine;
         Integer iTotalLBS = 0;
+        Integer iPickups = 0;
 
         try
         {
@@ -571,11 +578,18 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             //Get the list of lines by header id for current ticket
             olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
 
-            //Get the total LBS on ticket
-            iTotalLBS = getTotalPickupLBS(olLine);
+            //Check if there are any pickups
+            if (olLine != null)
+            {
+                //Get the total pickups
+                iPickups = olLine.size();
+
+                //Get the total LBS on ticket
+                iTotalLBS = getTotalPickupLBS(olLine);
+            }
 
             //Display the pickup info on UI
-            _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
+            _pickup_Totals.setText("Total Pickups: " + iPickups + " --- Total LBS: " + iTotalLBS);
 
             //Check if the profile record was found
             if (_oProfile != null)
@@ -796,6 +810,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
         try
         {
+            //Clear the screen edit text colors
+            clearScreenColors();
+
             //Check for headerid being blank or null
             if (_spkHeaderID.length() == 0 || _spkHeaderID == null)
             {
@@ -805,13 +822,21 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             //Check for producer being 4 characters
             if (_pickup_producer.getText().toString().length() < 4)
             {
+                //Set flag as error found
                 bCheck = true;
+
+                //Set the producer edit text to red
+                _pickup_producer.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             }
 
             //Check for tank being 2 characters
             if (_pickup_tank.getText().toString().length() < 2)
             {
+                //Set flag as error found
                 bCheck = true;
+
+                //Set the producer tank edit text to red
+                _pickup_tank.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             }
 
             //Check if this is a pickup scan type
@@ -820,26 +845,43 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Check if the gauge rod major is entered
                 if (Integer.parseInt(_gaugerod_major.getText().toString()) < 0)
                 {
+                    //Set flag as error found
                     bCheck = true;
+
+                    //Set the gauge rod major edit text to red
+                    _gaugerod_major.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
                 }
 
                 //Check if the gauge rod minor is entered
                 if (Integer.parseInt(_gaugerod_minor.getText().toString()) < 0)
                 {
+                    //Set flag as error found
                     bCheck = true;
+
+                    //Set the gauge rod minor edit text to red
+                    _gaugerod_minor.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
                 }
             }
 
             //Check convertedlbs against convertexlbsconfirmation
             if (!checkConvertedLBS(_convertedLBS.getText().toString(), _convertedLBS_confirm.getText().toString()))
             {
+                //Set flag as error found
                 bCheck = true;
+
+                //Set the converted lbs and confirm edit text to red
+                _convertedLBS.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                _convertedLBS_confirm.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             }
 
             //Check that the temperature is entered
             if (Double.parseDouble(_temperature.getText().toString()) <= 0)
             {
+                //Set flag as error found
                 bCheck = true;
+
+                //Set the temperature edit text to red
+                _temperature.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
             }
         }
         catch (Exception ex)
@@ -892,6 +934,56 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         return iTotalLBS;
+    }
+
+    /**
+     * clearScreenValues
+     *  - clear the screen contents
+     */
+    private void clearScreenValues()
+    {
+        try
+        {
+            //Clear the screen contents
+            _pickup_producer.setText("");
+            _pickup_tank.setText("");
+            _pickup_labcode.setText("");
+            _gaugerod_major.setText("");
+            _gaugerod_minor.setText("");
+            _convertedLBS.setText("");
+            _convertedLBS_confirm.setText("");
+            _temperature.setText("");
+            _dfa_ticket.setText("");
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * clearScreenColors
+     *  - clear the screen contents
+     */
+    private void clearScreenColors()
+    {
+        try
+        {
+            //Set edit text background colors to default
+            _pickup_producer.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _pickup_tank.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _gaugerod_major.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _gaugerod_minor.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _convertedLBS.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _convertedLBS_confirm.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _temperature.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
     }
     //endregion
 }

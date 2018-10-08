@@ -39,7 +39,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener
 {
-    private Button _main_savereceipt_button, _main_gotopickup_button;
+    private Button _main_savereceipt_button;
     private TextView main_Bottom_Message;
     private EditText _route, _license, _startmileage;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sUsername;
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
 
         //Instantiate the save receipt and goto pickup buttons
         _main_savereceipt_button = (Button)findViewById(R.id.main_savereceipt_button);
-        _main_gotopickup_button = (Button)findViewById(R.id.main_gotopickup_button);
 
         //Instantiate the main bottom message text view
         main_Bottom_Message = (TextView)findViewById(R.id.main_bottom_message);
@@ -75,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
 
         //Set the on click listener for page to the save receipt and goto pickup buttons
         _main_savereceipt_button.setOnClickListener(this);
-        _main_gotopickup_button.setOnClickListener(this);
 
         //Setup the bundle object
         Bundle oBundle = getIntent().getExtras();
@@ -202,14 +200,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
     {
         try
         {
+            //Save the new header record
+            _spkHeaderID = saveNewHeader();
+
             //Check if the save receipt button was pressed
             if (v.getId() == R.id.main_savereceipt_button)
             {
                 //Log message to activity
                 _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "main_savereceipt_button pressed", "");
-
-                //Save the new header record
-                _spkHeaderID = saveNewHeader();
 
                 //Check if the headerID was retrieved
                 if (_spkHeaderID != null)
@@ -236,28 +234,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                     //Log message to activity
                     _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New receipt save unsuccessful, no ID created", "");
                 }
-            }
-            else if (v.getId() == R.id.main_gotopickup_button)
-            {
-                //Log message to activity
-                _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "main_gotopickup_button pressed", "");
-
-                //Instantiate a new intent of Pickup Activity
-                Intent gotopickup_intent = new Intent(this, PickupActivity.class);
-
-                //Instantiate the bundle object
-                Bundle oBundle = new Bundle();
-
-                //Set the headerID, profileID and settingsID in the bundle
-                oBundle.putString("pkHeaderID", _spkHeaderID);
-                oBundle.putString("pkProfileID", _spkProfileID);
-                oBundle.putString("pkSettingsID", _spkSettingsID);
-
-                //Setup bundle into intent
-                gotopickup_intent.putExtras(oBundle);
-
-                //Navigate to the Pickup Activity page
-                startActivity(gotopickup_intent);
             }
         }
         catch (Exception ex)
@@ -375,9 +351,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                 //Set the global username variable
                 _sUsername = _oProfile.getUsername();
             }
-
-            //Disable the go to pickup screen button until record is saved
-            _main_gotopickup_button.setEnabled(false);
         }
         catch (Exception ex)
         {
@@ -412,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
             oHeader.setRouteIdentifier(_route.getText().toString());
             oHeader.setTruckLicenseNumber(_license.getText().toString());
 
-            //Try parse of start mileage
+            //Check if the start mileage value was set
             try
             {
                 //Parse the start mileage field
@@ -420,8 +393,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
             }
             catch(NumberFormatException nfe)
             {
-                //Log error message to activity
-                _oUtils.InsertActivity(this, "3", "MainActivity", "saveNewHeader", _sUsername, nfe.getMessage().toString(), nfe.getStackTrace().toString());
+                //Set the start mileage value to 0
+                iStartMileage = 0;
             }
 
             //Continue setup of new header object data
@@ -451,6 +424,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         {
             //Log error message to activity
             _oUtils.InsertActivity(this, "3", "MainActivity", "saveNewHeader", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            //Set the headerid to null
+            sHeaderID = null;
         }
 
         //Return the headerID

@@ -34,8 +34,7 @@
     <string name="main_routelabel">Route Identifier</string>
     <string name="main_licenselabel">Truck License Number</string>
     <string name="main_startmileagelabel">Start Mileage (Odometer)</string>
-    <string name="main_savereceipt_button">SAVE RECEIPT</string>
-    <string name="main_gotopickup_button">GOTO PICKUPS</string>
+    <string name="main_savereceipt_button">SAVE RECEIPT GOTO PICKUPS</string>
     <string name="settings_description">MILK RECEIPT SETTINGS</string>
     <string name="settings_webserviceurl">Web Service URL (500 max)</string>
     <string name="settings_drugtestdevice">Drug Test Device (150 max)</string>
