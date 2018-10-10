@@ -281,7 +281,7 @@
                 android:text="Total LBS available: XXXXX"
                 android:textSize="16dp"
                 android:textStyle="italic"
-                android:textColor="@color/valueText_Red"
+                android:textColor="@color/valueText_Yellow"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 app:layout_constraintTop_toBottomOf="@id/receive_receivelbs"/>
@@ -289,10 +289,57 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/receive_endmileagelabel"
+                android:text="@string/receive_endmileagelabel"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_receivelbsavailable"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_endmileage"
+                android:maxLength="7"
+                android:inputType="number"
+                android:text=""
+                android:hint="enter end mileage"
+                android:layout_marginLeft="30dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_endmileagelabel"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_endmileage_spacer"
+                android:text="@string/receive_endmileage_spacer"
+                android:textSize="34dp"
+                android:textStyle="bold"
+                android:textColor="@color/valueText_Lime"
+                app:layout_constraintTop_toBottomOf="@id/receive_endmileagelabel"
+                app:layout_constraintLeft_toRightOf="@id/receive_endmileage"
+                android:layout_marginLeft="70dp"/>
+
+            <EditText
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/receive_intakenumber"
+                android:maxLength="15"
+                android:inputType="number"
+                android:text=""
+                android:layout_marginRight="30dp"
+                android:hint="enter intake number"
+                app:layout_constraintTop_toBottomOf="@id/receive_endmileagelabel"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/receive_spacer8"
                 android:text=""
-                android:textSize="60dp"
-                app:layout_constraintTop_toBottomOf="@id/receive_receivelbsavailable"/>
+                android:textSize="10dp"
+                app:layout_constraintTop_toBottomOf="@id/receive_endmileage"/>
 
             <Button
                 android:id="@+id/receive_save_button"

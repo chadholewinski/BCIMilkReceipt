@@ -306,7 +306,7 @@
                 android:id="@+id/pickup_totals"
                 android:text="Total Pickups: xx Total LBS: xxxxx"
                 android:textSize="16dp"
-                android:textColor="@color/valueText_Red"
+                android:textColor="@color/valueText_Yellow"
                 android:gravity="right"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"

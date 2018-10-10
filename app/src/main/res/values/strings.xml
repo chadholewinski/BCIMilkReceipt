@@ -68,4 +68,6 @@
     <string name="receive_seals_spacer">/</string>
     <string name="receive_finishticket_button">FINISH TICKET</string>
     <string name="receive_temperaturelabel">Receive Temperature</string>
+    <string name="receive_endmileagelabel">End Mileage (Odometer) / Intake Number</string>
+    <string name="receive_endmileage_spacer">/</string>
 </resources>

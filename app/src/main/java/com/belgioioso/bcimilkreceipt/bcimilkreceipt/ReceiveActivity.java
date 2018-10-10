@@ -1,6 +1,8 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -240,15 +242,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Check if the record was saved
                 if (sReceiveIDSaved.length() > 0)
                 {
-                    //Clear the screen contents
-                    _receive_DrugTestDevice.setText("");
-                    _receive_DrugTestResult.setText("");
-                    _receive_Silo.setText("");
-                    _receive_Temperature.setText("");
-                    _receive_TopSeal.setText("");
-                    _receive_BottomSeal.setText("");
-                    _receive_ReceivedLBS.setText("");
-                    _receive_ReceivedLBSConfirmation.setText("");
+                    //Clear the screen
+                    clearScreenValues();
+                    clearScreenColors();
 
                     //Display save successful message on bottom of screen
                     _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
@@ -834,6 +830,50 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return bFinished;
+    }
+
+    /**
+     * clearScreenValues
+     *  - clear the screen contents values
+     */
+    private void clearScreenValues()
+    {
+        try
+        {
+            //Clear the screen contents values
+            _receive_DrugTestDevice.setText("");
+            _receive_DrugTestResult.setText("");
+            _receive_Silo.setText("");
+            _receive_Temperature.setText("");
+            _receive_TopSeal.setText("");
+            _receive_BottomSeal.setText("");
+            _receive_ReceivedLBS.setText("");
+            _receive_ReceivedLBSConfirmation.setText("");
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "clearScreenValues", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * clearScreenColors
+     *  - clear the screen contents colors
+     */
+    private void clearScreenColors()
+    {
+        try
+        {
+            //Set edit text background colors to default
+            _receive_ReceivedLBS.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+            _receive_ReceivedLBSConfirmation.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "clearScreenColors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
     }
     //endregion
 }

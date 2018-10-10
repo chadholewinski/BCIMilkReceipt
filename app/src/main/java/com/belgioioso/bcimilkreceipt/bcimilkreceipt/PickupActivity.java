@@ -145,6 +145,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         //Display message to user
         Toast.makeText(PickupActivity.this, "Back button pressed: NOT ALLOWED!", Toast.LENGTH_SHORT).show();
     }
+    //endregion
 
     //region GPS (Commented Out)
 //    @Override

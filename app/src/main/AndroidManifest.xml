@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
         <activity android:name=".SignInActivity"
-                    android:screenOrientation="portrait">
+                    android:screenOrientation="sensorPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,19 +18,19 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
         <activity android:name=".SettingsActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
         <activity android:name=".ReceiptActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
         <activity android:name=".PickupActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
         <activity android:name=".ReceiveActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
         <activity android:name=".LogActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
         <activity android:name=".AboutActivity"
-                    android:screenOrientation="portrait"/>
+                    android:screenOrientation="sensorPortrait"/>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
