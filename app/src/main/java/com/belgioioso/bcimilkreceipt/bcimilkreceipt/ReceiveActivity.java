@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
@@ -23,7 +22,6 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbPlant;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbReceive;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,11 +29,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class ReceiveActivity extends AppCompatActivity implements View.OnClickListener
+public class ReceiveActivity extends AppCompatActivity implements View.OnClickListener//, View.OnFocusChangeListener
 {
     private Button _receive_save_button, _receive_finishticket_button;
     private TextView _receive_Bottom_Message, _receive_ReceiveLBSAvailable, _receive_Bottom_SaveMessage;
-    private EditText _receive_DrugTestDevice, _receive_DrugTestResult, _receive_Silo, _receive_Temperature, _receive_TopSeal, _receive_BottomSeal, _receive_ReceivedLBS, _receive_ReceivedLBSConfirmation;
+    private EditText _receive_DrugTestDevice, _receive_DrugTestResult, _receive_Silo, _receive_Temperature, _receive_TopSeal, _receive_BottomSeal, _receive_ReceivedLBS, _receive_ReceivedLBSConfirmation, _receive_EndMileage, _receive_IntakeNumber;
     private Spinner _receive_plant, _receive_scalemeter;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sUsername;
     private Utilities _oUtils;
@@ -75,10 +73,15 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         _receive_BottomSeal = (EditText)findViewById(R.id.receive_bottomseal);
         _receive_ReceivedLBS = (EditText)findViewById(R.id.receive_receivelbs);
         _receive_ReceivedLBSConfirmation = (EditText)findViewById(R.id.receive_receivelbs_confirm);
+        _receive_EndMileage = (EditText)findViewById(R.id.receive_endmileage);
+        _receive_IntakeNumber = (EditText)findViewById(R.id.receive_intakenumber);
 
         //Set the on click listener for page to the screen buttons
         _receive_save_button.setOnClickListener(this);
         _receive_finishticket_button.setOnClickListener(this);
+
+        //Set the focus change listener for drug test result edit text
+        //_receive_DrugTestResult.setOnFocusChangeListener(hasFocusListener);
 
         //Setup the bundle object
         Bundle oBundle = getIntent().getExtras();
@@ -222,8 +225,11 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
      *  - Handles the onClick event for the page
      * @param v
      */
+    @Override
     public void onClick(View v)
     {
+        Integer iTotalLBS = 0;
+
         try
         {
             //Check if the receive save button was pressed
@@ -244,13 +250,27 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 {
                     //Clear the screen
                     clearScreenValues();
-                    clearScreenColors();
 
                     //Display save successful message on bottom of screen
                     _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
 
+                    //Get the total LBS left available on ticket
+                    iTotalLBS = getTotalLBSLeftOnTicket();
+
                     //Display the pickup info on UI
-                    _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + getTotalLBSLeftOnTicket());
+                    _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
+
+                    //Check if there are still LBS available for receives
+                    if (iTotalLBS > 0)
+                    {
+                        //Still LBS available so do not allow finish of the ticket
+                        _receive_finishticket_button.setEnabled(false);
+                    }
+                    else
+                    {
+                        //No LBS are available finishing of ticket is not available
+                        _receive_finishticket_button.setEnabled(true);
+                    }
                 }
                 else
                 {
@@ -295,6 +315,12 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _oUtils.InsertActivity(this, "3", "ReceiveActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
+
+    //@Override
+    //public void onFocusChange(View v, boolean hasFocus)
+    //{
+
+    //}
     //endregion
 
     //region Routines
@@ -383,6 +409,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void setupScreen()
     {
+        Integer iTotalLBS = 0;
+
         try
         {
             //Instantiate the database handler
@@ -391,8 +419,23 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
 
+            //Get the total LBS left available on ticket
+            iTotalLBS = getTotalLBSLeftOnTicket();
+
             //Display the pickup info on UI
-            _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + getTotalLBSLeftOnTicket());
+            _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
+
+            //Check if there are still LBS available for receives
+            if (iTotalLBS > 0)
+            {
+                //Still LBS available so do not allow finish of the ticket
+                _receive_finishticket_button.setEnabled(false);
+            }
+            else
+            {
+                //No LBS are available finishing of ticket is not available
+                _receive_finishticket_button.setEnabled(true);
+            }
 
             //Check if the profile record was found
             if (_oProfile != null)
@@ -644,6 +687,22 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                 //Set the return ReceiveID
                 sReceiveID = gID.toString();
+
+                //Check if the start mileage was entered
+                if (getStartMileage() > 0)
+                {
+                    //Instantiate a new header record
+                    dbHeader oHeader = new dbHeader();
+
+                    //Get the header record
+                    oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
+
+                    //Set the end mileage on the header record
+                    oHeader.setEndMileage(Integer.parseInt(_receive_EndMileage.getText().toString()));
+
+                    //Update the header record
+                    oDBHandler.updateHeader(oHeader);
+                }
             }
         }
         catch(Exception ex)
@@ -663,6 +722,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     private boolean checkReceiveForErrors()
     {
         boolean bCheck = false;
+        Integer iStartMileage = 0;
 
         try
         {
@@ -670,6 +730,94 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             if (_spkHeaderID.length() == 0 || _spkHeaderID == null)
             {
                 bCheck = true;
+            }
+
+            //Check that the drug test device is entered
+            if (_receive_DrugTestDevice.getText().length() < 1)
+            {
+                bCheck = true;
+
+                //Set error for the drug test device
+                _receive_DrugTestDevice.setError("Drug Test Device is Required");
+            }
+
+            //Check that the drug test result is entered
+            if (_receive_DrugTestResult.getText().length() < 1)
+            {
+                bCheck = true;
+
+                //Set error for the drug test result
+                _receive_DrugTestResult.setError("Drug Test Result is Required");
+            }
+
+            //Check that the silo is entered
+            if (_receive_Silo.getText().length() < 1)
+            {
+                bCheck = true;
+
+                //Set error for the silo
+                _receive_Silo.setError("Silo is required");
+            }
+
+            //Check that the load temperature is entered
+            if (_receive_Temperature.getText().length() < 1)
+            {
+                bCheck = true;
+
+                //Set error for the load temperature
+                _receive_Temperature.setError("Load Temperature is Required");
+            }
+
+            //Check that the top seal is entered
+            if (_receive_TopSeal.getText().length() < 1)
+            {
+                bCheck = true;
+                
+                //Set error for the top seal
+                _receive_TopSeal.setError("Top Seal is Required");
+            }
+
+            //Check that the bottom seal is entered
+            if (_receive_BottomSeal.getText().length() < 1)
+            {
+                bCheck = true;
+
+                //Set error for the bottom seal
+                _receive_BottomSeal.setError("Bottom Seal is Required");
+            }
+
+            //Check receivedlbs against receivedlbsconfirmation
+            if (!checkReceivedLBS(_receive_ReceivedLBS.getText().toString(), _receive_ReceivedLBSConfirmation.getText().toString()))
+            {
+                //Set flag as error found
+                bCheck = true;
+
+                //Set error for received LBS not matching
+                _receive_ReceivedLBSConfirmation.setError("Received LBS Must Match");
+            }
+
+            //Get the start mileage
+            iStartMileage = getStartMileage();
+
+            //Check if start mileage is greater than 0
+            if (iStartMileage > 0)
+            {
+                //Check if the end mileage is entered
+                if (_receive_EndMileage.getText().length() < 1)
+                {
+                    bCheck = true;
+
+                    //Set error for end mileage required
+                    _receive_EndMileage.setError("End Mileage is Required");
+                }
+                //Check if the end mileage is higher than the start mileage
+                else if (Integer.parseInt(_receive_EndMileage.getText().toString()) < iStartMileage)
+                {
+                    bCheck = true;
+
+                    //Set error for end mileage less than start mileage
+                    _receive_EndMileage.setError("End Mileage Must Be More Than Start Mileage");
+                }
             }
         }
         catch (Exception ex)
@@ -833,6 +981,90 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     /**
+     * checkReceivedLBS
+     *  - checks if the receivedLBS and the receivedLBSConfirm are equal
+     * @param psReceivedLBS
+     * @param psReceivedLBSConfirm
+     * @return (boolean) result of the check if the 2 values are equal
+     */
+    private boolean checkReceivedLBS(String psReceivedLBS, String psReceivedLBSConfirm)
+    {
+        boolean bCheck = false;
+        double fReceivedLBS, fReceivedLBSConfirm;
+
+        try
+        {
+            //Set the check to false
+            bCheck = false;
+
+            //Try converting the strings to double values
+            fReceivedLBS = Double.parseDouble(psReceivedLBS);
+            fReceivedLBSConfirm = Double.parseDouble(psReceivedLBSConfirm);
+
+            //Check if the receivedLBS is equal to the receivedLBSConfirm
+            if (fReceivedLBS == fReceivedLBSConfirm)
+            {
+                //Both are equal, set check to valid
+                bCheck = true;
+            }
+            else
+            {
+                //Not equal, set check to invalid
+                bCheck = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "checkReceivedLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        //Return the check result
+        return bCheck;
+    }
+
+    /**
+     * getStartMileage
+     *  - get the start mileage from the header record
+     * @return (Integer) the start mileage value from the header record
+     */
+    private Integer getStartMileage()
+    {
+        Integer iStartMileage = 0;
+        dbHeader oHeader = new dbHeader();
+
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the header record from the database
+            oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
+
+            //Check that the header was received
+            if (oHeader != null)
+            {
+                //Get the start mileage from the header record
+                iStartMileage = oHeader.getStartMileage();
+            }
+            else
+            {
+                //Set the start mileage to 0
+                iStartMileage = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getStartMileage", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            iStartMileage = 0;
+        }
+
+        return iStartMileage;
+    }
+
+    /**
      * clearScreenValues
      *  - clear the screen contents values
      */
@@ -849,30 +1081,13 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_BottomSeal.setText("");
             _receive_ReceivedLBS.setText("");
             _receive_ReceivedLBSConfirmation.setText("");
+            _receive_EndMileage.setText("");
+            _receive_IntakeNumber.setText("");
         }
         catch(Exception ex)
         {
             //Log error message to activity
             _oUtils.InsertActivity(this, "3", "ReceiveActivity", "clearScreenValues", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-    }
-
-    /**
-     * clearScreenColors
-     *  - clear the screen contents colors
-     */
-    private void clearScreenColors()
-    {
-        try
-        {
-            //Set edit text background colors to default
-            _receive_ReceivedLBS.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _receive_ReceivedLBSConfirmation.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "clearScreenColors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

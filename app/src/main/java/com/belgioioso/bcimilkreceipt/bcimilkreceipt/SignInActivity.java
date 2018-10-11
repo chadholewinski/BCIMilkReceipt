@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
@@ -44,6 +46,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 {
 
     private Button _signin_login_button;
+    private ProgressBar _signin_progressbar;
+    private TextView _signin_progresslabel;
     private String _spkSettingsID;
     private Utilities _oUtils;
     private String _sWSURL = "http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc";
@@ -64,11 +68,20 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         //Instantiate the login button
         _signin_login_button = (Button)findViewById(R.id.signin_login_button);
 
+        //Instantiate the progress bar
+        _signin_progressbar = (ProgressBar)findViewById(R.id.signin_progressbar);
+
+        //Instantiate the progress bar label
+        _signin_progresslabel = (TextView)findViewById(R.id.signin_progresslabel);
+
         //Set the on click listener for page to the login button
         _signin_login_button.setOnClickListener(this);
 
         //Get settings for the current tablet and store the id in global variable
         _spkSettingsID = findSettings(android.os.Build.SERIAL);
+
+        //Sync data to the web service
+        syncToWebService();
     }
 
     /**
@@ -462,6 +475,10 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
     {
         try
         {
+            //Set the progress bar to 0
+            _signin_progressbar.setProgress(0);
+            _signin_progresslabel.setText("Start of data syncronization (0%)");
+
             //Instantiate the database handler
             dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
@@ -475,47 +492,97 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
                 //new SignInActivity.GetSettings().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
+                //Set the progress bar to 33
+                //_signin_progressbar.setProgress(33);
+                //_signin_progresslabel.setText("Download: Settings (33%)");
+
                 //Connect to web service and get the profile records by last date
                 //new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/" + oSettings.getLastProfileUpdate());
                 new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/1900-01-01T000000");
                 //new SignInActivity.GetProfiles().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetProfileDataJSON/1900-01-01T000000");
 
+                //Set the progress bar to 66
+                //_signin_progressbar.setProgress(66);
+                //_signin_progresslabel.setText("Download: Profiles (66%)");
+
                 //Connect to web service and get the plant records by last date
                 new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/1900-01-01T000000");
                 //new SignInActivity.GetPlants().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetPlantDataJSON/1900-01-01T000000");
+
+                //Set the progress bar to 100
+                //_signin_progressbar.setProgress(100);
+                //_signin_progresslabel.setText("Download: Plants (100%)");
 
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(oSettings.getWebServiceURL() + "/PostHeaderDataJSON");
                 //new SignInActivity.PostHeader().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostHeaderDataJSON");
 
+                //Set the progress bar to 33
+                //_signin_progressbar.setProgress(33);
+                //_signin_progresslabel.setText("Upload: Headers (33%)");
+
                 //Connect to web service and post non-transferred line data
                 new SignInActivity.PostLine().execute(oSettings.getWebServiceURL() + "/PostLineDataJSON");
                 //new SignInActivity.PostLine().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostLineDataJSON");
 
+                //Set the progress bar to 66
+                //_signin_progressbar.setProgress(66);
+                //_signin_progresslabel.setText("Upload: Lines (66%)");
+
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(oSettings.getWebServiceURL() + "/PostReceiveDataJSON");
                 //new SignInActivity.PostReceive().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostReceiveDataJSON");
+
+                //Set the progress bar to 100
+                //_signin_progressbar.setProgress(100);
+                //_signin_progresslabel.setText("Upload: Receives (100%)");
             }
             else
             {
                 //Connect to web service and get the settings record by serial #
                 new SignInActivity.GetSettings().execute(_sWSURL + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
+                //Set the progress bar to 33
+                //_signin_progressbar.setProgress(33);
+                //_signin_progresslabel.setText("Download: Settings (33%)");
+
                 //Connect to web service and get the profile records by last date
                 new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/1900-01-01T000000");
+
+                //Set the progress bar to 66
+                //_signin_progressbar.setProgress(66);
+                //_signin_progresslabel.setText("Download: Profiles (66%)");
 
                 //Connect to web service and get the plant records by last date
                 new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/1900-01-01T000000");
 
+                //Set the progress bar to 100
+                //_signin_progressbar.setProgress(100);
+                //_signin_progresslabel.setText("Download: Plants (100%)");
+
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(_sWSURL + "/PostHeaderDataJSON");
+
+                //Set the progress bar to 33
+                //_signin_progressbar.setProgress(33);
+                //_signin_progresslabel.setText("Upload: Headers (33%)");
 
                 //Connect to web service and post non-transferred line data
                 new SignInActivity.PostLine().execute(_sWSURL + "/PostLineDataJSON");
 
+                //Set the progress bar to 66
+                //_signin_progressbar.setProgress(66);
+                //_signin_progresslabel.setText("Upload: Lines (66%)");
+
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(_sWSURL + "/PostReceiveDataJSON");
+
+                //Set the progress bar to 100
+                //_signin_progressbar.setProgress(100);
+                //_signin_progresslabel.setText("Upload: Receives (100%)");
             }
+
+            //_signin_progresslabel.setText("End of data syncronization (100%)");
         }
         catch(Exception ex)
         {
@@ -653,6 +720,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oDBHandler.updateProfile(oProfile);
                 }
             }
+
+            _signin_progressbar.setProgress(66);
+            _signin_progresslabel.setText("Download: Profiles (66%)");
         }
     }
     //endregion
@@ -715,6 +785,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oDBHandler.updateSettings(oSettings);
                 }
             }
+
+            _signin_progressbar.setProgress(33);
+            _signin_progresslabel.setText("Download: Settings (33%)");
         }
     }
     //endregion
@@ -777,6 +850,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oDBHandler.updatePlant(oPlant);
                 }
             }
+
+            _signin_progressbar.setProgress(100);
+            _signin_progresslabel.setText("Download: Plants (100%)");
         }
     }
     //endregion
@@ -886,6 +962,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
+
+            _signin_progressbar.setProgress(33);
+            _signin_progresslabel.setText("Upload: Headers (33%)");
         }
     }
     //endregion
@@ -1004,6 +1083,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
+
+            _signin_progressbar.setProgress(66);
+            _signin_progresslabel.setText("Upload: Lines (66%)");
         }
     }
     //endregion
@@ -1122,6 +1204,11 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
+
+            _signin_progressbar.setProgress(100);
+            _signin_progresslabel.setText("Upload: Receives (100%)");
+
+            _signin_progresslabel.setText("End of data syncronization (100%)");
         }
     }
     //endregion

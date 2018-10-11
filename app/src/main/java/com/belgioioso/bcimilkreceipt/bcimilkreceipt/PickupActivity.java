@@ -355,7 +355,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     {
                         //Clear the screen contents/colors
                         clearScreenValues();
-                        clearScreenColors();
+                        //clearScreenColors();
 
                         //Display save successful message on bottom of screen
                         _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
@@ -720,8 +720,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setCompany(_sCompany);
                 oLine.setDivision(_sDivision);
                 oLine.setType(_sType);
-                oLine.setGaugeRodMajor(Integer.parseInt(_gaugerod_major.getText().toString()));
-                oLine.setGaugeRodMinor(Integer.parseInt(_gaugerod_minor.getText().toString()));
+                oLine.setGaugeRodMajor(_gaugerod_major.getText().toString() == null ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
+                oLine.setGaugeRodMinor(_gaugerod_minor.getText().toString() == null ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
                 oLine.setConvertedLBS(Integer.parseInt(_convertedLBS.getText().toString()));
                 oLine.setTemperature(Double.parseDouble(_temperature.getText().toString()));
                 oLine.setPickupDate(dfDate.format(dDate).toString());
@@ -811,9 +811,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
         try
         {
-            //Clear the screen edit text colors
-            clearScreenColors();
-
             //Check for headerid being blank or null
             if (_spkHeaderID.length() == 0 || _spkHeaderID == null)
             {
@@ -826,8 +823,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Set flag as error found
                 bCheck = true;
 
-                //Set the producer edit text to red
-                _pickup_producer.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                //Set error for producer
+                _pickup_producer.setError("Producer Must be 4 Digits");
             }
 
             //Check for tank being 2 characters
@@ -836,31 +833,31 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Set flag as error found
                 bCheck = true;
 
-                //Set the producer tank edit text to red
-                _pickup_tank.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                //Set error for tank
+                _pickup_tank.setError("Tank Must be 2 Digits");
             }
 
             //Check if this is a pickup scan type
             if (_sType == "PU")
             {
                 //Check if the gauge rod major is entered
-                if (Integer.parseInt(_gaugerod_major.getText().toString()) < 0)
+                if (_gaugerod_major.getText().length() < 1)
                 {
                     //Set flag as error found
                     bCheck = true;
 
-                    //Set the gauge rod major edit text to red
-                    _gaugerod_major.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                    //Set error for the gauge rod major
+                    _gaugerod_major.setError("Gauge Rod Major is Required");
                 }
 
                 //Check if the gauge rod minor is entered
-                if (Integer.parseInt(_gaugerod_minor.getText().toString()) < 0)
+                if (_gaugerod_minor.getText().length() < 1)
                 {
                     //Set flag as error found
                     bCheck = true;
 
-                    //Set the gauge rod minor edit text to red
-                    _gaugerod_minor.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                    //Set error for the gauge rod minor
+                    _gaugerod_minor.setError("Gauge Rod Minor is Required");
                 }
             }
 
@@ -870,19 +867,18 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Set flag as error found
                 bCheck = true;
 
-                //Set the converted lbs and confirm edit text to red
-                _convertedLBS.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
-                _convertedLBS_confirm.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                //Set error for convertedLBS not equal to convertedLBSConfirmation
+                _convertedLBS_confirm.setError("Converted LBS Must Match");
             }
 
             //Check that the temperature is entered
-            if (Double.parseDouble(_temperature.getText().toString()) <= 0)
+            if (_temperature.getText().length() < 1)
             {
                 //Set flag as error found
                 bCheck = true;
 
-                //Set the temperature edit text to red
-                _temperature.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
+                //Set error for temperature
+                _temperature.setError("Temperature is Required");
             }
         }
         catch (Exception ex)
@@ -955,30 +951,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             _convertedLBS_confirm.setText("");
             _temperature.setText("");
             _dfa_ticket.setText("");
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-    }
-
-    /**
-     * clearScreenColors
-     *  - clear the screen contents
-     */
-    private void clearScreenColors()
-    {
-        try
-        {
-            //Set edit text background colors to default
-            _pickup_producer.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _pickup_tank.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _gaugerod_major.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _gaugerod_minor.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _convertedLBS.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _convertedLBS_confirm.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            _temperature.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         }
         catch(Exception ex)
         {
