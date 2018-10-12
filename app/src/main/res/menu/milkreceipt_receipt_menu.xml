@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_receipt_activity"
         android:title="View Activity" />
+    <item android:id="@+id/menu_signin_settings"
+        android:title="Settings" />
+    <item android:id="@+id/menu_signin_copydb"
+        android:title="Copy Database" />
     <item android:id="@+id/menu_receipt_logout"
         android:title="Log Out" />
 </menu>

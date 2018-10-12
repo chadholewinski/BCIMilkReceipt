@@ -94,6 +94,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
             oDBHandler.deleteLineAll();
             oDBHandler.deleteReceiveAll();
             oDBHandler.deleteActivityAll();
+            oDBHandler.deleteSettingsAll();
         }
         catch(Exception ex)
         {

@@ -278,7 +278,7 @@
         app:layout_constraintHorizontal_bias="0.501" />
 
     <Button
-        android:id="@+id/settigns_buttonsave"
+        android:id="@+id/settings_buttonsave"
         android:layout_width="258dp"
         android:layout_height="98dp"
         android:text="@string/settings_buttonsave"

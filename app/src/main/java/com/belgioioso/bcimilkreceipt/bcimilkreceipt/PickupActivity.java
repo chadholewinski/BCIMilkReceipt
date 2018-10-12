@@ -457,7 +457,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     _pickup_tank.setText(sTank);
                 }
                 //Check if the scan content retrieved is 18 characters long
-                else if (scanContent.length() == 18)
+                else
                 {
                     //Set the labcode edit text field
                     _pickup_labcode.setText(scanContent);

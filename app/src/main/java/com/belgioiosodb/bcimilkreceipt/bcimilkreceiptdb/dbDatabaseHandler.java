@@ -1870,6 +1870,76 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         return oSettings;
     }
 
+    //findSettingsByNameAll
+    // - Get all settings records by name
+    public List<dbSettings> findSettingsByNameAll(String psName)
+    {
+        String query;
+        List<dbSettings> olSettings = new ArrayList<dbSettings>();
+        dbSettings oSettings = new dbSettings();
+
+        //Create the query string
+        query = "SELECT * FROM " + oSettings.TABLE_SETTINGS + " WHERE " + oSettings.SETTINGS_COLUMN_TABLETNAME + " = \"" + psName + "\"";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast())
+            {
+                //Instantiate new settings object
+                oSettings = new dbSettings();
+
+                //Get values from database
+                oSettings.setPkSettingsID(cursor.getString(0));
+                oSettings.setTabletName(cursor.getString(1));
+                oSettings.setMachineID(cursor.getString(2));
+                oSettings.setTrackPickupGeoLocation(Integer.parseInt(cursor.getString(3)));
+                oSettings.setTrackRouteGeoLocation(Integer.parseInt(cursor.getString(4)));
+                oSettings.setDebug(Integer.parseInt(cursor.getString(5)));
+                oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6)));
+                oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(7)));
+                oSettings.setLastUserLoginID(cursor.getString(8));
+                oSettings.setLastUserLoginDate(cursor.getString(9));
+                oSettings.setLastMilkReceiptID(cursor.getString(10));
+                oSettings.setScanLoop(Integer.parseInt(cursor.getString(11)));
+                oSettings.setLastSettingsUpdate(cursor.getString(12));
+                oSettings.setLastProfileUpdate(cursor.getString(13));
+                oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(14)));
+                oSettings.setUpdateAvailableDate(cursor.getString(15));
+                oSettings.setDrugTestDevice(cursor.getString(16));
+                oSettings.setWebServiceURL(cursor.getString(17));
+                oSettings.setInsertDate(cursor.getString(18));
+                oSettings.setModifiedDate(cursor.getString(19));
+
+                //Add settings object to array list
+                olSettings.add(oSettings);
+
+                //Move to the next record in database
+                cursor.moveToNext();
+            }
+        }
+        else
+        {
+            //No records found, set settings object to null
+            olSettings = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the settings object array
+        return olSettings;
+    }
+
     //deleteSettingsByID
     // - Delete a settings record by ID
     public boolean deleteSettingsByID(String psSettingsID)
@@ -1902,6 +1972,29 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Return true
             result = true;
         }
+
+        //Close the database connection
+        db.close();
+
+        //Return the result
+        return result;
+    }
+
+    //deleteSettingsAll
+    // - Delete all settings records
+    public boolean deleteSettingsAll()
+    {
+        boolean result = false;
+        dbSettings oSettings = new dbSettings();
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Delete all activity records from database
+        db.delete(oSettings.TABLE_SETTINGS, null, null);
+
+        //Return true
+        result = true;
 
         //Close the database connection
         db.close();

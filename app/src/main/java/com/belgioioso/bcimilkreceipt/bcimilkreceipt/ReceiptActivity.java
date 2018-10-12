@@ -1,9 +1,12 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,13 +16,15 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
-import com.google.zxing.integration.android.IntentIntegrator;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -145,6 +150,54 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
                     //Log message to activity
                     _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_activity item selected", "");
+
+                    //Set the return value to true
+                    bReturn = true;
+
+                    break;
+
+                //Menu Settings item selected
+                case R.id.menu_signin_settings:
+                    //Instantiate a new intent of SettingsActivity
+                    Intent settings_intent = new Intent(this, SettingsActivity.class);
+
+                    //Instantiate the bundle object
+                    Bundle oBundle = new Bundle();
+
+                    //Set the profileID and settingsID in the bundle
+                    oBundle.putString("pkProfileID", _spkProfileID);
+                    oBundle.putString("pkSettingsID", _spkSettingsID);
+
+                    //Setup bundle into intent
+                    settings_intent.putExtras(oBundle);
+
+                    //Navigate to the settings screen
+                    startActivity(settings_intent);
+
+                    //Log message to activity
+                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_settings item selected", "");
+
+                    //Set the return value to true
+                    bReturn = true;
+
+                    break;
+
+                //Menu CopyDB item selected
+                case R.id.menu_signin_copydb:
+                    //Check if required permissions are set for external storage
+                    if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED )
+                    {
+                        //Request the external storage permissions
+                        ActivityCompat.requestPermissions( this, new String[] { android.Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1 );
+                    }
+                    else
+                    {
+                        //Copy the sqlite db file to accessible folder
+                        copyDBFile();
+                    }
+
+                    //Log message to activity
+                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_copydb item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -440,6 +493,39 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         {
             //Log error message to activity
             _oUtils.InsertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * copyDBFile
+     * - Copies the database file to accessible folder
+     * @throws IOException
+     */
+    public void copyDBFile() throws IOException
+    {
+        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MilkReceipt.db"); // for example "my_data_backup.db"
+        File currentDB = getApplicationContext().getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
+
+        //Check if the current DB file exists
+        if (currentDB.exists())
+        {
+            //Check if a copy of database has already been copied to folder
+            if (backupDB.exists())
+            {
+                //Delete the database copy file
+                backupDB.delete();
+            }
+
+            //Instantiate the source and destination file streams
+            FileChannel src = new FileInputStream(currentDB).getChannel();
+            FileChannel dst = new FileOutputStream(backupDB).getChannel();
+
+            //Copy the database file to destination folder
+            dst.transferFrom(src, 0, src.size());
+
+            //Close the source and destination file streams
+            src.close();
+            dst.close();
         }
     }
     //endregion

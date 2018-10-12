@@ -1,8 +1,6 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -637,6 +635,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         String sReceiveID = null;
         dbReceive oReceive = new dbReceive();
         List<dbReceive> olReceive = new ArrayList<>();
+        Integer iReceivedLBS = 0;
 
         try
         {
@@ -646,6 +645,18 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Format the date for insert and modified
                 DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
                 Date dDate = new Date();
+
+                //Check if the user left receive LBS fields blank, then assume full load
+                if (_receive_ReceivedLBS.getText().toString().isEmpty() && _receive_ReceivedLBSConfirmation.getText().toString().isEmpty())
+                {
+                    //Get the total LBS left
+                    iReceivedLBS = getTotalLBSLeftOnTicket();
+                }
+                else
+                {
+                    //Use what the driver entered into field
+                    iReceivedLBS = Integer.parseInt(_receive_ReceivedLBS.getText().toString());
+                }
 
                 //Instantiate the database handler
                 dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
@@ -669,7 +680,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 oReceive.setScaleMeter(getScaleMeterSpinnerSelection());
                 oReceive.setTopSeal(_receive_TopSeal.getText().toString());
                 oReceive.setBottomSeal(_receive_BottomSeal.getText().toString());
-                oReceive.setReceivedLBS(Integer.parseInt(_receive_ReceivedLBS.getText().toString()));
+                oReceive.setReceivedLBS(iReceivedLBS);
                 oReceive.setLoadTemp(Integer.parseInt(_receive_Temperature.getText().toString()));
                 oReceive.setIntakeNumber(0);
                 oReceive.setFinished(0);
@@ -997,20 +1008,29 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Set the check to false
             bCheck = false;
 
-            //Try converting the strings to double values
-            fReceivedLBS = Double.parseDouble(psReceivedLBS);
-            fReceivedLBSConfirm = Double.parseDouble(psReceivedLBSConfirm);
-
-            //Check if the receivedLBS is equal to the receivedLBSConfirm
-            if (fReceivedLBS == fReceivedLBSConfirm)
+            //Check if the receive is set to blank, this means assume full load
+            if (psReceivedLBS.isEmpty() && psReceivedLBSConfirm.isEmpty())
             {
-                //Both are equal, set check to valid
+                //Set check to valid
                 bCheck = true;
             }
             else
             {
-                //Not equal, set check to invalid
-                bCheck = false;
+                //Try converting the strings to double values
+                fReceivedLBS = Double.parseDouble(psReceivedLBS);
+                fReceivedLBSConfirm = Double.parseDouble(psReceivedLBSConfirm);
+
+                //Check if the receivedLBS is equal to the receivedLBSConfirm
+                if (fReceivedLBS == fReceivedLBSConfirm)
+                {
+                    //Both are equal, set check to valid
+                    bCheck = true;
+                }
+                else
+                {
+                    //Not equal, set check to invalid
+                    bCheck = false;
+                }
             }
         }
         catch (Exception ex)

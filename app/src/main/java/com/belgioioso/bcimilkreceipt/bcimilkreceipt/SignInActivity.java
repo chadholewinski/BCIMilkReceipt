@@ -1,11 +1,6 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
-import android.app.ProgressDialog;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -27,14 +22,8 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbReceive;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import com.belgioiososvc.bcimilkreceipt.bcimilkreceiptsvc.svcMilkReceipt;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -164,22 +153,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     break;
 
-                //Menu Settings item selected
-                case R.id.menu_signin_settings:
-                    //Instantiate a new intent of SettingsActivity
-                    Intent settings_intent = new Intent(this, SettingsActivity.class);
-
-                    //Navigate to the settings screen
-                    startActivity(settings_intent);
-
-                    //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_settings item selected", "");
-
-                    //Set the return value to true
-                    bReturn = true;
-
-                    break;
-
                 //Menu Sync item selected
                 case R.id.menu_signin_sync:
                     //Sync data to the web service
@@ -187,28 +160,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     //Log message to activity
                     _oUtils.InsertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_sync item selected", "");
-
-                    //Set the return value to true
-                    bReturn = true;
-
-                    break;
-
-                //Menu CopyDB item selected
-                case R.id.menu_signin_copydb:
-                    //Check if required permissions are set for external storage
-                    if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED )
-                    {
-                        //Request the external storage permissions
-                        ActivityCompat.requestPermissions( this, new String[] { android.Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1 );
-                    }
-                    else
-                    {
-                        //Copy the sqlite db file to accessible folder
-                        copyDBFile();
-                    }
-
-                    //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_copydb item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -435,39 +386,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
     }
 
     /**
-     * copyDBFile
-     * - Copies the database file to accessible folder
-     * @throws IOException
-     */
-    public void copyDBFile() throws IOException
-    {
-        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MilkReceipt.db"); // for example "my_data_backup.db"
-        File currentDB = getApplicationContext().getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
-
-        //Check if the current DB file exists
-        if (currentDB.exists())
-        {
-            //Check if a copy of database has already been copied to folder
-            if (backupDB.exists())
-            {
-                //Delete the database copy file
-                backupDB.delete();
-            }
-
-            //Instantiate the source and destination file streams
-            FileChannel src = new FileInputStream(currentDB).getChannel();
-            FileChannel dst = new FileOutputStream(backupDB).getChannel();
-
-            //Copy the database file to destination folder
-            dst.transferFrom(src, 0, src.size());
-
-            //Close the source and destination file streams
-            src.close();
-            dst.close();
-        }
-    }
-
-    /**
      * syncToWebService
      * - Runs the background web service sync process
      */
@@ -492,97 +410,47 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
                 //new SignInActivity.GetSettings().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
-                //Set the progress bar to 33
-                //_signin_progressbar.setProgress(33);
-                //_signin_progresslabel.setText("Download: Settings (33%)");
-
                 //Connect to web service and get the profile records by last date
                 //new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/" + oSettings.getLastProfileUpdate());
                 new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/1900-01-01T000000");
                 //new SignInActivity.GetProfiles().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetProfileDataJSON/1900-01-01T000000");
 
-                //Set the progress bar to 66
-                //_signin_progressbar.setProgress(66);
-                //_signin_progresslabel.setText("Download: Profiles (66%)");
-
                 //Connect to web service and get the plant records by last date
                 new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/1900-01-01T000000");
                 //new SignInActivity.GetPlants().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetPlantDataJSON/1900-01-01T000000");
-
-                //Set the progress bar to 100
-                //_signin_progressbar.setProgress(100);
-                //_signin_progresslabel.setText("Download: Plants (100%)");
 
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(oSettings.getWebServiceURL() + "/PostHeaderDataJSON");
                 //new SignInActivity.PostHeader().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostHeaderDataJSON");
 
-                //Set the progress bar to 33
-                //_signin_progressbar.setProgress(33);
-                //_signin_progresslabel.setText("Upload: Headers (33%)");
-
                 //Connect to web service and post non-transferred line data
                 new SignInActivity.PostLine().execute(oSettings.getWebServiceURL() + "/PostLineDataJSON");
                 //new SignInActivity.PostLine().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostLineDataJSON");
 
-                //Set the progress bar to 66
-                //_signin_progressbar.setProgress(66);
-                //_signin_progresslabel.setText("Upload: Lines (66%)");
-
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(oSettings.getWebServiceURL() + "/PostReceiveDataJSON");
                 //new SignInActivity.PostReceive().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostReceiveDataJSON");
-
-                //Set the progress bar to 100
-                //_signin_progressbar.setProgress(100);
-                //_signin_progresslabel.setText("Upload: Receives (100%)");
             }
             else
             {
                 //Connect to web service and get the settings record by serial #
                 new SignInActivity.GetSettings().execute(_sWSURL + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
-                //Set the progress bar to 33
-                //_signin_progressbar.setProgress(33);
-                //_signin_progresslabel.setText("Download: Settings (33%)");
-
                 //Connect to web service and get the profile records by last date
                 new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/1900-01-01T000000");
-
-                //Set the progress bar to 66
-                //_signin_progressbar.setProgress(66);
-                //_signin_progresslabel.setText("Download: Profiles (66%)");
 
                 //Connect to web service and get the plant records by last date
                 new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/1900-01-01T000000");
 
-                //Set the progress bar to 100
-                //_signin_progressbar.setProgress(100);
-                //_signin_progresslabel.setText("Download: Plants (100%)");
-
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(_sWSURL + "/PostHeaderDataJSON");
-
-                //Set the progress bar to 33
-                //_signin_progressbar.setProgress(33);
-                //_signin_progresslabel.setText("Upload: Headers (33%)");
 
                 //Connect to web service and post non-transferred line data
                 new SignInActivity.PostLine().execute(_sWSURL + "/PostLineDataJSON");
 
-                //Set the progress bar to 66
-                //_signin_progressbar.setProgress(66);
-                //_signin_progresslabel.setText("Upload: Lines (66%)");
-
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(_sWSURL + "/PostReceiveDataJSON");
-
-                //Set the progress bar to 100
-                //_signin_progressbar.setProgress(100);
-                //_signin_progresslabel.setText("Upload: Receives (100%)");
             }
-
-            //_signin_progresslabel.setText("End of data syncronization (100%)");
         }
         catch(Exception ex)
         {
