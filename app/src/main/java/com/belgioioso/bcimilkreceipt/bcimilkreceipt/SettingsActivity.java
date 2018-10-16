@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -36,6 +37,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        //Set the keyboard to not show automatically
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         _sUsername = "N/A";
 
@@ -226,16 +230,23 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 //Log message to activity
                 _oUtils.InsertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttonsave pressed", "");
 
+                //Change text on edit cancel button to "Edit"
                 _settings_ButtonEditCancel.setText("Edit");
 
+                //Disable the save button
                 _settings_ButtonSave.setEnabled(false);
 
+                //Save the settings record
+                saveSettings();
+
+                //Disable all on screen controls
                 disableControls();
             }
         }
         catch(Exception ex)
         {
-
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "SettingsActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
@@ -418,6 +429,50 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         {
             //Log error message to activity
             _oUtils.InsertActivity(this, "3", "SettingsActivity", "enableControls", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    private void saveSettings()
+    {
+        dbSettings oSettings = new dbSettings();
+
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the current settings from the database
+            oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+            //Check if the settings were found from the database
+            if (oSettings != null)
+            {
+                //Set the fields based on what was entered onto the screen
+                oSettings.setWebServiceURL(_settings_WebServiceURL.getText().toString());
+                oSettings.setDrugTestDevice(_settings_DrugTestDevice.getText().toString());
+                oSettings.setScanLoop(Integer.parseInt(_settings_ScanLoop.getText().toString()));
+                oSettings.setTrackPickupGeoLocation(_settings_TrackPickupGeoLocation.isChecked() == true ? 1 : 0);
+                oSettings.setTrackRouteGeoLocation(_settings_TrackRouteGeoLocation.isChecked() == true ? 1 : 0);
+                oSettings.setDebug(_settings_EnableDebug.isChecked() == true ? 1 : 0);
+                oSettings.setAutoDBBackup(_settings_EnableAutoDBBackup.isChecked() == true ? 1 : 0);
+                oSettings.setDownloadNotCompletedData(_settings_DownloadNotCompletedData.isChecked() == true ? 1 : 0);
+
+                //Format the date for insert and modified
+                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+                Date dDate = new Date();
+
+                //Set the modified date
+                oSettings.setModifiedDate(dfDate.format(dDate).toString());
+
+                //Update the settings record in the database
+                oDBHandler.updateSettings(oSettings);
+            }
+
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.InsertActivity(this, "3", "SettingsActivity", "saveSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

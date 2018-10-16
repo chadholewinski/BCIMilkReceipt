@@ -2039,6 +2039,63 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         }
     }
 
+    //findActivityByDateType
+    // - Get activity records by date and type
+    public List<dbActivityHeader> findActivityByDateType(String psStartDate, String psEndDate, String psActTypeID)
+    {
+        String query;
+        List<dbActivityHeader> olActivity = new ArrayList<dbActivityHeader>();
+        dbActivityHeader oActivity = new dbActivityHeader();
+
+        //Create the query string
+        query = "SELECT * FROM " + oActivity.TABLE_ACTIVITYHEADER + " WHERE " + oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE + " >= \"" + psStartDate + "\" AND " + oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE + " < \"" + psEndDate + "\" AND " + oActivity.ACTIVITYHEADER_COLUMN_FKACTIVITYTYPEID + " = \"" + psActTypeID + "\"";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast()) {
+                //Instantiate new activity object
+                oActivity = new dbActivityHeader();
+                
+                //Get values from database
+                oActivity.setPkActivityHeaderID(cursor.getString(0));
+                oActivity.setFkActivityTypeID(cursor.getString(1));
+                oActivity.setApplication(cursor.getString(2));
+                oActivity.setModule(cursor.getString(3));
+                oActivity.setRoutine(cursor.getString(4));
+                oActivity.setUsername(cursor.getString(5));
+                oActivity.setMessage(cursor.getString(6));
+                oActivity.setStackTrace(cursor.getString(7));
+                oActivity.setTransmitted(Boolean.parseBoolean(cursor.getString(8)));
+                oActivity.setTransmittedDate(cursor.getString(9));
+                oActivity.setInsertDate(cursor.getString(10));
+
+                //Add the object to the list of objects
+                olActivity.add(oActivity);
+            }
+        }
+        else
+        {
+            //No records found, set activity object list to null
+            olActivity = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the activity list
+        return olActivity;
+    }
+
     //deleteActivityAll
     // - Delete all activity records
     public boolean deleteActivityAll()
