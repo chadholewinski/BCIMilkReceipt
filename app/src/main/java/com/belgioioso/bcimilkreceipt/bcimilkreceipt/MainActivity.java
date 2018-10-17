@@ -216,6 +216,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                 //Check if the headerID was retrieved
                 if (_spkHeaderID != null)
                 {
+                    //Log message to activity
+                    _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New Ticket Created ID: " + _spkHeaderID, "");
+
                     //Instantiate a new intent of Pickup Activity
                     Intent gotopickup_intent_new = new Intent(this, PickupActivity.class);
 

@@ -141,22 +141,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     break;
 
-                //Menu Activity item selected
-                case R.id.menu_signin_activity:
-                    //Instantiate a new intent of LogActivity
-                    Intent log_intent = new Intent(this, LogActivity.class);
-
-                    //Navigate to the activity screen
-                    startActivity(log_intent);
-
-                    //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_activity item selected", "");
-
-                    //Set the return value to true
-                    bReturn = true;
-
-                    break;
-
                 //Menu Sync item selected
                 case R.id.menu_signin_sync:
                     //Sync data to the web service

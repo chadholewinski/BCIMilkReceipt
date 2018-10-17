@@ -9,6 +9,7 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -53,14 +54,15 @@ public class Utilities
             oActivity.setMessage(psMessage);
             oActivity.setStackTrace(psStackTrace);
             oActivity.setTransmitted(false);
-            oActivity.setTransmittedDate("1/1/1900");
 
             //Format the date for insert and modified
-            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
             Date dDate = new Date();
+            dDate = Calendar.getInstance().getTime();
 
             //Set the insert date field
-            oActivity.setInsertDate(dfDate.format(dDate).toString());
+            oActivity.setTransmittedDate(dfDate.parse("1/1/1900 00:00:00.000"));
+            oActivity.setInsertDate(dDate);
 
             //Add the activity record to database
             oDBHandler.addActivity(oActivity);

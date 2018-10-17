@@ -7,17 +7,19 @@ package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class dbDatabaseHandler extends SQLiteOpenHelper
 {
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "MilkReceipt.db";
 
     //region Class Constructor Methods
@@ -281,8 +283,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oActHeader.ACTIVITYHEADER_COLUMN_MESSAGE + " TEXT, " +
                 oActHeader.ACTIVITYHEADER_COLUMN_STACKTRACE + " TEXT, " +
                 oActHeader.ACTIVITYHEADER_COLUMN_TRANSMITTED + " INTEGER, " +
-                oActHeader.ACTIVITYHEADER_COLUMN_TRANSMITTEDDATE + " TEXT, " +
-                oActHeader.ACTIVITYHEADER_COLUMN_INSERTDATE + " TEXT)";
+                oActHeader.ACTIVITYHEADER_COLUMN_TRANSMITTEDDATE + " DATE, " +
+                oActHeader.ACTIVITYHEADER_COLUMN_INSERTDATE + " DATE)";
 
         //Return the string
         return CREATE_ACTHEADER_TABLE;
@@ -2015,6 +2017,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poActivity.ACTIVITYHEADER_COLUMN_PKACTIVITYHEADERID, poActivity.getPkActivityHeaderID());
             values.put(poActivity.ACTIVITYHEADER_COLUMN_FKACTIVITYTYPEID, poActivity.getFkActivityTypeID());
@@ -2025,8 +2030,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poActivity.ACTIVITYHEADER_COLUMN_MESSAGE, poActivity.getMessage());
             values.put(poActivity.ACTIVITYHEADER_COLUMN_STACKTRACE, poActivity.getStackTrace());
             values.put(poActivity.ACTIVITYHEADER_COLUMN_TRANSMITTED, poActivity.getTransmitted());
-            values.put(poActivity.ACTIVITYHEADER_COLUMN_TRANSMITTEDDATE, poActivity.getTransmittedDate());
-            values.put(poActivity.ACTIVITYHEADER_COLUMN_INSERTDATE, poActivity.getInsertDate());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_TRANSMITTEDDATE, dfDate.format(poActivity.getTransmittedDate()));
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_INSERTDATE, dfDate.format(poActivity.getInsertDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -2039,6 +2044,66 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         }
     }
 
+    //findActivityByID
+    // - Get activity record by id
+    public dbActivityHeader findActivityByID(String psActivityHeaderID)
+    {
+        String query;
+        dbActivityHeader oActivity = new dbActivityHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
+
+        //Create the query string
+        query = "SELECT * FROM " + oActivity.TABLE_ACTIVITYHEADER + " WHERE " + oActivity.ACTIVITYHEADER_COLUMN_PKACTIVITYHEADERID + " = \"" + psActivityHeaderID + "\"";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Get values from database
+            oActivity.setPkActivityHeaderID(cursor.getString(0));
+            oActivity.setFkActivityTypeID(cursor.getString(1));
+            oActivity.setApplication(cursor.getString(2));
+            oActivity.setModule(cursor.getString(3));
+            oActivity.setRoutine(cursor.getString(4));
+            oActivity.setUsername(cursor.getString(5));
+            oActivity.setMessage(cursor.getString(6));
+            oActivity.setStackTrace(cursor.getString(7));
+            oActivity.setTransmitted(Boolean.parseBoolean(cursor.getString(8)));
+
+            try
+            {
+                oActivity.setTransmittedDate(dfDate.parse(cursor.getString(9)));
+                oActivity.setInsertDate(dfDate.parse(cursor.getString(10)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oActivity.setTransmittedDate(dDate);
+                oActivity.setInsertDate(dDate);
+            }
+
+
+        }
+        else
+        {
+            //No records found, set activity object to null
+            oActivity = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the activity record
+        return oActivity;
+    }
+
     //findActivityByDateType
     // - Get activity records by date and type
     public List<dbActivityHeader> findActivityByDateType(String psStartDate, String psEndDate, String psActTypeID)
@@ -2046,6 +2111,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbActivityHeader> olActivity = new ArrayList<dbActivityHeader>();
         dbActivityHeader oActivity = new dbActivityHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oActivity.TABLE_ACTIVITYHEADER + " WHERE " + oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE + " >= \"" + psStartDate + "\" AND " + oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE + " < \"" + psEndDate + "\" AND " + oActivity.ACTIVITYHEADER_COLUMN_FKACTIVITYTYPEID + " = \"" + psActTypeID + "\"";
@@ -2076,11 +2142,26 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oActivity.setMessage(cursor.getString(6));
                 oActivity.setStackTrace(cursor.getString(7));
                 oActivity.setTransmitted(Boolean.parseBoolean(cursor.getString(8)));
-                oActivity.setTransmittedDate(cursor.getString(9));
-                oActivity.setInsertDate(cursor.getString(10));
+
+                try
+                {
+                    oActivity.setTransmittedDate(dfDate.parse(cursor.getString(9)));
+                    oActivity.setInsertDate(dfDate.parse(cursor.getString(10)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oActivity.setTransmittedDate(dDate);
+                    oActivity.setInsertDate(dDate);
+                }
 
                 //Add the object to the list of objects
                 olActivity.add(oActivity);
+
+                //Move to the next record from database
+                cursor.moveToNext();
             }
         }
         else

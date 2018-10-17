@@ -718,6 +718,10 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     //Update the header record
                     oDBHandler.updateHeader(oHeader);
                 }
+
+                //Log message to activity
+                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "saveNewReceive", _sUsername, "New Receive Saved:: ID: " + sReceiveID, "");
+                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "saveNewReceive", _sUsername, "New Receive Saved:: Plant: " + _receive_plant.getSelectedItem() + " DrugTestResult: " + oReceive.getDrugTestResult() + " Scale/Meter: " + oReceive.getScaleMeter() + " Silo: " + oReceive.getTank() + " Load Temp: " + oReceive.getLoadTemp() + " TopSeal: " + oReceive.getTopSeal() + " BottomSeal: " + oReceive.getBottomSeal() + " ReceivedLBS: " + oReceive.getReceivedLBS() + " End Mileage: " + _receive_EndMileage.getText() + " Intake Number: " + oReceive.getIntakeNumber(), "");
             }
         }
         catch(Exception ex)

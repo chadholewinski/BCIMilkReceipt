@@ -3,8 +3,6 @@
     <item android:id="@+id/menu_signin_about"
             android:icon="@drawable/menu_about"
             android:title="About" />
-    <item android:id="@+id/menu_signin_activity"
-        android:title="View Activity" />
     <item android:id="@+id/menu_signin_sync"
             android:icon="@drawable/menu_sync"
             android:title="Sync" />

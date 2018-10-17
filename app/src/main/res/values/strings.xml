@@ -49,11 +49,13 @@
     <string name="actlog_description">MILK RECEIPT ACTIVITY LOG</string>
     <string name="actlog_searchbutton">SEARCH</string>
     <string name="actlog_listdescription">Activity Records</string>
+    <string name="actlog_actusername_record">Username: </string>
     <string name="actlog_acttype_record">Type: </string>
     <string name="actlog_actmodule_record">Module: </string>
     <string name="actlog_actroutine_record">Routine: </string>
     <string name="actlog_actmessage_record">Message: </string>
     <string name="actlog_actstacktrace_record">Stack Trace: </string>
+    <string name="actlog_actinsertdate_record">Insert Date: </string>
     <string name="actlog_recorddescription">Record Description</string>
     <string name="receive_description">MILK RECEIPT RECEIVE ENTRY</string>
     <string name="receive_save_button">SAVE RECEIVE</string>

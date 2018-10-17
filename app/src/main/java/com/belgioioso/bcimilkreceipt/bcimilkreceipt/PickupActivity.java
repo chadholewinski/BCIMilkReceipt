@@ -359,7 +359,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     {
                         //Clear the screen contents/colors
                         clearScreenValues();
-                        //clearScreenColors();
 
                         //Display save successful message on bottom of screen
                         _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
@@ -724,8 +723,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setCompany(_sCompany);
                 oLine.setDivision(_sDivision);
                 oLine.setType(_sType);
-                oLine.setGaugeRodMajor(_gaugerod_major.getText().toString() == null ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
-                oLine.setGaugeRodMinor(_gaugerod_minor.getText().toString() == null ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
+                oLine.setGaugeRodMajor(_gaugerod_major.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
+                oLine.setGaugeRodMinor(_gaugerod_minor.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
                 oLine.setConvertedLBS(Integer.parseInt(_convertedLBS.getText().toString()));
                 oLine.setTemperature(Double.parseDouble(_temperature.getText().toString()));
                 oLine.setPickupDate(dfDate.format(dDate).toString());
@@ -749,6 +748,10 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                 //Set the return LineID
                 sLineID = gID.toString();
+
+                //Log message to activity
+                _oUtils.InsertActivity(this, "1", "PickupActivity", "saveNewPickup", _sUsername, "New Pickup Saved:: ID: " + sLineID, "");
+                _oUtils.InsertActivity(this, "1", "PickupActivity", "saveNewPickup", _sUsername, "New Pickup Saved:: Producer: " + oLine.getProducer() + " Tank: " + oLine.getTank() + " GaugeRod: " + oLine.getGaugeRodMajor() + "/" + oLine.getGaugeRodMinor() + " Temp: " + oLine.getTemperature() + " ConvertedLBS: " + oLine.getConvertedLBS() + " LabCode: " + oLine.getLabCode() + " DFATicket: " + oLine.getDFATicket(), "");
             }
         }
         catch (Exception ex)

@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -28,8 +30,8 @@ public class dbActivityHeader
     String Message;
     String StackTrace;
     Boolean Transmitted;
-    String TransmittedDate;
-    String InsertDate;
+    Date TransmittedDate;
+    Date InsertDate;
 
     public dbActivityHeader()
     {
@@ -72,21 +74,17 @@ public class dbActivityHeader
         return Transmitted;
     }
 
-    public String getTransmittedDate() {
+    public Date getTransmittedDate() {
         return TransmittedDate;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
-    public void setPkActivityHeaderID(String pkActivityHeaderID) {
-        this.pkActivityHeaderID = pkActivityHeaderID;
-    }
+    public void setPkActivityHeaderID(String pkActivityHeaderID) { this.pkActivityHeaderID = pkActivityHeaderID; }
 
-    public void setFkActivityTypeID(String fkActivityTypeID) {
-        this.fkActivityTypeID = fkActivityTypeID;
-    }
+    public void setFkActivityTypeID(String fkActivityTypeID) { this.fkActivityTypeID = fkActivityTypeID; }
 
     public void setApplication(String application) {
         Application = application;
@@ -116,11 +114,11 @@ public class dbActivityHeader
         Transmitted = transmitted;
     }
 
-    public void setTransmittedDate(String transmittedDate) {
+    public void setTransmittedDate(Date transmittedDate) {
         TransmittedDate = transmittedDate;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 }

@@ -149,6 +149,16 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     //Instantiate a new intent of LogActivity
                     Intent activity_intent = new Intent(this, LogActivity.class);
 
+                    //Instantiate the bundle object
+                    Bundle oActBundle = new Bundle();
+
+                    //Set the profileID and settingsID in the bundle
+                    oActBundle.putString("pkProfileID", _spkProfileID);
+                    oActBundle.putString("pkSettingsID", _spkSettingsID);
+
+                    //Setup bundle into intent
+                    activity_intent.putExtras(oActBundle);
+
                     //Navigate to the activity log screen
                     startActivity(activity_intent);
 
@@ -166,14 +176,14 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     Intent settings_intent = new Intent(this, SettingsActivity.class);
 
                     //Instantiate the bundle object
-                    Bundle oBundle = new Bundle();
+                    Bundle oSetBundle = new Bundle();
 
                     //Set the profileID and settingsID in the bundle
-                    oBundle.putString("pkProfileID", _spkProfileID);
-                    oBundle.putString("pkSettingsID", _spkSettingsID);
+                    oSetBundle.putString("pkProfileID", _spkProfileID);
+                    oSetBundle.putString("pkSettingsID", _spkSettingsID);
 
                     //Setup bundle into intent
-                    settings_intent.putExtras(oBundle);
+                    settings_intent.putExtras(oSetBundle);
 
                     //Navigate to the settings screen
                     startActivity(settings_intent);
@@ -304,6 +314,9 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     oBundle.putString("pkHeaderID", oHeader.getPkHeaderID());
                     oBundle.putString("pkProfileID", _spkProfileID);
                     oBundle.putString("pkSettingsID", _spkSettingsID);
+
+                    //Log message to activity
+                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Resuming Ticket ID: " + oHeader.getPkHeaderID(), "");
 
                     //Setup bundle into intent
                     gotopickup_intent.putExtras(oBundle);
