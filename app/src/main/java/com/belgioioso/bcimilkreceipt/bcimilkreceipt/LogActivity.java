@@ -85,11 +85,18 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         _spkSettingsID = oBundle.getString("pkSettingsID");
         _spkProfileID = oBundle.getString("pkProfileID");
 
+        //Check if the profile id is null
+        if (_spkProfileID != null)
+        {
+            //Get the username from database
+            _sUsername = _oUtils.findUsernameByID(this, _spkProfileID);
+        }
+
         //Check if the settings id was not passed from receipt page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
         {
             //Get the settings id from the database
-            _spkSettingsID = findSettings(android.os.Build.SERIAL);
+            _spkSettingsID = _oUtils.findSettings(this, _sUsername, android.os.Build.SERIAL);
         }
 
         //Setup the activity records list view on click listener
@@ -200,7 +207,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
                     startActivity(signin_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "LogActivity", "onOptionsItemSelected", "N/A", "menu_log_back item selected", "");
+                    _oUtils.insertActivity(this, "1", "LogActivity", "onOptionsItemSelected", "N/A", "menu_log_back item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -211,7 +218,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "LogActivity", "onOptionsItemSelected", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "LogActivity", "onOptionsItemSelected", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -270,91 +277,12 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
 
     //region Routines
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL("http://localweb.belgioioso.cheese.inc/MilkReceiptREST/MilkReceiptService.svc");
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "LogActivity", "findSettings", _sUsername, "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "LogActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
-    }
-
     /**
      * setupScreen
      *  - setup the screen for user
@@ -380,7 +308,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "LogActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "LogActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -396,6 +324,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         List<dbActivityHeader> olActivityHeaders = new ArrayList<>();
         List<String> olActivity = new ArrayList<>();
         dbActivityHeader oActivity = new dbActivityHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         try
         {
@@ -419,7 +348,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
                 {
                     oActivity = olActivityHeaders.get(i);
 
-                    olActivity.add(oActivity.getInsertDate() + ": " + oActivity.getMessage());
+                    olActivity.add(dfDate.format(oActivity.getInsertDate()) + ": " + oActivity.getMessage());
                     _olActivityHeaderIDs.add(oActivity.getPkActivityHeaderID());
                 }
 
@@ -431,7 +360,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "LogActivity", "loadActivityList", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "LogActivity", "loadActivityList", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

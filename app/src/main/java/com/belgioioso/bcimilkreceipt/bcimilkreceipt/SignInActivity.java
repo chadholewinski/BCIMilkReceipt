@@ -71,7 +71,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         _signin_login_button.setOnClickListener(this);
 
         //Get settings for the current tablet and store the id in global variable
-        _spkSettingsID = findSettings(android.os.Build.SERIAL);
+        _spkSettingsID = _oUtils.findSettings(this, "N/A", android.os.Build.SERIAL);
 
         //Sync data to the web service
         syncToWebService();
@@ -134,7 +134,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     startActivity(about_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_about item selected", "");
+                    _oUtils.insertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_about item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -147,7 +147,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     syncToWebService();
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_sync item selected", "");
+                    _oUtils.insertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_sync item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -165,7 +165,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SignInActivity", "onOptionsItemSelected", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SignInActivity", "onOptionsItemSelected", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -189,7 +189,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             if (v.getId() == R.id.signin_login_button)
             {
                 //Log activity
-                _oUtils.InsertActivity(this, "1", "SignInActivity", "onClick", "N/A", "SignIn button pressed", "");
+                _oUtils.insertActivity(this, "1", "SignInActivity", "onClick", "N/A", "SignIn button pressed", "");
 
                 //Get the username and pin from screen
                 oUsername = (EditText)findViewById(R.id.signin_username);
@@ -214,7 +214,10 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 if (bCredVerified)
                 {
                     //Log activity
-                    _oUtils.InsertActivity(this, "1", "SignInActivity", "onClick", spkProfileID, "SignIn successful", "");
+                    _oUtils.insertActivity(this, "1", "SignInActivity", "onClick", spkProfileID, "SignIn successful", "");
+
+                    //Update the settings information
+                    updateSettingsForLastUserLoggedIn(spkProfileID);
 
                     //Instantiate a new intent of receipt activity page
                     Intent intent = new Intent(this, ReceiptActivity.class);
@@ -237,95 +240,12 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SignInActivity", "onClick", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SignInActivity", "onClick", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
 
     //region Routines
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setDownloadNotCompletedData(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("00000000-0000-0000-0000-000000000000");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("00000000-0000-0000-0000-000000000000");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL(_sWSURL);
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Send the new settings record to web service
-                postSettingsToWS(oSettingsNew);
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "SignInActivity", "findSettings", "N/A", "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SignInActivity", "findSettings", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
-    }
-
     /**
      * findProfileByUsernamePin
      * - Get the profile by username and pin
@@ -352,7 +272,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 sProfileID = "";
 
                 //Log activity
-                _oUtils.InsertActivity(this, "1", "SignInActivity", "findProfileByUsernamePin", "N/A", "Profile not found for username: " + psUsername, "");
+                _oUtils.insertActivity(this, "1", "SignInActivity", "findProfileByUsernamePin", "N/A", "Profile not found for username: " + psUsername, "");
             }
             else
             {
@@ -360,18 +280,49 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 sProfileID = oProfile.getPkProfileID();
 
                 //Log activity
-                _oUtils.InsertActivity(this, "1", "SignInActivity", "findProfileByUsernamePin", "N/A", "Profile found for: " + oProfile.getFullName(), "");
+                _oUtils.insertActivity(this, "1", "SignInActivity", "findProfileByUsernamePin", "N/A", "Profile found for: " + oProfile.getFullName(), "");
             }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SignInActivity", "findProfileByUsernamePin", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SignInActivity", "findProfileByUsernamePin", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the profileID
         return sProfileID;
     }
+
+    /**
+     * updateSettingsForLastUserLoggedIn
+     *  - updates the settings record with last user logged in information
+     * @param spkProfileID
+     */
+    private void updateSettingsForLastUserLoggedIn(String spkProfileID)
+    {
+        try
+        {
+            //Instantiate the database handler object
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the current settings record
+            dbSettings oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+            //Update the settings user logged in fields
+            oSettings.setLastUserLoginID(spkProfileID);
+            oSettings.setLastUserLoginDate(_oUtils.getFormattedDate(this, "N/A"));
+            oSettings.setModifiedDate(_oUtils.getFormattedDate(this, "N/A"));
+
+            //Update the settings record
+            oDBHandler.updateSettings(oSettings);
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "SignInActivity", "updateSettingsForLastUserLoggedIn", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
 
     /**
      * syncToWebService
@@ -396,28 +347,28 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             {
                 //Connect to web service and get the settings record by serial #
                 new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
-                //new SignInActivity.GetSettings().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetSettingsDataJSON/" + android.os.Build.SERIAL);
+                //new SignInActivity.GetSettings().execute(_sWSURL + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
                 //Connect to web service and get the profile records by last date
                 //new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/" + oSettings.getLastProfileUpdate());
                 new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/1900-01-01T000000");
-                //new SignInActivity.GetProfiles().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetProfileDataJSON/1900-01-01T000000");
+                //new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/1900-01-01T000000");
 
                 //Connect to web service and get the plant records by last date
                 new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/1900-01-01T000000");
-                //new SignInActivity.GetPlants().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/GetPlantDataJSON/1900-01-01T000000");
+                //new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/1900-01-01T000000");
 
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(oSettings.getWebServiceURL() + "/PostHeaderDataJSON");
-                //new SignInActivity.PostHeader().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostHeaderDataJSON");
+                //new SignInActivity.PostHeader().execute(_sWSURL + "/PostHeaderDataJSON");
 
                 //Connect to web service and post non-transferred line data
                 new SignInActivity.PostLine().execute(oSettings.getWebServiceURL() + "/PostLineDataJSON");
-                //new SignInActivity.PostLine().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostLineDataJSON");
+                //new SignInActivity.PostLine().execute(_sWSURL + "/PostLineDataJSON");
 
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(oSettings.getWebServiceURL() + "/PostReceiveDataJSON");
-                //new SignInActivity.PostReceive().execute("http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostReceiveDataJSON");
+                //new SignInActivity.PostReceive().execute(_sWSURL + "/PostReceiveDataJSON");
             }
             else
             {
@@ -443,7 +394,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SignInActivity", "syncToWebService", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SignInActivity", "syncToWebService", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -462,7 +413,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         
         try
         {
-            sURL = "http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc/PostSettingsDataJSON";
+            sURL = _sWSURL + "/PostSettingsDataJSON";
 
             //Instantiate the JSON Array
             jaParams = new JSONArray();
@@ -502,18 +453,18 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             if (Integer.parseInt(sResult) == 1)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "SignInActivity", "postSettingsToWS", "N/A", "Successfully uploaded settings to web service", "");
+                _oUtils.insertActivity(this, "1", "SignInActivity", "postSettingsToWS", "N/A", "Successfully uploaded settings to web service", "");
             }
             else
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "SignInActivity", "postSettingsToWS", "N/A", "Failure of uploaded settings to web service", "");
+                _oUtils.insertActivity(this, "1", "SignInActivity", "postSettingsToWS", "N/A", "Failure of uploaded settings to web service", "");
             }
         }
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SignInActivity", "postSettingsToWS", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SignInActivity", "postSettingsToWS", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
@@ -786,7 +737,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                                 //Update the transmitted fields
                                 oHeader.setTransmitted(1);
-                                oHeader.setTransmittedDate(Calendar.getInstance().getTime().toString());
+                                oHeader.setTransmittedDate(Calendar.getInstance().getTime());
 
                                 //Update the header record
                                 oDBHandler.updateHeader(oHeader);
@@ -873,9 +824,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put("fkSettingsID", _spkSettingsID);
                             joParams.put(oLine.LINE_COLUMN_TANK, oLine.getTank());
                             joParams.put(oLine.LINE_COLUMN_PRODUCER, oLine.getProducer());
-                            joParams.put(oLine.LINE_COLUMN_COMPANY, _oUtils.CheckNullString(oLine.getCompany()));
-                            joParams.put(oLine.LINE_COLUMN_DIVISION, _oUtils.CheckNullString(oLine.getDivision()));
-                            joParams.put(oLine.LINE_COLUMN_TYPE, _oUtils.CheckNullString(oLine.getType()));
+                            joParams.put(oLine.LINE_COLUMN_COMPANY, _oUtils.checkNullString(oLine.getCompany()));
+                            joParams.put(oLine.LINE_COLUMN_DIVISION, _oUtils.checkNullString(oLine.getDivision()));
+                            joParams.put(oLine.LINE_COLUMN_TYPE, _oUtils.checkNullString(oLine.getType()));
                             joParams.put(oLine.LINE_COLUMN_GAUGERODMAJOR, oLine.getGaugeRodMajor());
                             joParams.put(oLine.LINE_COLUMN_GAUGERODMINOR, oLine.getGaugeRodMinor());
                             joParams.put(oLine.LINE_COLUMN_CONVERTEDLBS, oLine.getConvertedLBS());
@@ -907,7 +858,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                                 //Update the transmitted fields
                                 oLine.setTransmitted(1);
-                                oLine.setTransmittedDate(Calendar.getInstance().getTime().toString());
+                                oLine.setTransmittedDate(Calendar.getInstance().getTime());
 
                                 //Update the line record
                                 oDBHandler.updateLine(oLine);
@@ -993,7 +944,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put(oReceive.RECEIVE_COLUMN_FKHEADERID, oReceive.getFkHeaderID());
                             joParams.put("fkSettingsID", _spkSettingsID);
                             joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTID, oReceive.getFkPlantID());
-                            //joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, oReceive.getFkPlantOriginalID());
                             joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, "00000000-0000-0000-0000-000000000000");
                             joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, oReceive.getDrugTestDevice());
                             joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTRESULT, oReceive.getDrugTestResult());
@@ -1026,7 +976,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                                 //Update the transmitted fields
                                 oReceive.setTransmitted(1);
-                                oReceive.setTransmittedDate(Calendar.getInstance().getTime().toString());
+                                oReceive.setTransmittedDate(Calendar.getInstance().getTime());
 
                                 //Update the line record
                                 oDBHandler.updateReceive(oReceive);

@@ -82,11 +82,18 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         _spkSettingsID = oBundle.getString("pkSettingsID");
         _spkProfileID = oBundle.getString("pkProfileID");
 
+        //Check if the profile id is null
+        if (_spkProfileID != null)
+        {
+            //Get the username from database
+            _sUsername = _oUtils.findUsernameByID(this, _spkProfileID);
+        }
+
         //Check if the settings id was not passed from receipt page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
         {
             //Get the settings id from the database
-            _spkSettingsID = findSettings(android.os.Build.SERIAL);
+            _spkSettingsID = _oUtils.findSettings(this, _sUsername, android.os.Build.SERIAL);
         }
 
         //Setup the screen
@@ -150,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "menu_settings_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "menu_settings_activity item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -166,7 +173,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "menu_settings_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "menu_settings_logout item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -184,7 +191,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -205,7 +212,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             if (v.getId() == R.id.settings_buttoneditcancel)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttoneditcancel pressed", "");
+                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttoneditcancel pressed", "");
 
                 //Check if the edit/cancel button is set to edit
                 if (_settings_ButtonEditCancel.getText() == "Edit")
@@ -228,7 +235,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             else if (v.getId() == R.id.settings_buttonsave)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttonsave pressed", "");
+                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttonsave pressed", "");
 
                 //Change text on edit cancel button to "Edit"
                 _settings_ButtonEditCancel.setText("Edit");
@@ -246,91 +253,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
 
     //region Routines
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL("http://localweb.belgioioso.cheese.inc/MilkReceiptREST/MilkReceiptService.svc");
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "findSettings", _sUsername, "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
-    }
-
     /**
      * setupScreen
      * - Setup the screen
@@ -378,7 +306,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -403,7 +331,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "disableControls", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "disableControls", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -428,7 +356,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "enableControls", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "enableControls", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -457,12 +385,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 oSettings.setAutoDBBackup(_settings_EnableAutoDBBackup.isChecked() == true ? 1 : 0);
                 oSettings.setDownloadNotCompletedData(_settings_DownloadNotCompletedData.isChecked() == true ? 1 : 0);
 
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
                 //Set the modified date
-                oSettings.setModifiedDate(dfDate.format(dDate).toString());
+                oSettings.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
 
                 //Update the settings record in the database
                 oDBHandler.updateSettings(oSettings);
@@ -472,7 +396,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "SettingsActivity", "saveSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "saveSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

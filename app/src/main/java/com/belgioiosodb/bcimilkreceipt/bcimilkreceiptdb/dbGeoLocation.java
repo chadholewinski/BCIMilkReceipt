@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -26,8 +28,8 @@ public class dbGeoLocation
     Double Speed;
     Double Altitude;
     Integer Transmitted;
-    String TransmittedDate;
-    String InsertDate;
+    Date TransmittedDate;
+    Date InsertDate;
 
     public dbGeoLocation()
     {
@@ -66,11 +68,11 @@ public class dbGeoLocation
         return Transmitted;
     }
 
-    public String getTransmittedDate() {
+    public Date getTransmittedDate() {
         return TransmittedDate;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
@@ -102,11 +104,11 @@ public class dbGeoLocation
         Transmitted = transmitted;
     }
 
-    public void setTransmittedDate(String transmittedDate) {
+    public void setTransmittedDate(Date transmittedDate) {
         TransmittedDate = transmittedDate;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 }

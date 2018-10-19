@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -16,8 +18,8 @@ public class dbVersion
     String fkSettingsID;
     String MachineID;
     String Version;
-    String InsertDate;
-    String ModifiedDate;
+    Date InsertDate;
+    Date ModifiedDate;
 
     public dbVersion()
     {
@@ -36,11 +38,11 @@ public class dbVersion
         return Version;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return ModifiedDate;
     }
 
@@ -56,11 +58,11 @@ public class dbVersion
         Version = version;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         ModifiedDate = modifiedDate;
     }
 }

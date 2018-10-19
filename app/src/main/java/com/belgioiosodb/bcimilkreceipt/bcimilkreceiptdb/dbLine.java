@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -41,8 +43,8 @@ public class dbLine
     Integer GaugeRodMajor;
     Integer GaugeRodMinor;
     Integer ConvertedLBS;
-    Double Temperature;
-    String PickupDate;
+    Integer Temperature;
+    Date PickupDate;
     String DFATicket;
     String LabCode;
     Double Latitude;
@@ -51,9 +53,9 @@ public class dbLine
     Integer Finished;
     Integer WaitingForScaleData;
     Integer Transmitted;
-    String TransmittedDate;
-    String InsertDate;
-    String ModifiedDate;
+    Date TransmittedDate;
+    Date InsertDate;
+    Date ModifiedDate;
 
     public dbLine()
     {
@@ -99,11 +101,11 @@ public class dbLine
         return ConvertedLBS;
     }
 
-    public Double getTemperature() {
+    public Integer getTemperature() {
         return Temperature;
     }
 
-    public String getPickupDate() {
+    public Date getPickupDate() {
         return PickupDate;
     }
 
@@ -139,15 +141,15 @@ public class dbLine
         return Transmitted;
     }
 
-    public String getTransmittedDate() {
+    public Date getTransmittedDate() {
         return TransmittedDate;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return ModifiedDate;
     }
 
@@ -191,11 +193,11 @@ public class dbLine
         ConvertedLBS = convertedLBS;
     }
 
-    public void setTemperature(Double temperature) {
+    public void setTemperature(Integer temperature) {
         Temperature = temperature;
     }
 
-    public void setPickupDate(String pickupDate) {
+    public void setPickupDate(Date pickupDate) {
         PickupDate = pickupDate;
     }
 
@@ -229,15 +231,15 @@ public class dbLine
         Transmitted = transmitted;
     }
 
-    public void setTransmittedDate(String transmittedDate) {
+    public void setTransmittedDate(Date transmittedDate) {
         TransmittedDate = transmittedDate;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         ModifiedDate = modifiedDate;
     }
 }

@@ -102,11 +102,18 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _spkSettingsID = oBundle.getString("pkSettingsID");
         _spkProfileID = oBundle.getString("pkProfileID");
 
+        //Check if the profile id is null
+        if (_spkProfileID != null)
+        {
+            //Get the username from database
+            _sUsername = _oUtils.findUsernameByID(this, _spkProfileID);
+        }
+
         //Check if the settings id was not passed from receipt page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
         {
             //Get the settings id from the database
-            _spkSettingsID = findSettings(android.os.Build.SERIAL);
+            _spkSettingsID = _oUtils.findSettings(this, _sUsername, android.os.Build.SERIAL);
         }
 
         //Setup the screen
@@ -196,7 +203,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 //        catch (Exception ex)
 //        {
 //            //Log error message to activity
-//            _oUtils.InsertActivity(this, "3", "PickupActivity", "onLocationChanged", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+//            _oUtils.insertActivity(this, "3", "PickupActivity", "onLocationChanged", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 //        }
 //    }
 
@@ -264,7 +271,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "menu_pickup_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "menu_pickup_activity item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -280,7 +287,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "menu_pickup_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "menu_pickup_logout item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -298,7 +305,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -318,7 +325,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             if (v.getId() == R.id.pickup_scanproducer_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_scanproducer_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_scanproducer_button pressed", "");
 
                 //Instantiate a new producer scanning intent integrator
                 IntentIntegrator scanProducerIntegrator = new IntentIntegrator(this);
@@ -330,7 +337,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             else if (v.getId() == R.id.pickup_scanlabcode_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_scanlabcode_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_scanlabcode_button pressed", "");
 
                 //Instantiate a new labcode scanning intent integrator
                 IntentIntegrator scanLabCodeIntegrator = new IntentIntegrator(this);
@@ -342,7 +349,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             else if (v.getId() == R.id.pickup_save_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_save_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_save_button pressed", "");
 
                 //Save the pickup
                 String sLineIDSaved = saveNewPickup();
@@ -393,7 +400,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             else if (v.getId() == R.id.pickup_gotoreceive_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_gotoreceive_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_gotoreceive_button pressed", "");
 
                 //Instantiate a new intent of ReceiveActivity
                 Intent receive_intent = new Intent(this, ReceiveActivity.class);
@@ -416,7 +423,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
@@ -446,7 +453,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 if (scanContent.length() == 14)
                 {
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "Barcode scan found: " + scanContent, "");
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "Barcode scan found: " + scanContent, "");
 
                     //Get the parsed values from content
                     _sCompany = scanContent.substring(0,3);
@@ -472,93 +479,14 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(getApplicationContext(), "No scan data received!", Toast.LENGTH_SHORT);
 
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "No scan data received!", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "No scan data received!", "");
             }
         }
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "onActivityResult", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "onActivityResult", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
-    }
-
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL("http://localweb.belgioioso.cheese.inc/MilkReceiptREST/MilkReceiptService.svc");
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "findSettings", _sUsername, "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
     }
 
     /**
@@ -612,7 +540,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -646,7 +574,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     //    catch(Exception ex)
     //    {
             //Log error message to activity
-    //        _oUtils.InsertActivity(this, "3", "PickupActivity", "setupGPS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+    //        _oUtils.insertActivity(this, "3", "PickupActivity", "setupGPS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
     //    }
     //}
 
@@ -683,7 +611,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     //    catch(Exception ex)
     //    {
             //Log error message to activity
-    //        _oUtils.InsertActivity(this, "3", "PickupActivity", "getCurrentLocation", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+    //        _oUtils.insertActivity(this, "3", "PickupActivity", "getCurrentLocation", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
     //    }
 
     //    return _oLocation;
@@ -705,10 +633,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         {
             if (!checkPickupForErrors())
             {
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
                 //Instantiate the database handler
                 dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
@@ -726,8 +650,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setGaugeRodMajor(_gaugerod_major.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
                 oLine.setGaugeRodMinor(_gaugerod_minor.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
                 oLine.setConvertedLBS(Integer.parseInt(_convertedLBS.getText().toString()));
-                oLine.setTemperature(Double.parseDouble(_temperature.getText().toString()));
-                oLine.setPickupDate(dfDate.format(dDate).toString());
+                oLine.setTemperature(Integer.parseInt(_temperature.getText().toString()));
+                oLine.setPickupDate(_oUtils.getFormattedDate(this, _sUsername));
                 oLine.setDFATicket(_dfa_ticket.getText().toString());
                 oLine.setLabCode(_pickup_labcode.getText().toString());
                 oLine.setLatitude(Double.parseDouble(_sLatitude));
@@ -736,9 +660,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setFinished(0);
                 oLine.setWaitingForScaleData(0);
                 oLine.setTransmitted(0);
-                oLine.setTransmittedDate("1/1/1900");
-                oLine.setInsertDate(dfDate.format(dDate).toString());
-                oLine.setModifiedDate(dfDate.format(dDate).toString());
+                oLine.setTransmittedDate(_oUtils.getFormattedDate(this, _sUsername, "1900-01-01 00:00:00.000"));
+                oLine.setInsertDate(_oUtils.getFormattedDate(this, _sUsername));
+                oLine.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
 
                 //Setup the arraylist for line insertion
                 olLine.add(oLine);
@@ -750,14 +674,14 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 sLineID = gID.toString();
 
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "saveNewPickup", _sUsername, "New Pickup Saved:: ID: " + sLineID, "");
-                _oUtils.InsertActivity(this, "1", "PickupActivity", "saveNewPickup", _sUsername, "New Pickup Saved:: Producer: " + oLine.getProducer() + " Tank: " + oLine.getTank() + " GaugeRod: " + oLine.getGaugeRodMajor() + "/" + oLine.getGaugeRodMinor() + " Temp: " + oLine.getTemperature() + " ConvertedLBS: " + oLine.getConvertedLBS() + " LabCode: " + oLine.getLabCode() + " DFATicket: " + oLine.getDFATicket(), "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "saveNewPickup", _sUsername, "New Pickup Saved:: ID: " + sLineID, "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "saveNewPickup", _sUsername, "New Pickup Saved:: Producer: " + oLine.getProducer() + " Tank: " + oLine.getTank() + " GaugeRod: " + oLine.getGaugeRodMajor() + "/" + oLine.getGaugeRodMinor() + " Temp: " + oLine.getTemperature() + " ConvertedLBS: " + oLine.getConvertedLBS() + " LabCode: " + oLine.getLabCode() + " DFATicket: " + oLine.getDFATicket(), "");
             }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "saveNewPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "saveNewPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the lineID
@@ -800,7 +724,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "checkConvertedLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "checkConvertedLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the check result
@@ -891,7 +815,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "checkPickupForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "checkPickupForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             bCheck = false;
         }
@@ -932,7 +856,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             iTotalLBS = 0;
         }
@@ -962,7 +886,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

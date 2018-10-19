@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -37,17 +39,17 @@ public class dbSettings
     Integer DownloadNotCompletedData;
     Integer AutoDBBackup;
     String LastUserLoginID;
-    String LastUserLoginDate;
+    Date LastUserLoginDate;
     String LastMilkReceiptID;
     Integer ScanLoop;
-    String LastSettingsUpdate;
-    String LastProfileUpdate;
+    Date LastSettingsUpdate;
+    Date LastProfileUpdate;
     Integer UpdateAvailable;
-    String UpdateAvailableDate;
+    Date UpdateAvailableDate;
     String DrugTestDevice;
     String WebServiceURL;
-    String InsertDate;
-    String ModifiedDate;
+    Date InsertDate;
+    Date ModifiedDate;
 
     public dbSettings()
     {
@@ -90,7 +92,7 @@ public class dbSettings
         return LastUserLoginID;
     }
 
-    public String getLastUserLoginDate() { return LastUserLoginDate; }
+    public Date getLastUserLoginDate() { return LastUserLoginDate; }
 
     public String getLastMilkReceiptID() {
         return LastMilkReceiptID;
@@ -100,11 +102,11 @@ public class dbSettings
         return ScanLoop;
     }
 
-    public String getLastSettingsUpdate() {
+    public Date getLastSettingsUpdate() {
         return LastSettingsUpdate;
     }
 
-    public String getLastProfileUpdate() {
+    public Date getLastProfileUpdate() {
         return LastProfileUpdate;
     }
 
@@ -112,7 +114,7 @@ public class dbSettings
         return UpdateAvailable;
     }
 
-    public String getUpdateAvailableDate() { return UpdateAvailableDate; }
+    public Date getUpdateAvailableDate() { return UpdateAvailableDate; }
 
     public String getDrugTestDevice() {
         return DrugTestDevice;
@@ -122,11 +124,11 @@ public class dbSettings
         return WebServiceURL;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return ModifiedDate;
     }
 
@@ -160,7 +162,7 @@ public class dbSettings
         LastUserLoginID = lastUserLoginID;
     }
 
-    public void setLastUserLoginDate(String lastUserLoginDate) { LastUserLoginDate = lastUserLoginDate; }
+    public void setLastUserLoginDate(Date lastUserLoginDate) { LastUserLoginDate = lastUserLoginDate; }
 
     public void setLastMilkReceiptID(String lastMilkReceiptID) { LastMilkReceiptID = lastMilkReceiptID; }
 
@@ -168,15 +170,15 @@ public class dbSettings
         ScanLoop = scanLoop;
     }
 
-    public void setLastSettingsUpdate(String lastSettingsUpdate) { LastSettingsUpdate = lastSettingsUpdate; }
+    public void setLastSettingsUpdate(Date lastSettingsUpdate) { LastSettingsUpdate = lastSettingsUpdate; }
 
-    public void setLastProfileUpdate(String lastProfileUpdate) { LastProfileUpdate = lastProfileUpdate; }
+    public void setLastProfileUpdate(Date lastProfileUpdate) { LastProfileUpdate = lastProfileUpdate; }
 
     public void setUpdateAvailable(Integer updateAvailable) {
         UpdateAvailable = updateAvailable;
     }
 
-    public void setUpdateAvailableDate(String updateAvailableDate) { UpdateAvailableDate = updateAvailableDate; }
+    public void setUpdateAvailableDate(Date updateAvailableDate) { UpdateAvailableDate = updateAvailableDate; }
 
     public void setDrugTestDevice(String drugTestDevice) {
         DrugTestDevice = drugTestDevice;
@@ -186,11 +188,11 @@ public class dbSettings
         WebServiceURL = webServiceURL;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         ModifiedDate = modifiedDate;
     }
 }

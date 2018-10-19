@@ -1,17 +1,28 @@
 package com.belgioiososvc.bcimilkreceipt.bcimilkreceiptsvc;
 
+import android.os.Bundle;
 import android.util.Log;
+
+import com.belgioioso.bcimilkreceipt.bcimilkreceipt.Utilities;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbPlant;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class svcMilkReceipt
 {
     public String sURL;
+    public Utilities _oUtils;
+
+    public svcMilkReceipt()
+    {
+        _oUtils = new Utilities();
+    }
 
     //region WebService Calls
     /**
@@ -97,6 +108,7 @@ public class svcMilkReceipt
     {
         List<dbSettings> olSettings = new ArrayList<>();
         dbSettings oSettings;
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         try
         {
@@ -128,17 +140,17 @@ public class svcMilkReceipt
                     oSettings.setDownloadNotCompletedData(objSettingsSingle.getInt("DownloadNotCompletedData"));
                     oSettings.setAutoDBBackup(objSettingsSingle.getInt("AutoDBBackup"));
                     oSettings.setLastUserLoginID(objSettingsSingle.getString("LastUserLoginID"));
-                    oSettings.setLastUserLoginDate(objSettingsSingle.getString("LastUserLoginDate"));
+                    oSettings.setLastUserLoginDate(_oUtils.convertJSONDateToDate(objSettingsSingle.getString("LastUserLoginDate")));
                     oSettings.setLastMilkReceiptID(objSettingsSingle.getString("LastMilkReceiptID"));
                     oSettings.setScanLoop(objSettingsSingle.getInt("ScanLoop"));
-                    oSettings.setLastSettingsUpdate(objSettingsSingle.getString("LastSettingsUpdate"));
-                    oSettings.setLastProfileUpdate(objSettingsSingle.getString("LastProfileUpdate"));
+                    oSettings.setLastSettingsUpdate(_oUtils.convertJSONDateToDate(objSettingsSingle.getString("LastSettingsUpdate")));
+                    oSettings.setLastProfileUpdate(_oUtils.convertJSONDateToDate(objSettingsSingle.getString("LastProfileUpdate")));
                     oSettings.setUpdateAvailable(objSettingsSingle.getInt("UpdateAvailable"));
-                    oSettings.setUpdateAvailableDate(objSettingsSingle.getString("UpdateAvailableDate"));
+                    oSettings.setUpdateAvailableDate(_oUtils.convertJSONDateToDate(objSettingsSingle.getString("UpdateAvailableDate")));
                     oSettings.setDrugTestDevice(objSettingsSingle.getString("DrugTestDevice"));
                     oSettings.setWebServiceURL(objSettingsSingle.getString("WebServiceURL"));
-                    oSettings.setInsertDate(objSettingsSingle.getString("InsertDate"));
-                    oSettings.setModifiedDate(objSettingsSingle.getString("ModifiedDate"));
+                    oSettings.setInsertDate(_oUtils.convertJSONDateToDate(objSettingsSingle.getString("InsertDate")));
+                    oSettings.setModifiedDate(_oUtils.convertJSONDateToDate(objSettingsSingle.getString("ModifiedDate")));
 
                     //Add the settings object to the settings list
                     olSettings.add(oSettings);
@@ -163,6 +175,7 @@ public class svcMilkReceipt
     {
         List<dbPlant> olPlant = new ArrayList<>();
         dbPlant oPlant;
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         try
         {
@@ -194,8 +207,8 @@ public class svcMilkReceipt
                     oPlant.setLatitude(objPlantSingle.getDouble("Latitude"));
                     oPlant.setLongitude(objPlantSingle.getDouble("Longitude"));
                     oPlant.setActive(objPlantSingle.getInt("Active"));
-                    oPlant.setInsertDate(objPlantSingle.getString("InsertDate"));
-                    oPlant.setModifiedDate(objPlantSingle.getString("ModifiedDate"));
+                    oPlant.setInsertDate(_oUtils.convertJSONDateToDate(objPlantSingle.getString("InsertDate")));
+                    oPlant.setModifiedDate(_oUtils.convertJSONDateToDate(objPlantSingle.getString("ModifiedDate")));
 
                     //Add the plant object to the plant list
                     olPlant.add(oPlant);
@@ -220,6 +233,7 @@ public class svcMilkReceipt
     {
         List<dbProfile> olProfile = new ArrayList<>();
         dbProfile oProfile;
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         try
         {
@@ -250,13 +264,13 @@ public class svcMilkReceipt
                     oProfile.setPin(objProfileSingle.getInt("Pin"));
                     oProfile.setHaulerSignature(objProfileSingle.getString("HaulerSignature"));
                     oProfile.setHaulerLicenseNumber(objProfileSingle.getString("HaulerLicenseNumber"));
-                    oProfile.setHaulerExpirationDate(objProfileSingle.getString("HaulerExpirationDate"));
+                    oProfile.setHaulerExpirationDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("HaulerExpirationDate")).toString());
                     oProfile.setSignatureAgreement(objProfileSingle.getInt("SignatureAgreement"));
                     oProfile.setActive(objProfileSingle.getInt("Active"));
                     oProfile.setAdminSecurity(objProfileSingle.getInt("AdminSecurity"));
-                    oProfile.setLastSignInDate(objProfileSingle.getString("LastSignInDate"));
-                    oProfile.setInsertDate(objProfileSingle.getString("InsertDate"));
-                    oProfile.setModifiedDate(objProfileSingle.getString("ModifiedDate"));
+                    oProfile.setLastSignInDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("LastSignInDate")));
+                    oProfile.setInsertDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("InsertDate")));
+                    oProfile.setModifiedDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("ModifiedDate")));
 
                     //Add the Profile object to the Profile list
                     olProfile.add(oProfile);

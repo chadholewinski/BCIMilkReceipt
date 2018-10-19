@@ -1,5 +1,7 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,7 +27,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ReceiveActivity extends AppCompatActivity implements View.OnClickListener//, View.OnFocusChangeListener
@@ -38,6 +42,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     private Utilities _oUtils;
     private dbProfile _oProfile;
     private List<String> _oPlantIDList = new ArrayList<>();
+    private Map<String, String> _oPlantLookup = new HashMap<String, String>();
 
     //region Class Constructor Methods
     @Override
@@ -93,11 +98,18 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         _spkProfileID = oBundle.getString("pkProfileID");
         _spkSettingsID = oBundle.getString("pkSettingsID");
 
+        //Check if the profile id is null
+        if (_spkProfileID != null)
+        {
+            //Get the username from database
+            _sUsername = _oUtils.findUsernameByID(this, _spkProfileID);
+        }
+        
         //Check if the settings id was not passed from receipt page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
         {
             //Get the settings id from the database
-            _spkSettingsID = findSettings(android.os.Build.SERIAL);
+            _spkSettingsID = _oUtils.findSettings(this, _sUsername, android.os.Build.SERIAL);
         }
 
         //Setup the screen
@@ -165,7 +177,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_activity item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -181,7 +193,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(pickup_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_backtopickups item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_backtopickups item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -197,7 +209,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_logout item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -215,7 +227,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -230,61 +242,91 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v)
     {
-        Integer iTotalLBS = 0;
-
         try
         {
             //Check if the receive save button was pressed
             if (v.getId() == R.id.receive_save_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_save_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_save_button pressed", "");
 
-                //Save the pickup
-                String sReceiveIDSaved = saveNewReceive();
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Check if the record was saved
-                if (sReceiveIDSaved.length() > 0)
+                //Check if the plant selected is correct for the current ip location
+                if (!checkIPtoSelectedReceivePlant(_receive_plant.getSelectedItem().toString()))
                 {
-                    //Clear the screen
-                    clearScreenValues();
+                    // Use the Builder class for convenient dialog construction
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                    //Display save successful message on bottom of screen
-                    _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
+                    //Build the message
+                    builder.setMessage("Plant Warning: You are not currently at " + _receive_plant.getSelectedItem().toString() + ".  Are you sure you want to use this receiving plant?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                public void onClick(DialogInterface dialog, int id)
+                                {
+                                    //QUE PASA....NO BUENO!
+                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", _sUsername, "User selected plant: " + _receive_plant.getSelectedItem().toString() + " but IP was: " + _oUtils.getWiFiIPAddress(getApplicationContext(), _sUsername).toString(), "");
 
-                    //Get the total LBS left available on ticket
-                    iTotalLBS = getTotalLBSLeftOnTicket();
+                                    //Instantiate the total lbs
+                                    Integer iTotalLBS = 0;
 
-                    //Display the pickup info on UI
-                    _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
+                                    //Save the pickup
+                                    String sReceiveIDSaved = saveNewReceive();
 
-                    //Check if there are still LBS available for receives
-                    if (iTotalLBS > 0)
-                    {
-                        //Still LBS available so do not allow finish of the ticket
-                        _receive_finishticket_button.setEnabled(false);
-                    }
-                    else
-                    {
-                        //No LBS are available finishing of ticket is not available
-                        _receive_finishticket_button.setEnabled(true);
-                    }
-                }
-                else
-                {
-                    //Display save failed message on bottom of screen
-                    _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate).toString());
+                                    //Format the date for insert and modified
+                                    DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+                                    Date dDate = new Date();
+
+                                    //Check if the record was saved
+                                    if (sReceiveIDSaved.length() > 0)
+                                    {
+                                        //Clear the screen
+                                        clearScreenValues();
+
+                                        //Display save successful message on bottom of screen
+                                        _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
+
+                                        //Get the total LBS left available on ticket
+                                        iTotalLBS = getTotalLBSLeftOnTicket();
+
+                                        //Display the pickup info on UI
+                                        _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
+
+                                        //Check if there are still LBS available for receives
+                                        if (iTotalLBS > 0)
+                                        {
+                                            //Still LBS available so do not allow finish of the ticket
+                                            _receive_finishticket_button.setEnabled(false);
+                                        }
+                                        else
+                                        {
+                                            //No LBS are available finishing of ticket is not available
+                                            _receive_finishticket_button.setEnabled(true);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //Display save failed message on bottom of screen
+                                        _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate).toString());
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                public void onClick(DialogInterface dialog, int id)
+                                {
+                                    // AYE CARUMBA...wa.wa.wawawawa
+                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "Awe you hit NO", "");
+                                }
+                            });
+
+                    AlertDialog aDialog = builder.create();
+                    aDialog.show();
                 }
             }
             //Check if the receive finish ticket button was pressed
             else if (v.getId() == R.id.receive_finishticket_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_finishticket_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_finishticket_button pressed", "");
 
                 //Check if the total receive LBS is the sames as total pickup LBS
                 if (getTotalLBSLeftOnTicket() == 0)
@@ -314,7 +356,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -326,85 +368,6 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     //endregion
 
     //region Routines
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL("http://localweb.belgioioso.cheese.inc/MilkReceiptREST/MilkReceiptService.svc");
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "findSettings", _sUsername, "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
-    }
-
     /**
      * setupScreen
      * - Setup the bottom message on the screen and other screen intitializations
@@ -458,11 +421,20 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
             //Set the default for the drug test device
             _receive_DrugTestDevice.setText(oSettings.getDrugTestDevice());
+
+            //Setup the hash map dictionary
+            _oPlantLookup.put("2", "Pulaski");
+            _oPlantLookup.put("3", "Glenmore");
+            _oPlantLookup.put("4", "Langes");
+            _oPlantLookup.put("5", "Chase");
+            _oPlantLookup.put("6", "New Denmark");
+            _oPlantLookup.put("8", "Byron");
+            _oPlantLookup.put("10", "Freedom");
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -514,7 +486,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "populatePlantSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "populatePlantSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -544,7 +516,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "populateScaleMeterSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "populateScaleMeterSpinner", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -580,7 +552,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             iTotalLBS = 0;
         }
@@ -621,7 +593,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getTotalReceiveLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "getTotalReceiveLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             iTotalLBS = 0;
         }
@@ -646,10 +618,6 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Check if any errors are present for receive
             if (!checkReceiveForErrors())
             {
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
                 //Check if the user left receive LBS fields blank, then assume full load
                 if (_receive_ReceivedLBS.getText().toString().isEmpty() && _receive_ReceivedLBSConfirmation.getText().toString().isEmpty())
                 {
@@ -679,7 +647,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 oReceive.setFkPlantOriginalID("");
                 oReceive.setDrugTestDevice(_receive_DrugTestDevice.getText().toString());
                 oReceive.setDrugTestResult(_receive_DrugTestResult.getText().toString());
-                oReceive.setReceiveDateTime(dfDate.format(dDate).toString());
+                oReceive.setReceiveDateTime(_oUtils.getFormattedDate(this, _sUsername));
                 oReceive.setTank(_receive_Silo.getText().toString());
                 oReceive.setScaleMeter(getScaleMeterSpinnerSelection());
                 oReceive.setTopSeal(_receive_TopSeal.getText().toString());
@@ -690,9 +658,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 oReceive.setFinished(0);
                 oReceive.setWaitingForScaleData(0);
                 oReceive.setTransmitted(0);
-                oReceive.setTransmittedDate("1/1/1900");
-                oReceive.setInsertDate(dfDate.format(dDate).toString());
-                oReceive.setModifiedDate(dfDate.format(dDate).toString());
+                oReceive.setTransmittedDate(_oUtils.getFormattedDate(this, _sUsername,"1900-01-01 00:00:00.000"));
+                oReceive.setInsertDate(_oUtils.getFormattedDate(this, _sUsername));
+                oReceive.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
 
                 //Setup the arraylist for receive insertion
                 olReceive.add(oReceive);
@@ -720,14 +688,14 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "saveNewReceive", _sUsername, "New Receive Saved:: ID: " + sReceiveID, "");
-                _oUtils.InsertActivity(this, "1", "ReceiveActivity", "saveNewReceive", _sUsername, "New Receive Saved:: Plant: " + _receive_plant.getSelectedItem() + " DrugTestResult: " + oReceive.getDrugTestResult() + " Scale/Meter: " + oReceive.getScaleMeter() + " Silo: " + oReceive.getTank() + " Load Temp: " + oReceive.getLoadTemp() + " TopSeal: " + oReceive.getTopSeal() + " BottomSeal: " + oReceive.getBottomSeal() + " ReceivedLBS: " + oReceive.getReceivedLBS() + " End Mileage: " + _receive_EndMileage.getText() + " Intake Number: " + oReceive.getIntakeNumber(), "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "saveNewReceive", _sUsername, "New Receive Saved:: ID: " + sReceiveID, "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "saveNewReceive", _sUsername, "New Receive Saved:: Plant: " + _receive_plant.getSelectedItem() + " DrugTestResult: " + oReceive.getDrugTestResult() + " Scale/Meter: " + oReceive.getScaleMeter() + " Silo: " + oReceive.getTank() + " Load Temp: " + oReceive.getLoadTemp() + " TopSeal: " + oReceive.getTopSeal() + " BottomSeal: " + oReceive.getBottomSeal() + " ReceivedLBS: " + oReceive.getReceivedLBS() + " End Mileage: " + _receive_EndMileage.getText() + " Intake Number: " + oReceive.getIntakeNumber(), "");
             }
         }
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "saveNewReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "saveNewReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
         
         return sReceiveID;
@@ -842,13 +810,123 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "checkReceiveForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "checkReceiveForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             bCheck = false;
         }
 
         //Return the check
         return bCheck;
+    }
+
+    /**
+     * checkIPtoSelectedReceivePlant
+     *  - checks to see if the ip address proves the tablet is at correct plant
+     * @param psPlant
+     * @return (Boolean) - true/false if the comparison is valid
+     */
+    public boolean checkIPtoSelectedReceivePlant(String psPlant)
+    {
+        String sIPAddress;
+        Boolean bValid = false;
+        Integer iNextDecimal = 0;
+        String sPlantCode;
+
+        try
+        {
+            //Get the IP address of the tablet
+            sIPAddress = _oUtils.getWiFiIPAddress(this, _sUsername);
+
+            //Find the next decimal point then get the 2nd octet of the ip address
+            iNextDecimal = sIPAddress.indexOf('.', 5);
+            sPlantCode = sIPAddress.substring(5, iNextDecimal);
+
+            if (_oPlantLookup.get(sPlantCode) == psPlant)
+            {
+                bValid = true;
+            }
+
+            //Check to see which plant the tablet is at then compare to the plant selected
+            /*switch(sPlantCode)
+            {
+                case "2":
+                    //Pulaski
+                    if (psPlant == "Pulaski")
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+
+                case "3":
+                    //Glenmore
+                    if (psPlant == "Glenmore")
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+
+                case "4":
+                    //Langes
+                    if (psPlant == "Langes")
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+
+                case "5":
+                    //Chase
+                    if ((psPlant == "Chase") || (psPlant == "Chase 2"))
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+
+                case "6":
+                    //New Denmark
+                    if (psPlant == "New Denmark")
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+
+                case "8":
+                    //Byron
+                    if (psPlant == "Byron")
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+
+                case "10":
+                    //Freedom
+                    if (psPlant == "Freedom")
+                    {
+                        //Set valid as true
+                        bValid = true;
+                    }
+
+                    break;
+            }*/
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "checkIPtoSelectedReceivePlant", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        return bValid;
     }
 
     /**
@@ -877,7 +955,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getScaleMeterSpinnerSelection", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "getScaleMeterSpinnerSelection", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         return iScaleMeter;
@@ -913,7 +991,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getTotalLBSLeftOnTicket", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "getTotalLBSLeftOnTicket", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             //Set total LBS to 99999
             iTotalLBSLeft = 99999;
@@ -990,7 +1068,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "setTicketAsFinished", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "setTicketAsFinished", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             //Set finished flag to false
             bFinished = false;
@@ -1044,7 +1122,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "checkReceivedLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "checkReceivedLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the check result
@@ -1084,7 +1162,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "getStartMileage", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "getStartMileage", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             iStartMileage = 0;
         }
@@ -1115,7 +1193,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiveActivity", "clearScreenValues", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "clearScreenValues", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

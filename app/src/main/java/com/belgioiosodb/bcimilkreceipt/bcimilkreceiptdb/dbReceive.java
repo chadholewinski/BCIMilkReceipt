@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -34,7 +36,7 @@ public class dbReceive
     String fkPlantOriginalID;
     String DrugTestDevice;
     String DrugTestResult;
-    String ReceiveDateTime;
+    Date ReceiveDateTime;
     String Tank;
     Integer ScaleMeter;
     String TopSeal;
@@ -45,9 +47,9 @@ public class dbReceive
     Integer Finished;
     Integer WaitingForScaleData;
     Integer Transmitted;
-    String TransmittedDate;
-    String InsertDate;
-    String ModifiedDate;
+    Date TransmittedDate;
+    Date InsertDate;
+    Date ModifiedDate;
 
     public dbReceive()
     {
@@ -78,7 +80,7 @@ public class dbReceive
         return DrugTestResult;
     }
 
-    public String getReceiveDateTime() {
+    public Date getReceiveDateTime() {
         return ReceiveDateTime;
     }
 
@@ -122,15 +124,15 @@ public class dbReceive
         return Transmitted;
     }
 
-    public String getTransmittedDate() {
+    public Date getTransmittedDate() {
         return TransmittedDate;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return ModifiedDate;
     }
 
@@ -156,7 +158,7 @@ public class dbReceive
         DrugTestResult = drugTestResult;
     }
 
-    public void setReceiveDateTime(String receiveDateTime) {
+    public void setReceiveDateTime(Date receiveDateTime) {
         ReceiveDateTime = receiveDateTime;
     }
 
@@ -198,15 +200,15 @@ public class dbReceive
         Transmitted = transmitted;
     }
 
-    public void setTransmittedDate(String transmittedDate) {
+    public void setTransmittedDate(Date transmittedDate) {
         TransmittedDate = transmittedDate;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         ModifiedDate = modifiedDate;
     }
 }

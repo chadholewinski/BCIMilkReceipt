@@ -82,11 +82,18 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         _spkSettingsID = oBundle.getString("pkSettingsID");
         _spkProfileID = oBundle.getString("pkProfileID");
 
+        //Check if the profile id is null
+        if (_spkProfileID != null)
+        {
+            //Get the username from database
+            _sUsername = _oUtils.findUsernameByID(this, _spkProfileID);
+        }
+
         //Check if the settings id was not passed from signin page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
         {
             //Get the settings id from the database
-            _spkSettingsID = findSettings(android.os.Build.SERIAL);
+            _spkSettingsID = _oUtils.findSettings(this, _sUsername, android.os.Build.SERIAL);
         }
 
         //Setup the spinner with existing tickets on tablet
@@ -163,7 +170,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_activity item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -189,7 +196,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(settings_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_settings item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_settings item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -211,7 +218,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     }
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_copydb item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_copydb item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -227,7 +234,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_logout item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -245,7 +252,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiptActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -265,7 +272,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
             if (v.getId() == R.id.receipt_new_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "receipt_new_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "receipt_new_button pressed", "");
 
                //Instantiate a new intent of Main Activity
                 Intent new_receipt_intent = new Intent(this, MainActivity.class);
@@ -287,7 +294,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
             else if (v.getId() == R.id.receipt_existing_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "receipt_existing_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "receipt_existing_button pressed", "");
 
                 //Get the selected ticket number from spinner
                 String sTicketNumber = spn_Existing_Tickets.getSelectedItem().toString();
@@ -316,7 +323,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     oBundle.putString("pkSettingsID", _spkSettingsID);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Resuming Ticket ID: " + oHeader.getPkHeaderID(), "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Resuming Ticket ID: " + oHeader.getPkHeaderID(), "");
 
                     //Setup bundle into intent
                     gotopickup_intent.putExtras(oBundle);
@@ -327,98 +334,19 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                 else
                 {
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Existing receipt not found for ticket: " + sTicketNumber, "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Existing receipt not found for ticket: " + sTicketNumber, "");
                 }
             }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiptActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
 
     //region Routines
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL("http://localweb.belgioioso.cheese.inc/MilkReceiptREST/MilkReceiptService.svc");
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "ReceiptActivity", "findSettings", _sUsername, "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
-    }
-
     /**
      * populateExistingTicketSpinner
      * - Fills the spinner with non finished receipt header ticket numbers
@@ -474,7 +402,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -509,7 +437,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 

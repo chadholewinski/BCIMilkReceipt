@@ -19,7 +19,7 @@ import java.util.List;
 
 public class dbDatabaseHandler extends SQLiteOpenHelper
 {
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "MilkReceipt.db";
 
     //region Class Constructor Methods
@@ -97,9 +97,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oHeader.HEADER_COLUMN_FINISHED + " INTEGER, " +
                 oHeader.HEADER_COLUMN_WAITINGFORSCALEDATA + " INTEGER, " +
                 oHeader.HEADER_COLUMN_TRANSMITTED + " INTEGER, " +
-                oHeader.HEADER_COLUMN_TRANSMITTEDDATE + " TEXT, " +
-                oHeader.HEADER_COLUMN_INSERTDATE + " TEXT, " +
-                oHeader.HEADER_COLUMN_MODIFIEDDATE + " TEXT)";
+                oHeader.HEADER_COLUMN_TRANSMITTEDDATE + " DATE, " +
+                oHeader.HEADER_COLUMN_INSERTDATE + " DATE, " +
+                oHeader.HEADER_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_HEADER_TABLE;
@@ -124,8 +124,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.LINE_COLUMN_GAUGERODMAJOR + " INTEGER, " +
                 oLine.LINE_COLUMN_GAUGERODMINOR + " INTEGER, " +
                 oLine.LINE_COLUMN_CONVERTEDLBS + " INTEGER, " +
-                oLine.LINE_COLUMN_TEMPERATURE + " FLOAT, " +
-                oLine.LINE_COLUMN_PICKUPDATE + " TEXT, " +
+                oLine.LINE_COLUMN_TEMPERATURE + " INTEGER, " +
+                oLine.LINE_COLUMN_PICKUPDATE + " DATE, " +
                 oLine.LINE_COLUMN_DFATICKET + " TEXT, " +
                 oLine.LINE_COLUMN_LABCODE + " TEXT, " +
                 oLine.LINE_COLUMN_LATITUDE + " FLOAT, " +
@@ -134,9 +134,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.LINE_COLUMN_FINISHED + " INTEGER, " +
                 oLine.LINE_COLUMN_WAITINGFORSCALEDATA + " INTEGER, " +
                 oLine.LINE_COLUMN_TRANSMITTED + " INTEGER, " +
-                oLine.LINE_COLUMN_TRANSMITTEDDATE+ " TEXT, " +
-                oLine.LINE_COLUMN_INSERTDATE + " TEXT, " +
-                oLine.LINE_COLUMN_MODIFIEDDATE + " TEXT)";
+                oLine.LINE_COLUMN_TRANSMITTEDDATE+ " DATE, " +
+                oLine.LINE_COLUMN_INSERTDATE + " DATE, " +
+                oLine.LINE_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_LINE_TABLE;
@@ -157,7 +157,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID + " TEXT, " +
                 oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE + " TEXT, " +
                 oReceive.RECEIVE_COLUMN_DRUGTESTRESULT + " TEXT, " +
-                oReceive.RECEIVE_COLUMN_RECEIVEDATETIME + " TEXT, " +
+                oReceive.RECEIVE_COLUMN_RECEIVEDATETIME + " DATE, " +
                 oReceive.RECEIVE_COLUMN_TANK + " TEXT, " +
                 oReceive.RECEIVE_COLUMN_SCALEMETER + " INTEGER, " +
                 oReceive.RECEIVE_COLUMN_TOPSEAL + " TEXT, " +
@@ -168,9 +168,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.RECEIVE_COLUMN_FINISHED + " INTEGER, " +
                 oReceive.RECEIVE_COLUMN_WAITINGFORSCALEDATA + " INTEGER, " +
                 oReceive.RECEIVE_COLUMN_TRANSMITTED + " INTEGER, " +
-                oReceive.RECEIVE_COLUMN_TRANSMITTEDDATE+ " TEXT, " +
-                oReceive.RECEIVE_COLUMN_INSERTDATE + " TEXT, " +
-                oReceive.RECEIVE_COLUMN_MODIFIEDDATE + " TEXT)";
+                oReceive.RECEIVE_COLUMN_TRANSMITTEDDATE+ " DATE, " +
+                oReceive.RECEIVE_COLUMN_INSERTDATE + " DATE, " +
+                oReceive.RECEIVE_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_RECEIVE_TABLE;
@@ -198,9 +198,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oProfile.PROFILE_COLUMN_SIGNATUREAGREEMENT + " INTEGER, " +
                 oProfile.PROFILE_COLUMN_ACTIVE + " INTEGER, " +
                 oProfile.PROFILE_COLUMN_ADMINSECURITY + " INTEGER, " +
-                oProfile.PROFILE_COLUMN_LASTSIGNINDATE + " TEXT, " +
-                oProfile.PROFILE_COLUMN_INSERTDATE + " TEXT, " +
-                oProfile.PROFILE_COLUMN_MODIFIEDDATE + " TEXT)";
+                oProfile.PROFILE_COLUMN_LASTSIGNINDATE + " DATE, " +
+                oProfile.PROFILE_COLUMN_INSERTDATE + " DATE, " +
+                oProfile.PROFILE_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_PROFILE_TABLE;
@@ -224,17 +224,17 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA + " INTEGER, " +
                 oSettings.SETTINGS_COLUMN_AUTODBBACKUP + " INTEGER, " +
                 oSettings.SETTINGS_COLUMN_LASTUSERLOGINID + " TEXT, " +
-                oSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE + " TEXT, " +
+                oSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE + " DATE, " +
                 oSettings.SETTINGS_COLUMN_LASTMILKRECEIPTID + " TEXT, " +
                 oSettings.SETTINGS_COLUMN_SCANLOOP + " INTEGER, " +
-                oSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE + " TEXT, " +
-                oSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE + " TEXT, " +
+                oSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE + " DATE, " +
+                oSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE + " DATE, " +
                 oSettings.SETTINGS_COLUMN_UPDATEAVAILABLE + " INTEGER, " +
-                oSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE + " TEXT, " +
+                oSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE + " DATE, " +
                 oSettings.SETTINGS_COLUMN_DRUGTESTDEVICE + " TEXT, " +
                 oSettings.SETTINGS_COLUMN_WEBSERVICEURL+ " TEXT, " +
-                oSettings.SETTINGS_COLUMN_INSERTDATE + " TEXT, " +
-                oSettings.SETTINGS_COLUMN_MODIFIEDDATE + " TEXT)";
+                oSettings.SETTINGS_COLUMN_INSERTDATE + " DATE, " +
+                oSettings.SETTINGS_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_SETTINGS_TABLE;
@@ -258,8 +258,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oPlant.PLANT_COLUMN_LATITUDE + " FLOAT, " +
                 oPlant.PLANT_COLUMN_LONGITUDE + " FLOAT, " +
                 oPlant.PLANT_COLUMN_ACTIVE + " INTEGER, " +
-                oPlant.PLANT_COLUMN_INSERTDATE + " TEXT, " +
-                oPlant.PLANT_COLUMN_MODIFIEDDATE + " TEXT)";
+                oPlant.PLANT_COLUMN_INSERTDATE + " DATE, " +
+                oPlant.PLANT_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_PLANT_TABLE;
@@ -302,8 +302,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oVersion.VERSION_COLUMN_FKSETTINGSID + " TEXT, " +
                 oVersion.VERSION_COLUMN_MACHINEID + " TEXT, " +
                 oVersion.VERSION_COLUMN_VERSION + " TEXT, " +
-                oVersion.VERSION_COLUMN_INSERTDATE + " TEXT, " +
-                oVersion.VERSION_COLUMN_MODIFIEDDATE + " TEXT)";
+                oVersion.VERSION_COLUMN_INSERTDATE + " DATE, " +
+                oVersion.VERSION_COLUMN_MODIFIEDDATE + " DATE)";
 
         //Return the string
         return CREATE_VERSION_TABLE;
@@ -326,8 +326,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oGeoLocation.GEOLOCATION_COLUMN_SPEED + " FLOAT, " +
                 oGeoLocation.GEOLOCATION_COLUMN_ALTITUDE + " FLOAT, " +
                 oGeoLocation.GEOLOCATION_COLUMN_TRANSMITTED + " INTEGER, " +
-                oGeoLocation.GEOLOCATION_COLUMN_TRANSMITTEDDATE + " TEXT, " +
-                oGeoLocation.GEOLOCATION_COLUMN_INSERTDATE + " TEXT)";
+                oGeoLocation.GEOLOCATION_COLUMN_TRANSMITTEDDATE + " DATE, " +
+                oGeoLocation.GEOLOCATION_COLUMN_INSERTDATE + " DATE)";
 
         //Return the string
         return CREATE_GEOLOCATION_TABLE;
@@ -345,6 +345,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poHeader.HEADER_COLUMN_PKHEADERID, poHeader.getPkHeaderID());
             values.put(poHeader.HEADER_COLUMN_FKPROFILEID, poHeader.getFkProfileID());
@@ -357,9 +360,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poHeader.HEADER_COLUMN_FINISHED, poHeader.getFinished());
             values.put(poHeader.HEADER_COLUMN_WAITINGFORSCALEDATA, poHeader.getWaitingForScaleData());
             values.put(poHeader.HEADER_COLUMN_TRANSMITTED, poHeader.getTransmitted());
-            values.put(poHeader.HEADER_COLUMN_TRANSMITTEDDATE, poHeader.getTransmittedDate());
-            values.put(poHeader.HEADER_COLUMN_INSERTDATE, poHeader.getInsertDate());
-            values.put(poHeader.HEADER_COLUMN_MODIFIEDDATE, poHeader.getModifiedDate());
+            values.put(poHeader.HEADER_COLUMN_TRANSMITTEDDATE, dfDate.format(poHeader.getTransmittedDate()));
+            values.put(poHeader.HEADER_COLUMN_INSERTDATE, dfDate.format(poHeader.getInsertDate()));
+            values.put(poHeader.HEADER_COLUMN_MODIFIEDDATE, dfDate.format(poHeader.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -382,6 +385,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poHeader.HEADER_COLUMN_PKHEADERID, poHeader.getPkHeaderID());
             values.put(poHeader.HEADER_COLUMN_FKPROFILEID, poHeader.getFkProfileID());
@@ -394,9 +400,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poHeader.HEADER_COLUMN_FINISHED, poHeader.getFinished());
             values.put(poHeader.HEADER_COLUMN_WAITINGFORSCALEDATA, poHeader.getWaitingForScaleData());
             values.put(poHeader.HEADER_COLUMN_TRANSMITTED, poHeader.getTransmitted());
-            values.put(poHeader.HEADER_COLUMN_TRANSMITTEDDATE, poHeader.getTransmittedDate());
-            values.put(poHeader.HEADER_COLUMN_INSERTDATE, poHeader.getInsertDate());
-            values.put(poHeader.HEADER_COLUMN_MODIFIEDDATE, poHeader.getModifiedDate());
+            values.put(poHeader.HEADER_COLUMN_TRANSMITTEDDATE, dfDate.format(poHeader.getTransmittedDate()));
+            values.put(poHeader.HEADER_COLUMN_INSERTDATE, dfDate.format(poHeader.getInsertDate()));
+            values.put(poHeader.HEADER_COLUMN_MODIFIEDDATE, dfDate.format(poHeader.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -415,6 +421,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbHeader oHeader = new dbHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_PKHEADERID + " = \"" + psHeaderID + "\"";
@@ -443,9 +450,22 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oHeader.setFinished(Integer.parseInt(cursor.getString(8)));
             oHeader.setWaitingForScaleData(Integer.parseInt(cursor.getString(9)));
             oHeader.setTransmitted(Integer.parseInt(cursor.getString(10)));
-            oHeader.setTransmittedDate(cursor.getString(11));
-            oHeader.setInsertDate(cursor.getString(12));
-            oHeader.setModifiedDate(cursor.getString(13));
+
+            try
+            {
+                oHeader.setTransmittedDate(dfDate.parse(cursor.getString(11)));
+                oHeader.setInsertDate(dfDate.parse(cursor.getString(12)));
+                oHeader.setModifiedDate(dfDate.parse(cursor.getString(13)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oHeader.setTransmittedDate(dDate);
+                oHeader.setInsertDate(dDate);
+                oHeader.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -466,6 +486,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbHeader oHeader = new dbHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_TICKETNUMBER + " = \"" + psTicketNumber + "\"";
@@ -494,9 +515,22 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oHeader.setFinished(Integer.parseInt(cursor.getString(8)));
             oHeader.setWaitingForScaleData(Integer.parseInt(cursor.getString(9)));
             oHeader.setTransmitted(Integer.parseInt(cursor.getString(10)));
-            oHeader.setTransmittedDate(cursor.getString(11));
-            oHeader.setInsertDate(cursor.getString(12));
-            oHeader.setModifiedDate(cursor.getString(13));
+
+            try
+            {
+                oHeader.setTransmittedDate(dfDate.parse(cursor.getString(11)));
+                oHeader.setInsertDate(dfDate.parse(cursor.getString(12)));
+                oHeader.setModifiedDate(dfDate.parse(cursor.getString(13)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oHeader.setTransmittedDate(dDate);
+                oHeader.setInsertDate(dDate);
+                oHeader.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -518,6 +552,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbHeader> olHeader = new ArrayList<>();
         dbHeader oHeader = new dbHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_FINISHED + " = 0";
@@ -551,9 +586,22 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oHeader.setFinished(Integer.parseInt(cursor.getString(8)));
                 oHeader.setWaitingForScaleData(Integer.parseInt(cursor.getString(9)));
                 oHeader.setTransmitted(Integer.parseInt(cursor.getString(10)));
-                oHeader.setTransmittedDate(cursor.getString(11));
-                oHeader.setInsertDate(cursor.getString(12));
-                oHeader.setModifiedDate(cursor.getString(13));
+
+                try
+                {
+                    oHeader.setTransmittedDate(dfDate.parse(cursor.getString(11)));
+                    oHeader.setInsertDate(dfDate.parse(cursor.getString(12)));
+                    oHeader.setModifiedDate(dfDate.parse(cursor.getString(13)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oHeader.setTransmittedDate(dDate);
+                    oHeader.setInsertDate(dDate);
+                    oHeader.setModifiedDate(dDate);
+                }
 
                 //Add the header object to the header list object
                 olHeader.add(oHeader);
@@ -582,6 +630,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbHeader> olHeader = new ArrayList<>();
         dbHeader oHeader = new dbHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_FINISHED + " = 1" + " AND " + oHeader.HEADER_COLUMN_TRANSMITTED + " = 0";
@@ -612,9 +661,22 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oHeader.setFinished(Integer.parseInt(cursor.getString(8)));
                 oHeader.setWaitingForScaleData(Integer.parseInt(cursor.getString(9)));
                 oHeader.setTransmitted(Integer.parseInt(cursor.getString(10)));
-                oHeader.setTransmittedDate(cursor.getString(11));
-                oHeader.setInsertDate(cursor.getString(12));
-                oHeader.setModifiedDate(cursor.getString(13));
+
+                try
+                {
+                    oHeader.setTransmittedDate(dfDate.parse(cursor.getString(11)));
+                    oHeader.setInsertDate(dfDate.parse(cursor.getString(12)));
+                    oHeader.setModifiedDate(dfDate.parse(cursor.getString(13)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oHeader.setTransmittedDate(dDate);
+                    oHeader.setInsertDate(dDate);
+                    oHeader.setModifiedDate(dDate);
+                }
 
                 //Add the header object to the header list object
                 olHeader.add(oHeader);
@@ -711,6 +773,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(oLine.LINE_COLUMN_PKLINEID, oLine.getPkLineID());
             values.put(oLine.LINE_COLUMN_FKHEADERID, oLine.getFkHeaderID());
@@ -723,7 +788,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(oLine.LINE_COLUMN_GAUGERODMINOR, oLine.getGaugeRodMinor());
             values.put(oLine.LINE_COLUMN_CONVERTEDLBS, oLine.getConvertedLBS());
             values.put(oLine.LINE_COLUMN_TEMPERATURE, oLine.getTemperature());
-            values.put(oLine.LINE_COLUMN_PICKUPDATE, oLine.getPickupDate());
+            values.put(oLine.LINE_COLUMN_PICKUPDATE, dfDate.format(oLine.getPickupDate()));
             values.put(oLine.LINE_COLUMN_DFATICKET, oLine.getDFATicket());
             values.put(oLine.LINE_COLUMN_LABCODE, oLine.getLabCode());
             values.put(oLine.LINE_COLUMN_LATITUDE, oLine.getLatitude());
@@ -732,9 +797,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(oLine.LINE_COLUMN_FINISHED, oLine.getFinished());
             values.put(oLine.LINE_COLUMN_WAITINGFORSCALEDATA, oLine.getWaitingForScaleData());
             values.put(oLine.LINE_COLUMN_TRANSMITTED, oLine.getTransmitted());
-            values.put(oLine.LINE_COLUMN_TRANSMITTEDDATE, oLine.getTransmittedDate());
-            values.put(oLine.LINE_COLUMN_INSERTDATE, oLine.getInsertDate());
-            values.put(oLine.LINE_COLUMN_MODIFIEDDATE, oLine.getModifiedDate());
+            values.put(oLine.LINE_COLUMN_TRANSMITTEDDATE, dfDate.format(oLine.getTransmittedDate()));
+            values.put(oLine.LINE_COLUMN_INSERTDATE, dfDate.format(oLine.getInsertDate()));
+            values.put(oLine.LINE_COLUMN_MODIFIEDDATE, dfDate.format(oLine.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -757,6 +822,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poLine.LINE_COLUMN_PKLINEID, poLine.getPkLineID());
             values.put(poLine.LINE_COLUMN_FKHEADERID, poLine.getFkHeaderID());
@@ -769,7 +837,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poLine.LINE_COLUMN_GAUGERODMINOR, poLine.getGaugeRodMinor());
             values.put(poLine.LINE_COLUMN_CONVERTEDLBS, poLine.getConvertedLBS());
             values.put(poLine.LINE_COLUMN_TEMPERATURE, poLine.getTemperature());
-            values.put(poLine.LINE_COLUMN_PICKUPDATE, poLine.getPickupDate());
+            values.put(poLine.LINE_COLUMN_PICKUPDATE, dfDate.format(poLine.getPickupDate()));
             values.put(poLine.LINE_COLUMN_DFATICKET, poLine.getDFATicket());
             values.put(poLine.LINE_COLUMN_LABCODE, poLine.getLabCode());
             values.put(poLine.LINE_COLUMN_LATITUDE, poLine.getLatitude());
@@ -778,9 +846,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poLine.LINE_COLUMN_FINISHED, poLine.getFinished());
             values.put(poLine.LINE_COLUMN_WAITINGFORSCALEDATA, poLine.getWaitingForScaleData());
             values.put(poLine.LINE_COLUMN_TRANSMITTED, poLine.getTransmitted());
-            values.put(poLine.LINE_COLUMN_TRANSMITTEDDATE, poLine.getTransmittedDate());
-            values.put(poLine.LINE_COLUMN_INSERTDATE, poLine.getInsertDate());
-            values.put(poLine.LINE_COLUMN_MODIFIEDDATE, poLine.getModifiedDate());
+            values.put(poLine.LINE_COLUMN_TRANSMITTEDDATE, dfDate.format(poLine.getTransmittedDate()));
+            values.put(poLine.LINE_COLUMN_INSERTDATE, dfDate.format(poLine.getInsertDate()));
+            values.put(poLine.LINE_COLUMN_MODIFIEDDATE, dfDate.format(poLine.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -799,6 +867,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbLine oLine = new dbLine();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oLine.TABLE_LINE + " WHERE " + oLine.LINE_COLUMN_PKLINEID + " = \"" + psLineID + "\"";
@@ -826,8 +895,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oLine.setGaugeRodMajor(Integer.parseInt(cursor.getString(7)));
             oLine.setGaugeRodMinor(Integer.parseInt(cursor.getString(8)));
             oLine.setConvertedLBS(Integer.parseInt(cursor.getString(9)));
-            oLine.setTemperature(Double.parseDouble(cursor.getString(10)));
-            oLine.setPickupDate(cursor.getString(11));
+            oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
             oLine.setDFATicket(cursor.getString(12));
             oLine.setLabCode(cursor.getString(13));
             oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
@@ -836,9 +904,24 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oLine.setFinished(Integer.parseInt(cursor.getString(17)));
             oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
             oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
-            oLine.setTransmittedDate(cursor.getString(20));
-            oLine.setInsertDate(cursor.getString(21));
-            oLine.setModifiedDate(cursor.getString(22));
+
+            try
+            {
+                oLine.setPickupDate(dfDate.parse(cursor.getString(11)));
+                oLine.setTransmittedDate(dfDate.parse(cursor.getString(20)));
+                oLine.setInsertDate(dfDate.parse(cursor.getString(21)));
+                oLine.setModifiedDate(dfDate.parse(cursor.getString(22)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oLine.setPickupDate(dDate);
+                oLine.setTransmittedDate(dDate);
+                oLine.setInsertDate(dDate);
+                oLine.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -860,6 +943,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         ArrayList<dbLine> oLines = new ArrayList<dbLine>();
         dbLine oLine = new dbLine();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oLine.TABLE_LINE + " WHERE " + oLine.LINE_COLUMN_FKHEADERID + " = \"" + psHeaderID + "\"";
@@ -892,8 +976,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setGaugeRodMajor(Integer.parseInt(cursor.getString(7)));
                 oLine.setGaugeRodMinor(Integer.parseInt(cursor.getString(8)));
                 oLine.setConvertedLBS(Integer.parseInt(cursor.getString(9)));
-                oLine.setTemperature(Double.parseDouble(cursor.getString(10)));
-                oLine.setPickupDate(cursor.getString(11));
+                oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
                 oLine.setDFATicket(cursor.getString(12));
                 oLine.setLabCode(cursor.getString(13));
                 oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
@@ -902,9 +985,24 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setFinished(Integer.parseInt(cursor.getString(17)));
                 oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
                 oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
-                oLine.setTransmittedDate(cursor.getString(20));
-                oLine.setInsertDate(cursor.getString(21));
-                oLine.setModifiedDate(cursor.getString(22));
+
+                try
+                {
+                    oLine.setPickupDate(dfDate.parse(cursor.getString(11)));
+                    oLine.setTransmittedDate(dfDate.parse(cursor.getString(20)));
+                    oLine.setInsertDate(dfDate.parse(cursor.getString(21)));
+                    oLine.setModifiedDate(dfDate.parse(cursor.getString(22)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oLine.setPickupDate(dDate);
+                    oLine.setTransmittedDate(dDate);
+                    oLine.setInsertDate(dDate);
+                    oLine.setModifiedDate(dDate);
+                }
 
                 //Add line object to array of line objects
                 oLines.add(oLine);
@@ -933,6 +1031,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbLine> olLine = new ArrayList<>();
         dbLine oLine = new dbLine();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oLine.TABLE_LINE + " WHERE " + oLine.LINE_COLUMN_FINISHED + " = 1" + " AND " + oLine.LINE_COLUMN_TRANSMITTED + " = 0";
@@ -965,8 +1064,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setGaugeRodMajor(Integer.parseInt(cursor.getString(7)));
                 oLine.setGaugeRodMinor(Integer.parseInt(cursor.getString(8)));
                 oLine.setConvertedLBS(Integer.parseInt(cursor.getString(9)));
-                oLine.setTemperature(Double.parseDouble(cursor.getString(10)));
-                oLine.setPickupDate(cursor.getString(11));
+                oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
                 oLine.setDFATicket(cursor.getString(12));
                 oLine.setLabCode(cursor.getString(13));
                 oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
@@ -975,9 +1073,24 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setFinished(Integer.parseInt(cursor.getString(17)));
                 oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
                 oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
-                oLine.setTransmittedDate(cursor.getString(20));
-                oLine.setInsertDate(cursor.getString(21));
-                oLine.setModifiedDate(cursor.getString(22));
+
+                try
+                {
+                    oLine.setPickupDate(dfDate.parse(cursor.getString(11)));
+                    oLine.setTransmittedDate(dfDate.parse(cursor.getString(20)));
+                    oLine.setInsertDate(dfDate.parse(cursor.getString(21)));
+                    oLine.setModifiedDate(dfDate.parse(cursor.getString(22)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oLine.setPickupDate(dDate);
+                    oLine.setTransmittedDate(dDate);
+                    oLine.setInsertDate(dDate);
+                    oLine.setModifiedDate(dDate);
+                }
 
                 //Add the line object to the line list object
                 olLine.add(oLine);
@@ -1074,6 +1187,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(oReceive.RECEIVE_COLUMN_PKRECEIVEID, oReceive.getPkReceiveID());
             values.put(oReceive.RECEIVE_COLUMN_FKHEADERID, oReceive.getFkHeaderID());
@@ -1081,7 +1197,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, oReceive.getFkPlantOriginalID());
             values.put(oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, oReceive.getDrugTestDevice());
             values.put(oReceive.RECEIVE_COLUMN_DRUGTESTRESULT, oReceive.getDrugTestResult());
-            values.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, oReceive.getReceiveDateTime());
+            values.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, dfDate.format(oReceive.getReceiveDateTime()));
             values.put(oReceive.RECEIVE_COLUMN_TANK, oReceive.getTank());
             values.put(oReceive.RECEIVE_COLUMN_SCALEMETER, oReceive.getScaleMeter().toString());
             values.put(oReceive.RECEIVE_COLUMN_TOPSEAL, oReceive.getTopSeal());
@@ -1092,9 +1208,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(oReceive.RECEIVE_COLUMN_FINISHED, oReceive.getFinished());
             values.put(oReceive.RECEIVE_COLUMN_WAITINGFORSCALEDATA, oReceive.getWaitingForScaleData());
             values.put(oReceive.RECEIVE_COLUMN_TRANSMITTED, oReceive.getTransmitted());
-            values.put(oReceive.RECEIVE_COLUMN_TRANSMITTEDDATE, oReceive.getTransmittedDate());
-            values.put(oReceive.RECEIVE_COLUMN_INSERTDATE, oReceive.getInsertDate());
-            values.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, oReceive.getModifiedDate());
+            values.put(oReceive.RECEIVE_COLUMN_TRANSMITTEDDATE, dfDate.format(oReceive.getTransmittedDate()));
+            values.put(oReceive.RECEIVE_COLUMN_INSERTDATE, dfDate.format(oReceive.getInsertDate()));
+            values.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, dfDate.format(oReceive.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1117,6 +1233,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poReceive.RECEIVE_COLUMN_PKRECEIVEID, poReceive.getPkReceiveID());
             values.put(poReceive.RECEIVE_COLUMN_FKHEADERID, poReceive.getFkHeaderID());
@@ -1124,7 +1243,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, poReceive.getFkPlantOriginalID());
             values.put(poReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, poReceive.getDrugTestDevice());
             values.put(poReceive.RECEIVE_COLUMN_DRUGTESTRESULT, poReceive.getDrugTestResult());
-            values.put(poReceive.RECEIVE_COLUMN_RECEIVEDATETIME, poReceive.getReceiveDateTime());
+            values.put(poReceive.RECEIVE_COLUMN_RECEIVEDATETIME, dfDate.format(poReceive.getReceiveDateTime()));
             values.put(poReceive.RECEIVE_COLUMN_TANK, poReceive.getTank());
             values.put(poReceive.RECEIVE_COLUMN_SCALEMETER, poReceive.getScaleMeter().toString());
             values.put(poReceive.RECEIVE_COLUMN_TOPSEAL, poReceive.getTopSeal());
@@ -1135,9 +1254,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poReceive.RECEIVE_COLUMN_FINISHED, poReceive.getFinished());
             values.put(poReceive.RECEIVE_COLUMN_WAITINGFORSCALEDATA, poReceive.getWaitingForScaleData());
             values.put(poReceive.RECEIVE_COLUMN_TRANSMITTED, poReceive.getTransmitted());
-            values.put(poReceive.RECEIVE_COLUMN_TRANSMITTEDDATE, poReceive.getTransmittedDate());
-            values.put(poReceive.RECEIVE_COLUMN_INSERTDATE, poReceive.getInsertDate());
-            values.put(poReceive.RECEIVE_COLUMN_MODIFIEDDATE, poReceive.getModifiedDate());
+            values.put(poReceive.RECEIVE_COLUMN_TRANSMITTEDDATE, dfDate.format(poReceive.getTransmittedDate()));
+            values.put(poReceive.RECEIVE_COLUMN_INSERTDATE, dfDate.format(poReceive.getInsertDate()));
+            values.put(poReceive.RECEIVE_COLUMN_MODIFIEDDATE, dfDate.format(poReceive.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1156,6 +1275,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbReceive oReceive = new dbReceive();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_PKRECEIVEID + " = \"" + psReceiveID + "\"";
@@ -1179,7 +1299,6 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oReceive.setFkPlantOriginalID(cursor.getString(3));
             oReceive.setDrugTestDevice(cursor.getString(4));
             oReceive.setDrugTestResult(cursor.getString(5));
-            oReceive.setReceiveDateTime(cursor.getString(6));
             oReceive.setTank(cursor.getString(7));
             oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
             oReceive.setTopSeal(cursor.getString(9));
@@ -1190,9 +1309,24 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
             oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
             oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
-            oReceive.setTransmittedDate(cursor.getString(17));
-            oReceive.setInsertDate(cursor.getString(18));
-            oReceive.setModifiedDate(cursor.getString(19));
+
+            try
+            {
+                oReceive.setReceiveDateTime(dfDate.parse(cursor.getString(6)));
+                oReceive.setTransmittedDate(dfDate.parse(cursor.getString(17)));
+                oReceive.setInsertDate(dfDate.parse(cursor.getString(18)));
+                oReceive.setModifiedDate(dfDate.parse(cursor.getString(19)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oReceive.setReceiveDateTime(dDate);
+                oReceive.setTransmittedDate(dDate);
+                oReceive.setInsertDate(dDate);
+                oReceive.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -1214,6 +1348,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         ArrayList<dbReceive> oReceives = new ArrayList<dbReceive>();
         dbReceive oReceive = new dbReceive();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_FKHEADERID + " = \"" + psHeaderID + "\"";
@@ -1241,7 +1376,6 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.setFkPlantOriginalID(cursor.getString(3));
                 oReceive.setDrugTestDevice(cursor.getString(4));
                 oReceive.setDrugTestResult(cursor.getString(5));
-                oReceive.setReceiveDateTime(cursor.getString(6));
                 oReceive.setTank(cursor.getString(7));
                 oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
                 oReceive.setTopSeal(cursor.getString(9));
@@ -1252,9 +1386,24 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
                 oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
                 oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
-                oReceive.setTransmittedDate(cursor.getString(17));
-                oReceive.setInsertDate(cursor.getString(18));
-                oReceive.setModifiedDate(cursor.getString(19));
+
+                try
+                {
+                    oReceive.setReceiveDateTime(dfDate.parse(cursor.getString(6)));
+                    oReceive.setTransmittedDate(dfDate.parse(cursor.getString(17)));
+                    oReceive.setInsertDate(dfDate.parse(cursor.getString(18)));
+                    oReceive.setModifiedDate(dfDate.parse(cursor.getString(19)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oReceive.setReceiveDateTime(dDate);
+                    oReceive.setTransmittedDate(dDate);
+                    oReceive.setInsertDate(dDate);
+                    oReceive.setModifiedDate(dDate);
+                }
 
                 //Add receive object to array of receive objects
                 oReceives.add(oReceive);
@@ -1283,6 +1432,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbReceive> olReceive = new ArrayList<>();
         dbReceive oReceive = new dbReceive();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_FINISHED + " = 1" + " AND " + oReceive.RECEIVE_COLUMN_TRANSMITTED + " = 0";
@@ -1311,7 +1461,6 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.setFkPlantOriginalID(cursor.getString(3));
                 oReceive.setDrugTestDevice(cursor.getString(4));
                 oReceive.setDrugTestResult(cursor.getString(5));
-                oReceive.setReceiveDateTime(cursor.getString(6));
                 oReceive.setTank(cursor.getString(7));
                 oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
                 oReceive.setTopSeal(cursor.getString(9));
@@ -1322,9 +1471,24 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
                 oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
                 oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
-                oReceive.setTransmittedDate(cursor.getString(17));
-                oReceive.setInsertDate(cursor.getString(18));
-                oReceive.setModifiedDate(cursor.getString(19));
+
+                try
+                {
+                    oReceive.setReceiveDateTime(dfDate.parse(cursor.getString(6)));
+                    oReceive.setTransmittedDate(dfDate.parse(cursor.getString(17)));
+                    oReceive.setInsertDate(dfDate.parse(cursor.getString(18)));
+                    oReceive.setModifiedDate(dfDate.parse(cursor.getString(19)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oReceive.setReceiveDateTime(dDate);
+                    oReceive.setTransmittedDate(dDate);
+                    oReceive.setInsertDate(dDate);
+                    oReceive.setModifiedDate(dDate);
+                }
 
                 //Add the receive object to the receive list object
                 olReceive.add(oReceive);
@@ -1418,6 +1582,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         //Instantiate a content value object
         ContentValues values = new ContentValues();
 
+        //Instantiate a date formatter
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
         //Load content values with column names and values
         values.put(poProfile.PROFILE_COLUMN_PKPROFILEID, poProfile.getPkProfileID());
         values.put(poProfile.PROFILE_COLUMN_FKPLANTID, poProfile.getFkPlantID());
@@ -1432,9 +1599,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         values.put(poProfile.PROFILE_COLUMN_SIGNATUREAGREEMENT, poProfile.getSignatureAgreement());
         values.put(poProfile.PROFILE_COLUMN_ACTIVE, poProfile.getActive());
         values.put(poProfile.PROFILE_COLUMN_ADMINSECURITY, poProfile.getAdminSecurity());
-        values.put(poProfile.PROFILE_COLUMN_LASTSIGNINDATE, poProfile.getLastSignInDate());
-        values.put(poProfile.PROFILE_COLUMN_INSERTDATE, poProfile.getInsertDate());
-        values.put(poProfile.PROFILE_COLUMN_MODIFIEDDATE, poProfile.getModifiedDate());
+        values.put(poProfile.PROFILE_COLUMN_LASTSIGNINDATE, dfDate.format(poProfile.getLastSignInDate()));
+        values.put(poProfile.PROFILE_COLUMN_INSERTDATE, dfDate.format(poProfile.getInsertDate()));
+        values.put(poProfile.PROFILE_COLUMN_MODIFIEDDATE, dfDate.format(poProfile.getModifiedDate()));
 
         //Instantiate a new db object
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1456,6 +1623,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poProfile.PROFILE_COLUMN_PKPROFILEID, poProfile.getPkProfileID());
             values.put(poProfile.PROFILE_COLUMN_FKPLANTID, poProfile.getFkPlantID());
@@ -1470,9 +1640,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poProfile.PROFILE_COLUMN_SIGNATUREAGREEMENT, poProfile.getSignatureAgreement());
             values.put(poProfile.PROFILE_COLUMN_ACTIVE, poProfile.getActive());
             values.put(poProfile.PROFILE_COLUMN_ADMINSECURITY, poProfile.getAdminSecurity());
-            values.put(poProfile.PROFILE_COLUMN_LASTSIGNINDATE, poProfile.getLastSignInDate());
-            values.put(poProfile.PROFILE_COLUMN_INSERTDATE, poProfile.getInsertDate());
-            values.put(poProfile.PROFILE_COLUMN_MODIFIEDDATE, poProfile.getModifiedDate());
+            values.put(poProfile.PROFILE_COLUMN_LASTSIGNINDATE, dfDate.format(poProfile.getLastSignInDate()));
+            values.put(poProfile.PROFILE_COLUMN_INSERTDATE, dfDate.format(poProfile.getInsertDate()));
+            values.put(poProfile.PROFILE_COLUMN_MODIFIEDDATE, dfDate.format(poProfile.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1491,6 +1661,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbProfile oProfile = new dbProfile();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oProfile.TABLE_PROFILE + " WHERE " + oProfile.PROFILE_COLUMN_PKPROFILEID + " = \"" + psProfileID + "\"";
@@ -1521,9 +1692,22 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oProfile.setSignatureAgreement(Integer.parseInt(cursor.getString(10)));
             oProfile.setActive(Integer.parseInt(cursor.getString(11)));
             oProfile.setAdminSecurity(Integer.parseInt(cursor.getString(12)));
-            oProfile.setLastSignInDate(cursor.getString(13));
-            oProfile.setInsertDate(cursor.getString(14));
-            oProfile.setModifiedDate(cursor.getString(15));
+
+            try
+            {
+                oProfile.setLastSignInDate(dfDate.parse(cursor.getString(13)));
+                oProfile.setInsertDate(dfDate.parse(cursor.getString(14)));
+                oProfile.setModifiedDate(dfDate.parse(cursor.getString(15)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oProfile.setLastSignInDate(dDate);
+                oProfile.setInsertDate(dDate);
+                oProfile.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -1544,6 +1728,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbProfile oProfile = new dbProfile();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oProfile.TABLE_PROFILE + " WHERE " + oProfile.PROFILE_COLUMN_USERNAME + " = \"" + psUsername + "\" AND " + oProfile.PROFILE_COLUMN_PIN + " = " + psPin;
@@ -1574,9 +1759,22 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oProfile.setSignatureAgreement(Integer.parseInt(cursor.getString(10)));
             oProfile.setActive(Integer.parseInt(cursor.getString(11)));
             oProfile.setAdminSecurity(Integer.parseInt(cursor.getString(12)));
-            oProfile.setLastSignInDate(cursor.getString(13));
-            oProfile.setInsertDate(cursor.getString(14));
-            oProfile.setModifiedDate(cursor.getString(15));
+
+            try
+            {
+                oProfile.setLastSignInDate(dfDate.parse(cursor.getString(13)));
+                oProfile.setInsertDate(dfDate.parse(cursor.getString(14)));
+                oProfile.setModifiedDate(dfDate.parse(cursor.getString(15)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oProfile.setLastSignInDate(dDate);
+                oProfile.setInsertDate(dDate);
+                oProfile.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -1682,6 +1880,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poSettings.SETTINGS_COLUMN_PKSETTINGSID, poSettings.getPkSettingsID());
             values.put(poSettings.SETTINGS_COLUMN_TABLETNAME, poSettings.getTabletName());
@@ -1692,17 +1893,17 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA, poSettings.getDownloadNotCompletedData());
             values.put(poSettings.SETTINGS_COLUMN_AUTODBBACKUP, poSettings.getAutoDBBackup());
             values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINID, poSettings.getLastUserLoginID());
-            values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, poSettings.getLastUserLoginDate());
+            values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, dfDate.format(poSettings.getLastUserLoginDate()));
             values.put(poSettings.SETTINGS_COLUMN_LASTMILKRECEIPTID, poSettings.getLastMilkReceiptID());
             values.put(poSettings.SETTINGS_COLUMN_SCANLOOP, poSettings.getScanLoop());
-            values.put(poSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE, poSettings.getLastSettingsUpdate());
-            values.put(poSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE, poSettings.getLastProfileUpdate());
+            values.put(poSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE, dfDate.format(poSettings.getLastSettingsUpdate()));
+            values.put(poSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE, dfDate.format(poSettings.getLastProfileUpdate()));
             values.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLE, poSettings.getUpdateAvailable());
-            values.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE, poSettings.getUpdateAvailableDate());
+            values.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE, dfDate.format(poSettings.getUpdateAvailableDate()));
             values.put(poSettings.SETTINGS_COLUMN_DRUGTESTDEVICE, poSettings.getDrugTestDevice());
             values.put(poSettings.SETTINGS_COLUMN_WEBSERVICEURL, poSettings.getWebServiceURL());
-            values.put(poSettings.SETTINGS_COLUMN_INSERTDATE, poSettings.getInsertDate());
-            values.put(poSettings.SETTINGS_COLUMN_MODIFIEDDATE, poSettings.getModifiedDate());
+            values.put(poSettings.SETTINGS_COLUMN_INSERTDATE, dfDate.format(poSettings.getInsertDate()));
+            values.put(poSettings.SETTINGS_COLUMN_MODIFIEDDATE, dfDate.format(poSettings.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1725,6 +1926,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poSettings.SETTINGS_COLUMN_PKSETTINGSID, poSettings.getPkSettingsID());
             values.put(poSettings.SETTINGS_COLUMN_TABLETNAME, poSettings.getTabletName());
@@ -1735,17 +1939,17 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA, poSettings.getDownloadNotCompletedData());
             values.put(poSettings.SETTINGS_COLUMN_AUTODBBACKUP, poSettings.getAutoDBBackup());
             values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINID, poSettings.getLastUserLoginID());
-            values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, poSettings.getLastUserLoginDate());
+            values.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, dfDate.format(poSettings.getLastUserLoginDate()));
             values.put(poSettings.SETTINGS_COLUMN_LASTMILKRECEIPTID, poSettings.getLastMilkReceiptID());
             values.put(poSettings.SETTINGS_COLUMN_SCANLOOP, poSettings.getScanLoop());
-            values.put(poSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE, poSettings.getLastSettingsUpdate());
-            values.put(poSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE, poSettings.getLastProfileUpdate());
+            values.put(poSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE, dfDate.format(poSettings.getLastSettingsUpdate()));
+            values.put(poSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE, dfDate.format(poSettings.getLastProfileUpdate()));
             values.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLE, poSettings.getUpdateAvailable());
-            values.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE, poSettings.getUpdateAvailableDate());
+            values.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE, dfDate.format(poSettings.getUpdateAvailableDate()));
             values.put(poSettings.SETTINGS_COLUMN_DRUGTESTDEVICE, poSettings.getDrugTestDevice());
             values.put(poSettings.SETTINGS_COLUMN_WEBSERVICEURL, poSettings.getWebServiceURL());
-            values.put(poSettings.SETTINGS_COLUMN_INSERTDATE, poSettings.getInsertDate());
-            values.put(poSettings.SETTINGS_COLUMN_MODIFIEDDATE, poSettings.getModifiedDate());
+            values.put(poSettings.SETTINGS_COLUMN_INSERTDATE, dfDate.format(poSettings.getInsertDate()));
+            values.put(poSettings.SETTINGS_COLUMN_MODIFIEDDATE, dfDate.format(poSettings.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1764,6 +1968,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbSettings oSettings = new dbSettings();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oSettings.TABLE_SETTINGS + " WHERE " + oSettings.SETTINGS_COLUMN_PKSETTINGSID + " = \"" + psSettingsID + "\"";
@@ -1790,17 +1995,33 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6)));
             oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(7)));
             oSettings.setLastUserLoginID(cursor.getString(8));
-            oSettings.setLastUserLoginDate(cursor.getString(9));
             oSettings.setLastMilkReceiptID(cursor.getString(10));
             oSettings.setScanLoop(Integer.parseInt(cursor.getString(11)));
-            oSettings.setLastSettingsUpdate(cursor.getString(12));
-            oSettings.setLastProfileUpdate(cursor.getString(13));
             oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(14)));
-            oSettings.setUpdateAvailableDate(cursor.getString(15));
             oSettings.setDrugTestDevice(cursor.getString(16));
             oSettings.setWebServiceURL(cursor.getString(17));
-            oSettings.setInsertDate(cursor.getString(18));
-            oSettings.setModifiedDate(cursor.getString(19));
+
+            try
+            {
+                oSettings.setLastUserLoginDate(dfDate.parse(cursor.getString(9)));
+                oSettings.setLastSettingsUpdate(dfDate.parse(cursor.getString(12)));
+                oSettings.setLastProfileUpdate(dfDate.parse(cursor.getString(13)));
+                oSettings.setUpdateAvailableDate(dfDate.parse(cursor.getString(15)));
+                oSettings.setInsertDate(dfDate.parse(cursor.getString(18)));
+                oSettings.setModifiedDate(dfDate.parse(cursor.getString(19)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oSettings.setLastUserLoginDate(dDate);
+                oSettings.setLastSettingsUpdate(dDate);
+                oSettings.setLastProfileUpdate(dDate);
+                oSettings.setUpdateAvailableDate(dDate);
+                oSettings.setInsertDate(dDate);
+                oSettings.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -1821,6 +2042,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbSettings oSettings = new dbSettings();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oSettings.TABLE_SETTINGS + " WHERE " + oSettings.SETTINGS_COLUMN_TABLETNAME + " = \"" + psName + "\"";
@@ -1844,20 +2066,36 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oSettings.setTrackPickupGeoLocation(Integer.parseInt(cursor.getString(3)));
             oSettings.setTrackRouteGeoLocation(Integer.parseInt(cursor.getString(4)));
             oSettings.setDebug(Integer.parseInt(cursor.getString(5)));
-            oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6)));
+            oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6) == null ? "0" : cursor.getString(6)));
             oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(7)));
             oSettings.setLastUserLoginID(cursor.getString(8));
-            oSettings.setLastUserLoginDate(cursor.getString(9));
             oSettings.setLastMilkReceiptID(cursor.getString(10));
             oSettings.setScanLoop(Integer.parseInt(cursor.getString(11)));
-            oSettings.setLastSettingsUpdate(cursor.getString(12));
-            oSettings.setLastProfileUpdate(cursor.getString(13));
             oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(14)));
-            oSettings.setUpdateAvailableDate(cursor.getString(15));
             oSettings.setDrugTestDevice(cursor.getString(16));
             oSettings.setWebServiceURL(cursor.getString(17));
-            oSettings.setInsertDate(cursor.getString(18));
-            oSettings.setModifiedDate(cursor.getString(19));
+
+            try
+            {
+                oSettings.setLastUserLoginDate(dfDate.parse(cursor.getString(9)));
+                oSettings.setLastSettingsUpdate(dfDate.parse(cursor.getString(12)));
+                oSettings.setLastProfileUpdate(dfDate.parse(cursor.getString(13)));
+                oSettings.setUpdateAvailableDate(dfDate.parse(cursor.getString(15)));
+                oSettings.setInsertDate(dfDate.parse(cursor.getString(18)));
+                oSettings.setModifiedDate(dfDate.parse(cursor.getString(19)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oSettings.setLastUserLoginDate(dDate);
+                oSettings.setLastSettingsUpdate(dDate);
+                oSettings.setLastProfileUpdate(dDate);
+                oSettings.setUpdateAvailableDate(dDate);
+                oSettings.setInsertDate(dDate);
+                oSettings.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -1879,6 +2117,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbSettings> olSettings = new ArrayList<dbSettings>();
         dbSettings oSettings = new dbSettings();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oSettings.TABLE_SETTINGS + " WHERE " + oSettings.SETTINGS_COLUMN_TABLETNAME + " = \"" + psName + "\"";
@@ -1910,17 +2149,33 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oSettings.setDownloadNotCompletedData(Integer.parseInt(cursor.getString(6)));
                 oSettings.setAutoDBBackup(Integer.parseInt(cursor.getString(7)));
                 oSettings.setLastUserLoginID(cursor.getString(8));
-                oSettings.setLastUserLoginDate(cursor.getString(9));
                 oSettings.setLastMilkReceiptID(cursor.getString(10));
                 oSettings.setScanLoop(Integer.parseInt(cursor.getString(11)));
-                oSettings.setLastSettingsUpdate(cursor.getString(12));
-                oSettings.setLastProfileUpdate(cursor.getString(13));
                 oSettings.setUpdateAvailable(Integer.parseInt(cursor.getString(14)));
-                oSettings.setUpdateAvailableDate(cursor.getString(15));
                 oSettings.setDrugTestDevice(cursor.getString(16));
                 oSettings.setWebServiceURL(cursor.getString(17));
-                oSettings.setInsertDate(cursor.getString(18));
-                oSettings.setModifiedDate(cursor.getString(19));
+
+                try
+                {
+                    oSettings.setLastUserLoginDate(dfDate.parse(cursor.getString(9)));
+                    oSettings.setLastSettingsUpdate(dfDate.parse(cursor.getString(12)));
+                    oSettings.setLastProfileUpdate(dfDate.parse(cursor.getString(13)));
+                    oSettings.setUpdateAvailableDate(dfDate.parse(cursor.getString(15)));
+                    oSettings.setInsertDate(dfDate.parse(cursor.getString(18)));
+                    oSettings.setModifiedDate(dfDate.parse(cursor.getString(19)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oSettings.setLastUserLoginDate(dDate);
+                    oSettings.setLastSettingsUpdate(dDate);
+                    oSettings.setLastProfileUpdate(dDate);
+                    oSettings.setUpdateAvailableDate(dDate);
+                    oSettings.setInsertDate(dDate);
+                    oSettings.setModifiedDate(dDate);
+                }
 
                 //Add settings object to array list
                 olSettings.add(oSettings);
@@ -2018,7 +2273,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             ContentValues values = new ContentValues();
 
             //Instantiate a date formatter
-            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
             //Load content values with column names and values
             values.put(poActivity.ACTIVITYHEADER_COLUMN_PKACTIVITYHEADERID, poActivity.getPkActivityHeaderID());
@@ -2050,7 +2305,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbActivityHeader oActivity = new dbActivityHeader();
-        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oActivity.TABLE_ACTIVITYHEADER + " WHERE " + oActivity.ACTIVITYHEADER_COLUMN_PKACTIVITYHEADERID + " = \"" + psActivityHeaderID + "\"";
@@ -2088,8 +2343,6 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oActivity.setTransmittedDate(dDate);
                 oActivity.setInsertDate(dDate);
             }
-
-
         }
         else
         {
@@ -2111,7 +2364,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbActivityHeader> olActivity = new ArrayList<dbActivityHeader>();
         dbActivityHeader oActivity = new dbActivityHeader();
-        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS");
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oActivity.TABLE_ACTIVITYHEADER + " WHERE " + oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE + " >= \"" + psStartDate + "\" AND " + oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE + " < \"" + psEndDate + "\" AND " + oActivity.ACTIVITYHEADER_COLUMN_FKACTIVITYTYPEID + " = \"" + psActTypeID + "\"";
@@ -2212,6 +2465,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poGeoLocation.GEOLOCATION_COLUMN_PKGEOLOCATIONID, poGeoLocation.getPkGeoLocationID());
             values.put(poGeoLocation.GEOLOCATION_COLUMN_LATITUDE, poGeoLocation.getLatitude());
@@ -2221,8 +2477,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poGeoLocation.GEOLOCATION_COLUMN_SPEED, poGeoLocation.getSpeed());
             values.put(poGeoLocation.GEOLOCATION_COLUMN_ALTITUDE, poGeoLocation.getAltitude());
             values.put(poGeoLocation.GEOLOCATION_COLUMN_TRANSMITTED, poGeoLocation.getTransmitted());
-            values.put(poGeoLocation.GEOLOCATION_COLUMN_TRANSMITTEDDATE, poGeoLocation.getTransmittedDate());
-            values.put(poGeoLocation.GEOLOCATION_COLUMN_INSERTDATE, poGeoLocation.getInsertDate());
+            values.put(poGeoLocation.GEOLOCATION_COLUMN_TRANSMITTEDDATE, dfDate.format(poGeoLocation.getTransmittedDate()));
+            values.put(poGeoLocation.GEOLOCATION_COLUMN_INSERTDATE, dfDate.format(poGeoLocation.getInsertDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -2244,6 +2500,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         //Instantiate a content value object
         ContentValues values = new ContentValues();
 
+        //Instantiate a date formatter
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
         //Load content values with column names and values
         values.put(poPlant.PLANT_COLUMN_PKPLANTID, poPlant.getPkPlantID());
         values.put(poPlant.PLANT_COLUMN_PLANTNAME, poPlant.getPlantName());
@@ -2254,8 +2513,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         values.put(poPlant.PLANT_COLUMN_LATITUDE, poPlant.getLatitude());
         values.put(poPlant.PLANT_COLUMN_LONGITUDE, poPlant.getLongitude());
         values.put(poPlant.PLANT_COLUMN_ACTIVE, poPlant.getActive());
-        values.put(poPlant.PLANT_COLUMN_INSERTDATE, poPlant.getInsertDate());
-        values.put(poPlant.PLANT_COLUMN_MODIFIEDDATE, poPlant.getModifiedDate());
+        values.put(poPlant.PLANT_COLUMN_INSERTDATE, dfDate.format(poPlant.getInsertDate()));
+        values.put(poPlant.PLANT_COLUMN_MODIFIEDDATE, dfDate.format(poPlant.getModifiedDate()));
 
         //Instantiate a new db object
         SQLiteDatabase db = this.getWritableDatabase();
@@ -2277,6 +2536,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Instantiate a content value object
             ContentValues values = new ContentValues();
 
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
             //Load content values with column names and values
             values.put(poPlant.PLANT_COLUMN_PKPLANTID, poPlant.getPkPlantID());
             values.put(poPlant.PLANT_COLUMN_PLANTNAME, poPlant.getPlantName());
@@ -2287,8 +2549,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             values.put(poPlant.PLANT_COLUMN_LATITUDE, poPlant.getLatitude());
             values.put(poPlant.PLANT_COLUMN_LONGITUDE, poPlant.getLongitude());
             values.put(poPlant.PLANT_COLUMN_ACTIVE, poPlant.getActive());
-            values.put(poPlant.PLANT_COLUMN_INSERTDATE, poPlant.getInsertDate());
-            values.put(poPlant.PLANT_COLUMN_MODIFIEDDATE, poPlant.getModifiedDate());
+            values.put(poPlant.PLANT_COLUMN_INSERTDATE, dfDate.format(poPlant.getInsertDate()));
+            values.put(poPlant.PLANT_COLUMN_MODIFIEDDATE, dfDate.format(poPlant.getModifiedDate()));
 
             //Instantiate a new db object
             SQLiteDatabase db = this.getWritableDatabase();
@@ -2307,6 +2569,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbPlant oPlant = new dbPlant();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_PKPLANTID + " = \"" + psPlantID + "\"";
@@ -2333,8 +2596,20 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
             oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
             oPlant.setActive(Integer.parseInt(cursor.getString(8)));
-            oPlant.setInsertDate(cursor.getString(9));
-            oPlant.setModifiedDate(cursor.getString(10));
+
+            try
+            {
+                oPlant.setInsertDate(dfDate.parse(cursor.getString(9)));
+                oPlant.setModifiedDate(dfDate.parse(cursor.getString(10)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oPlant.setInsertDate(dDate);
+                oPlant.setModifiedDate(dDate);
+            }
         }
         else
         {
@@ -2356,6 +2631,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         String query;
         List<dbPlant> olPlant = new ArrayList<dbPlant>();
         dbPlant oPlant = new dbPlant();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_ACTIVE + " = 1 ORDER BY " + oPlant.PLANT_COLUMN_PLANTNAME + " ASC";
@@ -2387,8 +2663,20 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
                 oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
                 oPlant.setActive(Integer.parseInt(cursor.getString(8)));
-                oPlant.setInsertDate(cursor.getString(9));
-                oPlant.setModifiedDate(cursor.getString(10));
+
+                try
+                {
+                    oPlant.setInsertDate(dfDate.parse(cursor.getString(9)));
+                    oPlant.setModifiedDate(dfDate.parse(cursor.getString(10)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oPlant.setInsertDate(dDate);
+                    oPlant.setModifiedDate(dDate);
+                }
 
                 //Add the plant object to the plant list object
                 olPlant.add(oPlant);
@@ -2416,6 +2704,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     {
         String query;
         dbPlant oPlant = new dbPlant();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
         query = "SELECT * FROM " + oPlant.TABLE_PLANT + " WHERE " + oPlant.PLANT_COLUMN_PLANTNAME + " = \"" + psPlantName + "\"";
@@ -2442,8 +2731,20 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oPlant.setLatitude(Double.parseDouble(cursor.getString(6)));
             oPlant.setLongitude(Double.parseDouble(cursor.getString(7)));
             oPlant.setActive(Integer.parseInt(cursor.getString(8)));
-            oPlant.setInsertDate(cursor.getString(9));
-            oPlant.setModifiedDate(cursor.getString(10));
+
+            try
+            {
+                oPlant.setInsertDate(dfDate.parse(cursor.getString(9)));
+                oPlant.setModifiedDate(dfDate.parse(cursor.getString(10)));
+            }
+            catch(ParseException pe)
+            {
+                Date dDate = new Date();
+                dDate = Calendar.getInstance().getTime();
+
+                oPlant.setInsertDate(dDate);
+                oPlant.setModifiedDate(dDate);
+            }
         }
         else
         {

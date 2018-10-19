@@ -1,5 +1,7 @@
 package com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb;
 
+import java.util.Date;
+
 /**
  * Created by ChadHolewinski on 12/6/2017.
  */
@@ -37,9 +39,9 @@ public class dbProfile
     Integer SignatureAgreement;
     Integer Active;
     Integer AdminSecurity;
-    String LastSignInDate;
-    String InsertDate;
-    String ModifiedDate;
+    Date LastSignInDate;
+    Date InsertDate;
+    Date ModifiedDate;
 
     public dbProfile()
     {
@@ -98,15 +100,15 @@ public class dbProfile
         return AdminSecurity;
     }
 
-    public String getLastSignInDate() {
+    public Date getLastSignInDate() {
         return LastSignInDate;
     }
 
-    public String getInsertDate() {
+    public Date getInsertDate() {
         return InsertDate;
     }
 
-    public String getModifiedDate() {
+    public Date getModifiedDate() {
         return ModifiedDate;
     }
 
@@ -138,21 +140,15 @@ public class dbProfile
         HaulerSignature = haulerSignature;
     }
 
-    public void setHaulerLicenseNumber(String haulerLicenseNumber) {
-        HaulerLicenseNumber = haulerLicenseNumber;
-    }
+    public void setHaulerLicenseNumber(String haulerLicenseNumber) { HaulerLicenseNumber = haulerLicenseNumber; }
 
-    public void setHaulerExpirationDate(String haulerExpirationDate) {
-        HaulerExpirationDate = haulerExpirationDate;
-    }
+    public void setHaulerExpirationDate(String haulerExpirationDate) { HaulerExpirationDate = haulerExpirationDate; }
 
     public void setHaulerNumber(String haulerNumber) {
         HaulerNumber = haulerNumber;
     }
 
-    public void setSignatureAgreement(Integer signatureAgreement) {
-        SignatureAgreement = signatureAgreement;
-    }
+    public void setSignatureAgreement(Integer signatureAgreement) { SignatureAgreement = signatureAgreement; }
 
     public void setActive(Integer active) {
         Active = active;
@@ -162,15 +158,15 @@ public class dbProfile
         AdminSecurity = adminSecurity;
     }
 
-    public void setLastSignInDate(String lastSignInDate) {
+    public void setLastSignInDate(Date lastSignInDate) {
         LastSignInDate = lastSignInDate;
     }
 
-    public void setInsertDate(String insertDate) {
+    public void setInsertDate(Date insertDate) {
         InsertDate = insertDate;
     }
 
-    public void setModifiedDate(String modifiedDate) {
+    public void setModifiedDate(Date modifiedDate) {
         ModifiedDate = modifiedDate;
     }
 }

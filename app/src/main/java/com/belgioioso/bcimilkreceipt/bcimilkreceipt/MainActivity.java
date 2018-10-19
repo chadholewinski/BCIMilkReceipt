@@ -86,11 +86,18 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         _spkSettingsID = oBundle.getString("pkSettingsID");
         _spkProfileID = oBundle.getString("pkProfileID");
 
+        //Check if the profile id is null
+        if (_spkProfileID != null)
+        {
+            //Get the username from database
+            _sUsername = _oUtils.findUsernameByID(this, _spkProfileID);
+        }
+
         //Check if the settings id was not passed from receipt page
         if (_spkSettingsID == null || _spkSettingsID.length() < 1)
         {
             //Get the settings id from the database
-            _spkSettingsID = findSettings(android.os.Build.SERIAL);
+            _spkSettingsID = _oUtils.findSettings(this, _sUsername, android.os.Build.SERIAL);
         }
 
         //Setup the screen for initial use
@@ -154,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "menu_main_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "menu_main_activity item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -170,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "menu_main_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "menu_main_logout item selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -188,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "MainActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "MainActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -211,13 +218,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
             if (v.getId() == R.id.main_savereceipt_button)
             {
                 //Log message to activity
-                _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "main_savereceipt_button pressed", "");
+                _oUtils.insertActivity(this, "1", "MainActivity", "onClick", _sUsername, "main_savereceipt_button pressed", "");
 
                 //Check if the headerID was retrieved
                 if (_spkHeaderID != null)
                 {
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New Ticket Created ID: " + _spkHeaderID, "");
+                    _oUtils.insertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New Ticket Created ID: " + _spkHeaderID, "");
 
                     //Instantiate a new intent of Pickup Activity
                     Intent gotopickup_intent_new = new Intent(this, PickupActivity.class);
@@ -239,98 +246,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                 else
                 {
                     //Log message to activity
-                    _oUtils.InsertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New receipt save unsuccessful, no ID created", "");
+                    _oUtils.insertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New receipt save unsuccessful, no ID created", "");
                 }
             }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "MainActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "MainActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
 
     //region Routines
-    /**
-     * findSettings
-     * - Gets the settings object with data from database
-     * @param ptmDevice
-     * @return returns the
-     */
-    private String findSettings(String ptmDevice)
-    {
-        String sReturnID = "";
-
-        try
-        {
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-
-            //Get the settings object from database
-            dbSettings oSettings = oDBHandler.findSettingsByName(ptmDevice);
-
-            //Check if the settings record was found
-            if (oSettings == null)
-            {
-                //Instantiate new settings object
-                dbSettings oSettingsNew = new dbSettings();
-
-                //Create a new settingsID GUID
-                UUID gID = UUID.randomUUID();
-
-                //Setup the new settings object data
-                oSettingsNew.setPkSettingsID(gID.toString());
-                oSettingsNew.setTabletName(ptmDevice);
-                oSettingsNew.setMachineID(ptmDevice);
-                oSettingsNew.setTrackPickupGeoLocation(0);
-                oSettingsNew.setTrackRouteGeoLocation(0);
-                oSettingsNew.setDebug(0);
-                oSettingsNew.setAutoDBBackup(0);
-                oSettingsNew.setLastUserLoginID("");
-                oSettingsNew.setLastUserLoginDate("1/1/1900");
-                oSettingsNew.setLastMilkReceiptID("");
-                oSettingsNew.setScanLoop(1);
-                oSettingsNew.setLastSettingsUpdate("1/1/1900");
-                oSettingsNew.setLastProfileUpdate("1/1/1900");
-                oSettingsNew.setUpdateAvailable(0);
-                oSettingsNew.setUpdateAvailableDate("1/1/1900");
-                oSettingsNew.setDrugTestDevice("CharmSLRosa");
-                oSettingsNew.setWebServiceURL("http://localweb.belgioioso.cheese.inc/MilkReceiptREST/MilkReceiptService.svc");
-
-                //Format the date for insert and modified
-                DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                Date dDate = new Date();
-
-                //Set the insert and modified date fields
-                oSettingsNew.setInsertDate(dfDate.format(dDate).toString());
-                oSettingsNew.setModifiedDate(dfDate.format(dDate).toString());
-
-                //Add the settings record to database
-                oDBHandler.addSettings(oSettingsNew);
-
-                //Set the return settingsID
-                sReturnID = gID.toString();
-
-                //Log activity
-                _oUtils.InsertActivity(this, "1", "MainActivity", "findSettings", _sUsername, "Settings not found, new settings record saved", "");
-            }
-            else
-            {
-                //Set the return settingsID
-                sReturnID = oSettings.getPkSettingsID();
-            }
-        }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "MainActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-
-        //Return the settingsID
-        return sReturnID;
-    }
-
     /**
      * setupScreen
      * - Setup the bottom message on the screen and other screen intitializations
@@ -362,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "MainActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "MainActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -411,15 +339,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
             oHeader.setFinished(0);
             oHeader.setWaitingForScaleData(0);
             oHeader.setTransmitted(0);
-            oHeader.setTransmittedDate("1/1/1900");
 
-            //Format the date for insert and modified
-            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-            Date dDate = new Date();
-
-            //Set the insert and modified date fields
-            oHeader.setInsertDate(dfDate.format(dDate).toString());
-            oHeader.setModifiedDate(dfDate.format(dDate).toString());
+            //Set the transmitted, insert and modified date fields
+            oHeader.setTransmittedDate(_oUtils.getFormattedDate(this, _sUsername, "1900-01-01 00:00:00.000"));
+            oHeader.setInsertDate(_oUtils.getFormattedDate(this, _sUsername));
+            oHeader.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
 
             //Add the header to the database
             oDBHandler.addHeader(oHeader);
@@ -430,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "MainActivity", "saveNewHeader", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "MainActivity", "saveNewHeader", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
             //Set the headerid to null
             sHeaderID = null;

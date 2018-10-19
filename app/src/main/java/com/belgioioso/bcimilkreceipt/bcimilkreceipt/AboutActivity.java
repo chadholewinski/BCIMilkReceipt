@@ -72,7 +72,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "AboutActivity", "onClick", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "AboutActivity", "onClick", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
@@ -99,7 +99,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.InsertActivity(this, "3", "AboutActivity", "CleanDB", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "AboutActivity", "CleanDB", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
