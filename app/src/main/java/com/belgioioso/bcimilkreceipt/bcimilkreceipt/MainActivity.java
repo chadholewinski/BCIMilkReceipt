@@ -226,6 +226,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                     //Log message to activity
                     _oUtils.insertActivity(this, "1", "MainActivity", "onClick", _sUsername, "New Ticket Created ID: " + _spkHeaderID, "");
 
+                    //Update the settings record
+                    updateSettingsWithLastReceiptID(_spkHeaderID);
+
                     //Instantiate a new intent of Pickup Activity
                     Intent gotopickup_intent_new = new Intent(this, PickupActivity.class);
 
@@ -362,6 +365,35 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
 
         //Return the headerID
         return sHeaderID;
+    }
+
+    /**
+     * updateSettingsWithLastReceiptID
+     *  - update the settings record with last milk receipt id
+     * @param psReceiptID
+     */
+    private void updateSettingsWithLastReceiptID(String psReceiptID)
+    {
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the current settings record from database
+            dbSettings oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+            //Update the settings information
+            oSettings.setLastMilkReceiptID(psReceiptID);
+            oSettings.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
+
+            //Update the record in the database
+            oDBHandler.updateSettings(oSettings);
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "MainActivity", "updateSettingsWithLastReceiptID", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
     }
     //endregion
 }
