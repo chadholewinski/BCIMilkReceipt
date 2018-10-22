@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbActivityHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
@@ -347,28 +349,22 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             {
                 //Connect to web service and get the settings record by serial #
                 new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
-                //new SignInActivity.GetSettings().execute(_sWSURL + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
                 //Connect to web service and get the profile records by last date
                 //new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/" + oSettings.getLastProfileUpdate());
                 new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/1900-01-01T000000");
-                //new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/1900-01-01T000000");
 
                 //Connect to web service and get the plant records by last date
                 new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/1900-01-01T000000");
-                //new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/1900-01-01T000000");
 
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(oSettings.getWebServiceURL() + "/PostHeaderDataJSON");
-                //new SignInActivity.PostHeader().execute(_sWSURL + "/PostHeaderDataJSON");
 
                 //Connect to web service and post non-transferred line data
                 new SignInActivity.PostLine().execute(oSettings.getWebServiceURL() + "/PostLineDataJSON");
-                //new SignInActivity.PostLine().execute(_sWSURL + "/PostLineDataJSON");
 
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(oSettings.getWebServiceURL() + "/PostReceiveDataJSON");
-                //new SignInActivity.PostReceive().execute(_sWSURL + "/PostReceiveDataJSON");
             }
             else
             {
@@ -469,71 +465,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
     }
     //endregion
 
-    //region Class Profile Background Task
-    private class GetProfiles extends AsyncTask<String, Void, List<dbProfile>>
-    {
-        @Override
-        protected void onPreExecute()
-        {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<dbProfile> doInBackground(String... psURL)
-        {
-            String sResult;
-            svcMilkReceipt oService = new svcMilkReceipt();
-            List<dbProfile> olProfile;
-
-            //Get the profile list from the web service
-            sResult = oService.readJSONFeed(psURL[0]);
-
-            //Parse the list and create profile object array
-            olProfile = oService.ParseProfile(sResult);
-
-            //Return the profile object array
-            return olProfile;
-        }
-
-        @Override
-        protected void onPostExecute(List<dbProfile> polProfile)
-        {
-            super.onPostExecute(polProfile);
-
-            //Instantiate the database handler
-            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
-
-            //Setup the profile and profilefound objects
-            dbProfile oProfile, oProfileFound;
-
-            //Loop through all profiles in the list
-            for (int i=0; i<polProfile.size(); i++)
-            {
-                //Get the profile object in list
-                oProfile = polProfile.get(i);
-
-                //Get profile record from the database
-                oProfileFound = oDBHandler.findProfileByID(oProfile.getPkProfileID());
-
-                //Check if the profile record was found
-                if (oProfileFound == null)
-                {
-                    //Update the profile record
-                    oDBHandler.addProfile(oProfile);
-                }
-                else
-                {
-                    //Insert the profile record
-                    oDBHandler.updateProfile(oProfile);
-                }
-            }
-
-            _signin_progressbar.setProgress(66);
-            _signin_progresslabel.setText("Download: Profiles (66%)");
-        }
-    }
-    //endregion
-
     //region Class Settings Background Task
     private class GetSettings extends AsyncTask<String, Void, List<dbSettings>>
     {
@@ -595,6 +526,71 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
             _signin_progressbar.setProgress(33);
             _signin_progresslabel.setText("Download: Settings (33%)");
+        }
+    }
+    //endregion
+
+    //region Class Profile Background Task
+    private class GetProfiles extends AsyncTask<String, Void, List<dbProfile>>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<dbProfile> doInBackground(String... psURL)
+        {
+            String sResult;
+            svcMilkReceipt oService = new svcMilkReceipt();
+            List<dbProfile> olProfile;
+
+            //Get the profile list from the web service
+            sResult = oService.readJSONFeed(psURL[0]);
+
+            //Parse the list and create profile object array
+            olProfile = oService.ParseProfile(sResult);
+
+            //Return the profile object array
+            return olProfile;
+        }
+
+        @Override
+        protected void onPostExecute(List<dbProfile> polProfile)
+        {
+            super.onPostExecute(polProfile);
+
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
+
+            //Setup the profile and profilefound objects
+            dbProfile oProfile, oProfileFound;
+
+            //Loop through all profiles in the list
+            for (int i=0; i<polProfile.size(); i++)
+            {
+                //Get the profile object in list
+                oProfile = polProfile.get(i);
+
+                //Get profile record from the database
+                oProfileFound = oDBHandler.findProfileByID(oProfile.getPkProfileID());
+
+                //Check if the profile record was found
+                if (oProfileFound == null)
+                {
+                    //Update the profile record
+                    oDBHandler.addProfile(oProfile);
+                }
+                else
+                {
+                    //Insert the profile record
+                    oDBHandler.updateProfile(oProfile);
+                }
+            }
+
+            _signin_progressbar.setProgress(66);
+            _signin_progresslabel.setText("Download: Profiles (66%)");
         }
     }
     //endregion
@@ -1013,6 +1009,120 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
             _signin_progressbar.setProgress(100);
             _signin_progresslabel.setText("Upload: Receives (100%)");
+
+            _signin_progresslabel.setText("End of data syncronization (100%)");
+        }
+    }
+    //endregion
+
+    //region Class PostReceive Background Task
+    private class PostActivity extends AsyncTask<String, Void, String>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... psURL)
+        {
+            String sResult;
+            JSONObject joParams;
+            JSONArray jaParams;
+            svcMilkReceipt oService = new svcMilkReceipt();
+            dbActivityHeader oActivity;
+            List<dbActivityHeader> olActivity;
+
+            try
+            {
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
+
+                olActivity = oDBHandler.findActivityNonTransmitted();
+
+                if (olActivity != null)
+                {
+                    if (!olActivity.isEmpty())
+                    {
+                        //Instantiate the JSON Array
+                        jaParams = new JSONArray();
+
+                        //Loop through all receive records in the list
+                        for (int i=0; i<olActivity.size(); i++)
+                        {
+                            //Get the current receive record
+                            oActivity = olActivity.get(i);
+
+                            //Instantiate a new JSON object
+                            joParams = new JSONObject();
+
+                            //Fill the JSON object with data
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_FKACTIVITYTYPEID, oActivity.getFkActivityTypeID());
+                            joParams.put("fkSettingsID", _spkSettingsID);
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_APPLICATION, oActivity.getApplication());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_MODULE, oActivity.getModule());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_ROUTINE, oActivity.getRoutine());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_USERNAME, oActivity.getUsername());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_MESSAGE, oActivity.getMessage());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_STACKTRACE, oActivity.getStackTrace());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE, oActivity.getInsertDate());
+
+                            //Add the JSON object to the array of JSON objects
+                            jaParams.put(joParams);
+                        }
+
+                        //Post the receive data to the web service
+                        sResult = oService.postJSONData(psURL[0], jaParams);
+
+                        //Check if the result of posted receive records is the same as what was sent
+                        if (Integer.parseInt(sResult) == olActivity.size())
+                        {
+                            //Loop through all receive records in the list
+                            for (int j=0; j<olActivity.size(); j++)
+                            {
+                                //Get the current receive record
+                                oActivity = olActivity.get(j);
+
+                                //Update the transmitted fields
+                                oActivity.setTransmitted(1);
+                                oActivity.setTransmittedDate(Calendar.getInstance().getTime());
+
+                                //Update the line record
+                                oDBHandler.updateActivity(oActivity);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //Set the return status
+                        sResult = "0";
+                    }
+                }
+                else
+                {
+                    //Set the return status
+                    sResult = "0";
+                }
+            }
+            catch(Exception ex)
+            {
+                Toast.makeText(SignInActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+
+                sResult = "0";
+            }
+
+            //Return the post result
+            return sResult;
+        }
+
+        @Override
+        protected void onPostExecute(String psString)
+        {
+            super.onPostExecute(psString);
+
+            _signin_progressbar.setProgress(100);
+            _signin_progresslabel.setText("Upload: Activity (100%)");
 
             _signin_progresslabel.setText("End of data syncronization (100%)");
         }

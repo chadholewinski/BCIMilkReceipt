@@ -262,59 +262,45 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    //QUE PASA....NO BUENO!
-                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", _sUsername, "User selected plant: " + _receive_plant.getSelectedItem().toString() + " but IP was: " + _oUtils.getWiFiIPAddress(getApplicationContext(), _sUsername).toString(), "");
-
-                                    //Instantiate the total lbs
-                                    Integer iTotalLBS = 0;
-
-                                    //Save the pickup
-                                    String sReceiveIDSaved = saveNewReceive();
-
-                                    //Format the date for insert and modified
-                                    DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-                                    Date dDate = new Date();
-
-                                    //Check if the record was saved
-                                    if (sReceiveIDSaved.length() > 0)
-                                    {
-                                        //Clear the screen
-                                        clearScreenValues();
-
-                                        //Display save successful message on bottom of screen
-                                        _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
-
-                                        //Get the total LBS left available on ticket
-                                        iTotalLBS = getTotalLBSLeftOnTicket();
-
-                                        //Display the pickup info on UI
-                                        _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
-
-                                        //Check if there are still LBS available for receives
-                                        if (iTotalLBS > 0)
-                                        {
-                                            //Still LBS available so do not allow finish of the ticket
-                                            _receive_finishticket_button.setEnabled(false);
-                                        }
-                                        else
-                                        {
-                                            //No LBS are available finishing of ticket is not available
-                                            _receive_finishticket_button.setEnabled(true);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        //Display save failed message on bottom of screen
-                                        _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate).toString());
-                                    }
+                                    //Run the save process
+                                    runSaveProcess();
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    // AYE CARUMBA...wa.wa.wawawawa
-                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "Awe you hit NO", "");
+                                    //Log message
+                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the save process", "");
+                                }
+                            });
+
+                    AlertDialog aDialog = builder.create();
+                    aDialog.show();
+                }
+
+                //Check if the plant selected is correct for the current ip location
+                if (!checkForDumpOrHot(_receive_plant.getSelectedItem().toString()))
+                {
+                    // Use the Builder class for convenient dialog construction
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    //Build the message
+                    builder.setMessage("Plant Warning: You have selected a Dumped or Hot load destination.  Are you sure you want to use a Dumped or Hot Destination?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                            {
+                                public void onClick(DialogInterface dialog, int id)
+                                {
+                                    //Run the save process
+                                    runSaveProcess();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                            {
+                                public void onClick(DialogInterface dialog, int id)
+                                {
+                                    //Log message
+                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the save process", "");
                                 }
                             });
 
@@ -423,13 +409,33 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_DrugTestDevice.setText(oSettings.getDrugTestDevice());
 
             //Setup the hash map dictionary
-            _oPlantLookup.put("2", "Pulaski");
-            _oPlantLookup.put("3", "Glenmore");
-            _oPlantLookup.put("4", "Langes");
-            _oPlantLookup.put("5", "Chase");
-            _oPlantLookup.put("6", "New Denmark");
-            _oPlantLookup.put("8", "Byron");
-            _oPlantLookup.put("10", "Freedom");
+            _oPlantLookup.put("Pulaski AA", "2");
+            _oPlantLookup.put("Pulaski AB", "2");
+            _oPlantLookup.put("Glenmore", "3");
+            _oPlantLookup.put("Langes Corners", "4");
+            _oPlantLookup.put("Chase", "5");
+            _oPlantLookup.put("Chase II", "5");
+            _oPlantLookup.put("New Denmark", "6");
+            _oPlantLookup.put("Byron", "8");
+            _oPlantLookup.put("Freedom", "10");
+            _oPlantLookup.put("DUMPED - Pulaski AA", "2");
+            _oPlantLookup.put("DUMPED - Pulaski AB", "2");
+            _oPlantLookup.put("DUMPED - Glenmore", "3");
+            _oPlantLookup.put("DUMPED - Langes Corners", "4");
+            _oPlantLookup.put("DUMPED - Chase", "5");
+            _oPlantLookup.put("DUMPED - Chase II", "5");
+            _oPlantLookup.put("DUMPED - New Denmark", "6");
+            _oPlantLookup.put("DUMPED - Byron", "8");
+            _oPlantLookup.put("DUMPED - Freedom", "10");
+            _oPlantLookup.put("HOT - Pulaski AA", "2");
+            _oPlantLookup.put("HOT - Pulaski AB", "2");
+            _oPlantLookup.put("HOT - Glenmore", "3");
+            _oPlantLookup.put("HOT - Langes Corners", "4");
+            _oPlantLookup.put("HOT - Chase", "5");
+            _oPlantLookup.put("HOT - Chase II", "5");
+            _oPlantLookup.put("HOT - New Denmark", "6");
+            _oPlantLookup.put("HOT - Byron", "8");
+            _oPlantLookup.put("HOT - Freedom", "10");
         }
         catch (Exception ex)
         {
@@ -599,6 +605,62 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return iTotalLBS;
+    }
+
+    private void runSaveProcess()
+    {
+        try
+        {
+            _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", _sUsername, "User selected plant: " + _receive_plant.getSelectedItem().toString() + " but IP was: " + _oUtils.getWiFiIPAddress(getApplicationContext(), _sUsername).toString(), "");
+
+            //Instantiate the total lbs
+            Integer iTotalLBS = 0;
+
+            //Save the pickup
+            String sReceiveIDSaved = saveNewReceive();
+
+            //Format the date for insert and modified
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+            Date dDate = new Date();
+
+            //Check if the record was saved
+            if (sReceiveIDSaved.length() > 0)
+            {
+                //Clear the screen
+                clearScreenValues();
+
+                //Display save successful message on bottom of screen
+                _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
+
+                //Get the total LBS left available on ticket
+                iTotalLBS = getTotalLBSLeftOnTicket();
+
+                //Display the pickup info on UI
+                _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
+
+                //Check if there are still LBS available for receives
+                if (iTotalLBS > 0)
+                {
+                    //Still LBS available so do not allow finish of the ticket
+                    _receive_finishticket_button.setEnabled(false);
+                }
+                else
+                {
+                    //No LBS are available finishing of ticket is not available
+                    _receive_finishticket_button.setEnabled(true);
+                }
+            }
+            else
+            {
+                //Display save failed message on bottom of screen
+                _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate).toString());
+            }
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "runSaveProcess", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
     }
 
     /**
@@ -840,85 +902,23 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Find the next decimal point then get the 2nd octet of the ip address
             iNextDecimal = sIPAddress.indexOf('.', 5);
             sPlantCode = sIPAddress.substring(5, iNextDecimal);
+            String sPlantLookup = _oPlantLookup.get(psPlant);
 
-            if (_oPlantLookup.get(sPlantCode) == psPlant)
+            //Check if the plant does not have a lookup value
+            if (sPlantLookup.trim() == "")
             {
+                //No lookup value means not our plant
                 bValid = true;
             }
-
-            //Check to see which plant the tablet is at then compare to the plant selected
-            /*switch(sPlantCode)
+            else
             {
-                case "2":
-                    //Pulaski
-                    if (psPlant == "Pulaski")
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-
-                case "3":
-                    //Glenmore
-                    if (psPlant == "Glenmore")
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-
-                case "4":
-                    //Langes
-                    if (psPlant == "Langes")
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-
-                case "5":
-                    //Chase
-                    if ((psPlant == "Chase") || (psPlant == "Chase 2"))
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-
-                case "6":
-                    //New Denmark
-                    if (psPlant == "New Denmark")
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-
-                case "8":
-                    //Byron
-                    if (psPlant == "Byron")
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-
-                case "10":
-                    //Freedom
-                    if (psPlant == "Freedom")
-                    {
-                        //Set valid as true
-                        bValid = true;
-                    }
-
-                    break;
-            }*/
+                //Check if the plant code in IP matches plant code in lookup table
+                if (sPlantCode == sPlantLookup)
+                {
+                    //Match
+                    bValid = true;
+                }
+            }
         }
         catch(Exception ex)
         {
@@ -927,6 +927,46 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return bValid;
+    }
+
+    /**
+     * checkForDumpOrHot
+     *  - check to see if the selected plant is a dumped or hot load selection
+     * @param psPlant
+     * @return (Boolean) - true/false if this is a dumped or hot load selection
+     */
+    private boolean checkForDumpOrHot(String psPlant)
+    {
+        boolean bReturn = false;
+        String sDump, sHot;
+
+        try
+        {
+            //Get the section of string that would be dumped or hot
+            sDump = psPlant.substring(0,5);
+            sHot = psPlant.substring(0,2);
+
+            //Check if the dumped matches
+            if (sDump == "DUMPED")
+            {
+                //This is a dumped load
+                bReturn = true;
+            }
+
+            //Check if the hot matches
+            if (sHot == "HOT")
+            {
+                //This is a hot load
+                bReturn = true;
+            }
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "checkForDumpOrHot", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        return bReturn;
     }
 
     /**

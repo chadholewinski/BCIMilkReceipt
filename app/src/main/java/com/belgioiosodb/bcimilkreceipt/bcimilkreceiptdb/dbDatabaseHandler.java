@@ -2299,6 +2299,43 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         }
     }
 
+    //updateActivity
+    // - Update Activity record(s) to SQLite database
+    public void updateActivity(dbActivityHeader poActivity)
+    {
+        //Check if activity object is null
+        if (poActivity != null)
+        {
+            //Instantiate a content value object
+            ContentValues values = new ContentValues();
+
+            //Instantiate a date formatter
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+            //Load content values with column names and values
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_PKACTIVITYHEADERID, poActivity.getPkActivityHeaderID());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_FKACTIVITYTYPEID, poActivity.getFkActivityTypeID());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_APPLICATION, poActivity.getApplication());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_MODULE, poActivity.getModule());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_ROUTINE, poActivity.getRoutine());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_USERNAME, poActivity.getUsername());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_MESSAGE, poActivity.getMessage());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_STACKTRACE, poActivity.getStackTrace());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_TRANSMITTED, poActivity.getTransmitted());
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_TRANSMITTEDDATE, dfDate.format(poActivity.getTransmittedDate()));
+            values.put(poActivity.ACTIVITYHEADER_COLUMN_INSERTDATE, dfDate.format(poActivity.getInsertDate()));
+
+            //Instantiate a new db object
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            //Update the profile object into database
+            db.update(poActivity.TABLE_ACTIVITYHEADER, values, poActivity.ACTIVITYHEADER_COLUMN_PKACTIVITYHEADERID + "= ?", new String[] {poActivity.getPkActivityHeaderID()});
+
+            //Close the database connection
+            db.close();
+        }
+    }
+
     //findActivityByID
     // - Get activity record by id
     public dbActivityHeader findActivityByID(String psActivityHeaderID)
@@ -2328,7 +2365,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oActivity.setUsername(cursor.getString(5));
             oActivity.setMessage(cursor.getString(6));
             oActivity.setStackTrace(cursor.getString(7));
-            oActivity.setTransmitted(Boolean.parseBoolean(cursor.getString(8)));
+            oActivity.setTransmitted(Integer.parseInt(cursor.getString(8)));
 
             try
             {
@@ -2394,7 +2431,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oActivity.setUsername(cursor.getString(5));
                 oActivity.setMessage(cursor.getString(6));
                 oActivity.setStackTrace(cursor.getString(7));
-                oActivity.setTransmitted(Boolean.parseBoolean(cursor.getString(8)));
+                oActivity.setTransmitted(Integer.parseInt(cursor.getString(8)));
 
                 try
                 {
@@ -2427,6 +2464,80 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         db.close();
 
         //Return the activity list
+        return olActivity;
+    }
+
+    //findActivityNonTransmitted
+    // - Get list of activity objects not transmitted
+    public List<dbActivityHeader> findActivityNonTransmitted()
+    {
+        String query;
+        List<dbActivityHeader> olActivity = new ArrayList<>();
+        dbActivityHeader oActivity = new dbActivityHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+        //Create the query string
+        query = "SELECT * FROM " + oActivity.TABLE_ACTIVITYHEADER + " WHERE " + oActivity.ACTIVITYHEADER_COLUMN_TRANSMITTED + " = 0";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast())
+            {
+                //Instantiate new activity object
+                oActivity = new dbActivityHeader();
+
+                //Get values from database
+                oActivity.setPkActivityHeaderID(cursor.getString(0));
+                oActivity.setFkActivityTypeID(cursor.getString(1));
+                oActivity.setApplication(cursor.getString(2));
+                oActivity.setModule(cursor.getString(3));
+                oActivity.setRoutine(cursor.getString(4));
+                oActivity.setUsername(cursor.getString(5));
+                oActivity.setMessage(cursor.getString(7));
+                oActivity.setStackTrace(cursor.getString(8));
+                oActivity.setTransmitted(Integer.parseInt(cursor.getString(9)));
+
+                try
+                {
+                    oActivity.setTransmittedDate(dfDate.parse(cursor.getString(10)));
+                    oActivity.setInsertDate(dfDate.parse(cursor.getString(11)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oActivity.setTransmittedDate(dDate);
+                    oActivity.setInsertDate(dDate);
+                }
+
+                //Add the activity object to the activity list object
+                olActivity.add(oActivity);
+
+                //Move to the next record from database
+                cursor.moveToNext();
+            }
+        }
+        else
+        {
+            //No records found, set activity object to null
+            olActivity = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the activity list object
         return olActivity;
     }
 

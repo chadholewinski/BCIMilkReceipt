@@ -29,7 +29,7 @@ public class dbActivityHeader
     String Username;
     String Message;
     String StackTrace;
-    Boolean Transmitted;
+    Integer Transmitted;
     Date TransmittedDate;
     Date InsertDate;
 
@@ -70,7 +70,7 @@ public class dbActivityHeader
         return StackTrace;
     }
 
-    public Boolean getTransmitted() {
+    public Integer getTransmitted() {
         return Transmitted;
     }
 
@@ -110,7 +110,7 @@ public class dbActivityHeader
         StackTrace = stackTrace;
     }
 
-    public void setTransmitted(Boolean transmitted) {
+    public void setTransmitted(Integer transmitted) {
         Transmitted = transmitted;
     }
 
