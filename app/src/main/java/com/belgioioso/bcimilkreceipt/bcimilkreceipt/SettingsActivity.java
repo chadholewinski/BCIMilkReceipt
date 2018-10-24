@@ -157,7 +157,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "menu_settings_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "Settings menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -173,7 +173,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "menu_settings_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "Settings menu back to SignIn selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -212,7 +212,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             if (v.getId() == R.id.settings_buttoneditcancel)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttoneditcancel pressed", "");
+                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "Settings edit cancel button pressed", "");
 
                 //Check if the edit/cancel button is set to edit
                 if (_settings_ButtonEditCancel.getText() == "Edit")
@@ -235,7 +235,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             else if (v.getId() == R.id.settings_buttonsave)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "settings_buttonsave pressed", "");
+                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "Settings save button pressed", "");
 
                 //Change text on edit cancel button to "Edit"
                 _settings_ButtonEditCancel.setText("Edit");

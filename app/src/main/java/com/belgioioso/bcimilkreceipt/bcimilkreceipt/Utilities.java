@@ -148,7 +148,7 @@ public class Utilities
             oActivity.setUsername(psUser);
             oActivity.setMessage(psMessage);
             oActivity.setStackTrace(psStackTrace);
-            oActivity.setTransmitted(false);
+            oActivity.setTransmitted(0);
 
             //Format the date for insert and modified
             DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
@@ -287,7 +287,7 @@ public class Utilities
      *  - converts date to proper format
      * @param poContext
      * @param psUsername
-     * @return (String) - date string in correct format
+     * @return (Date) - date in correct format
      */
     public Date getFormattedDate(Context poContext, String psUsername)
     {
@@ -321,7 +321,7 @@ public class Utilities
      * @param poContext
      * @param psUsername
      * @param psDateString
-     * @return (String) - date string in correct format
+     * @return (Date) - date in correct format
      */
     public Date getFormattedDate(Context poContext, String psUsername, String psDateString)
     {
@@ -342,6 +342,34 @@ public class Utilities
         }
 
         return dReturnDate;
+    }
+
+    /**
+     * converts date to proper formatted string
+     * @param poContext
+     * @param psUsername
+     * @param pdDate
+     * @return (String) - date string in correct format
+     */
+    public String getFormattedDateString(Context poContext, String psUsername, Date pdDate)
+    {
+        String sReturnDate = "";
+
+        try
+        {
+            //Format the date for insert and modified
+            DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+            //Reformat to a date type
+            sReturnDate = dfDate.format(pdDate);
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            insertActivity(poContext, "3", "Utilities", "getFormattedDateString", psUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        return sReturnDate;
     }
     //endregion
 }

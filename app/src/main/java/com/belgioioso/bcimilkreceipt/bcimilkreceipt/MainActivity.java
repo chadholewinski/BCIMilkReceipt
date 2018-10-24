@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "menu_main_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "Main menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "menu_main_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "MainActivity", "onOptionsItemSelected", _sUsername, "Main menu back to SignIn selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
             if (v.getId() == R.id.main_savereceipt_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "MainActivity", "onClick", _sUsername, "main_savereceipt_button pressed", "");
+                _oUtils.insertActivity(this, "1", "MainActivity", "onClick", _sUsername, "Main save new receipt button pressed", "");
 
                 //Check if the headerID was retrieved
                 if (_spkHeaderID != null)

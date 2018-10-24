@@ -200,14 +200,14 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
             {
                 //Menu About item selected
                 case R.id.menu_log_back:
-                    //Instantiate a new intent of AboutActivity
+                    //Instantiate a new intent of SignIn Activity
                     Intent signin_intent = new Intent(this, SignInActivity.class);
 
                     //Navigate to the about screen
                     startActivity(signin_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "LogActivity", "onOptionsItemSelected", "N/A", "menu_log_back item selected", "");
+                    _oUtils.insertActivity(this, "1", "LogActivity", "onOptionsItemSelected", "N/A", "Activity Log menu back to SignIn selected", "");
 
                     //Set the return value to true
                     bReturn = true;

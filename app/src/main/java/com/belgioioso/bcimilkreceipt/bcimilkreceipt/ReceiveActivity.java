@@ -177,7 +177,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "Receive menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -193,7 +193,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(pickup_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_backtopickups item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "Receive menu back to pickups selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -209,7 +209,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "menu_receive_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "Receive menu logout selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -248,7 +248,10 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             if (v.getId() == R.id.receive_save_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_save_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "Receive save button pressed", "");
+
+                //Disable the save button
+                _receive_save_button.setEnabled(false);
 
                 //Check if the plant selected is correct for the current ip location
                 if (!checkIPtoSelectedReceivePlant(_receive_plant.getSelectedItem().toString()))
@@ -272,6 +275,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                                 {
                                     //Log message
                                     _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the save process", "");
+
+                                    //Disable the save button
+                                    _receive_save_button.setEnabled(true);
                                 }
                             });
 
@@ -301,6 +307,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                                 {
                                     //Log message
                                     _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the save process", "");
+
+                                    //Disable the save button
+                                    _receive_save_button.setEnabled(true);
                                 }
                             });
 
@@ -312,7 +321,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             else if (v.getId() == R.id.receive_finishticket_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "receive_finishticket_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "Receive finish ticket button pressed", "");
 
                 //Check if the total receive LBS is the sames as total pickup LBS
                 if (getTotalLBSLeftOnTicket() == 0)
@@ -643,11 +652,17 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 {
                     //Still LBS available so do not allow finish of the ticket
                     _receive_finishticket_button.setEnabled(false);
+
+                    //Disable the save button
+                    _receive_save_button.setEnabled(true);
                 }
                 else
                 {
                     //No LBS are available finishing of ticket is not available
                     _receive_finishticket_button.setEnabled(true);
+
+                    //Disable the save button
+                    _receive_save_button.setEnabled(false);
                 }
             }
             else

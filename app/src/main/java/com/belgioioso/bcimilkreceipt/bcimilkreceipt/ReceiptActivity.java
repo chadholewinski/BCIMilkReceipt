@@ -170,7 +170,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "Receipt menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -196,7 +196,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(settings_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_settings item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu settings selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -218,7 +218,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     }
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "menu_receipt_copydb item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu copy database selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -234,7 +234,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "menu_receipt_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "Receipt menu go to SignIn selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -272,7 +272,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
             if (v.getId() == R.id.receipt_new_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "receipt_new_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Receipt new receipt button pressed", "");
 
                //Instantiate a new intent of Main Activity
                 Intent new_receipt_intent = new Intent(this, MainActivity.class);
@@ -294,7 +294,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
             else if (v.getId() == R.id.receipt_existing_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "receipt_existing_button pressed", "");
+                _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Receipt existing receipt button pressed", "");
 
                 //Get the selected ticket number from spinner
                 String sTicketNumber = spn_Existing_Tickets.getSelectedItem().toString();

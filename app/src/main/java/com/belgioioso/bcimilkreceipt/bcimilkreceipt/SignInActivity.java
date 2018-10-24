@@ -136,7 +136,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     startActivity(about_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_about item selected", "");
+                    _oUtils.insertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "SignIn menu about selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -149,7 +149,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     syncToWebService();
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "menu_signin_sync item selected", "");
+                    _oUtils.insertActivity(this, "1", "SignInActivity", "onOptionsItemSelected", "N/A", "SignIn menu sync data selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -325,7 +325,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         }
     }
 
-
     /**
      * syncToWebService
      * - Runs the background web service sync process
@@ -347,6 +346,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             //Check if settings object is populated
             if (oSettings != null)
             {
+                //Connect to web service and post settings data
+                new SignInActivity.PostSettings().execute(oSettings.getWebServiceURL() + "/PostSettingsDataJSON");
+
                 //Connect to web service and get the settings record by serial #
                 new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
@@ -365,6 +367,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(oSettings.getWebServiceURL() + "/PostReceiveDataJSON");
+
+                //Connect to web service and post non-transferred receive data
+                new SignInActivity.PostActivity().execute(oSettings.getWebServiceURL() + "/PostActivityDataJSON");
             }
             else
             {
@@ -385,6 +390,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostReceive().execute(_sWSURL + "/PostReceiveDataJSON");
+
+                //Connect to web service and post non-transferred receive data
+                new SignInActivity.PostActivity().execute(_sWSURL + "/PostActivityDataJSON");
             }
         }
         catch(Exception ex)
@@ -393,74 +401,94 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             _oUtils.insertActivity(this, "3", "SignInActivity", "syncToWebService", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
+    //endregion
 
-    /**
-     * postSettingsToWS
-     * - Posts the settings information to the web service
-     * @param poSettings
-     */
-    public void postSettingsToWS(dbSettings poSettings)
+    //region Class PostSettings Background Task
+    private class PostSettings extends AsyncTask<String, Void, String>
     {
-        String sURL;
-        String sResult;
-        JSONObject joParams;
-        JSONArray jaParams;
-        svcMilkReceipt oService = new svcMilkReceipt();
-        
-        try
+        @Override
+        protected void onPreExecute()
         {
-            sURL = _sWSURL + "/PostSettingsDataJSON";
+            super.onPreExecute();
 
-            //Instantiate the JSON Array
-            jaParams = new JSONArray();
-            
-            //Instantiate a new JSON object
-            joParams = new JSONObject();
-
-            //Fill the JSON object with data
-            joParams.put(poSettings.SETTINGS_COLUMN_PKSETTINGSID, poSettings.getPkSettingsID());
-            joParams.put(poSettings.SETTINGS_COLUMN_TABLETNAME, poSettings.getTabletName());
-            joParams.put(poSettings.SETTINGS_COLUMN_MACHINEID, poSettings.getMachineID());
-            joParams.put(poSettings.SETTINGS_COLUMN_TRACKPICKUPGEOLOCATION, poSettings.getTrackPickupGeoLocation());
-            joParams.put(poSettings.SETTINGS_COLUMN_TRACKROUTEGEOLOCATION, poSettings.getTrackRouteGeoLocation());
-            joParams.put(poSettings.SETTINGS_COLUMN_DEBUG, poSettings.getDebug());
-            joParams.put(poSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA, poSettings.getDownloadNotCompletedData());
-            joParams.put(poSettings.SETTINGS_COLUMN_AUTODBBACKUP, poSettings.getAutoDBBackup());
-            joParams.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINID, poSettings.getLastUserLoginID());
-            joParams.put(poSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, poSettings.getLastUserLoginDate());
-            joParams.put(poSettings.SETTINGS_COLUMN_LASTMILKRECEIPTID, poSettings.getLastMilkReceiptID());
-            joParams.put(poSettings.SETTINGS_COLUMN_SCANLOOP, poSettings.getScanLoop());
-            joParams.put(poSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE, poSettings.getLastSettingsUpdate());
-            joParams.put(poSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE, poSettings.getLastProfileUpdate());
-            joParams.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLE, poSettings.getUpdateAvailable());
-            joParams.put(poSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE, poSettings.getUpdateAvailableDate());
-            joParams.put(poSettings.SETTINGS_COLUMN_DRUGTESTDEVICE, poSettings.getDrugTestDevice());
-            joParams.put(poSettings.SETTINGS_COLUMN_WEBSERVICEURL, poSettings.getWebServiceURL());
-            joParams.put(poSettings.SETTINGS_COLUMN_INSERTDATE, poSettings.getInsertDate());
-            joParams.put(poSettings.SETTINGS_COLUMN_MODIFIEDDATE, poSettings.getModifiedDate());
-
-            //Add the JSON object to the array of JSON objects
-            jaParams.put(joParams);
-
-            //Post the header data to the web service
-            sResult = oService.postJSONData(sURL, jaParams);
-
-            //Check if the result of posted settings record is the same as what was sent
-            if (Integer.parseInt(sResult) == 1)
-            {
-                //Log message to activity
-                _oUtils.insertActivity(this, "1", "SignInActivity", "postSettingsToWS", "N/A", "Successfully uploaded settings to web service", "");
-            }
-            else
-            {
-                //Log message to activity
-                _oUtils.insertActivity(this, "1", "SignInActivity", "postSettingsToWS", "N/A", "Failure of uploaded settings to web service", "");
-            }
+            //Disable the login button until data sync is finished
+            _signin_login_button.setEnabled(false);
         }
-        catch(Exception ex)
+
+        @Override
+        protected String doInBackground(String... psURL)
         {
-            //Log error message to activity
-            _oUtils.insertActivity(this, "3", "SignInActivity", "postSettingsToWS", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            String sResult;
+            JSONObject joParams;
+            JSONArray jaParams;
+            svcMilkReceipt oService = new svcMilkReceipt();
+            dbSettings oSettings;
+
+            try
+            {
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
+
+                //Get the settings from the database
+                oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+                //Check if the settings object is null
+                if (oSettings != null)
+                {
+                    //Instantiate the JSON Array and Object
+                    jaParams = new JSONArray();
+                    joParams = new JSONObject();
+
+                    //Fill the JSON object with data
+                    joParams.put(oSettings.SETTINGS_COLUMN_PKSETTINGSID, oSettings.getPkSettingsID());
+                    joParams.put(oSettings.SETTINGS_COLUMN_TABLETNAME, oSettings.getTabletName());
+                    joParams.put(oSettings.SETTINGS_COLUMN_MACHINEID, oSettings.getMachineID());
+                    joParams.put(oSettings.SETTINGS_COLUMN_TRACKPICKUPGEOLOCATION, oSettings.getTrackPickupGeoLocation());
+                    joParams.put(oSettings.SETTINGS_COLUMN_TRACKROUTEGEOLOCATION, oSettings.getTrackRouteGeoLocation());
+                    joParams.put(oSettings.SETTINGS_COLUMN_DEBUG, oSettings.getDebug());
+                    joParams.put(oSettings.SETTINGS_COLUMN_DOWNLOADNOTCOMPLETEDDATA, oSettings.getDownloadNotCompletedData());
+                    joParams.put(oSettings.SETTINGS_COLUMN_AUTODBBACKUP, oSettings.getAutoDBBackup());
+                    joParams.put(oSettings.SETTINGS_COLUMN_LASTUSERLOGINID, oSettings.getLastUserLoginID());
+                    joParams.put(oSettings.SETTINGS_COLUMN_LASTUSERLOGINDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oSettings.getLastUserLoginDate()));
+                    joParams.put(oSettings.SETTINGS_COLUMN_LASTMILKRECEIPTID, oSettings.getLastMilkReceiptID());
+                    joParams.put(oSettings.SETTINGS_COLUMN_SCANLOOP, oSettings.getScanLoop());
+                    joParams.put(oSettings.SETTINGS_COLUMN_LASTSETTINGSUPDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oSettings.getLastSettingsUpdate()));
+                    joParams.put(oSettings.SETTINGS_COLUMN_LASTPROFILEUPDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oSettings.getLastProfileUpdate()));
+                    joParams.put(oSettings.SETTINGS_COLUMN_UPDATEAVAILABLE, oSettings.getUpdateAvailable());
+                    joParams.put(oSettings.SETTINGS_COLUMN_UPDATEAVAILABLEDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oSettings.getUpdateAvailableDate()));
+                    joParams.put(oSettings.SETTINGS_COLUMN_DRUGTESTDEVICE, oSettings.getDrugTestDevice());
+                    joParams.put(oSettings.SETTINGS_COLUMN_WEBSERVICEURL, oSettings.getWebServiceURL());
+                    joParams.put(oSettings.SETTINGS_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oSettings.getInsertDate()));
+                    joParams.put(oSettings.SETTINGS_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oSettings.getModifiedDate()));
+
+                    //Add the JSON object to the array of JSON objects
+                    jaParams.put(joParams);
+
+                    //Post the header data to the web service
+                    sResult = oService.postJSONData(psURL[0], jaParams);
+                }
+                else
+                {
+                    //Set the return status
+                    sResult = "0";
+                }
+            }
+            catch(Exception ex)
+            {
+                sResult = "0";
+            }
+
+            //Return the post result
+            return sResult;
+        }
+
+        @Override
+        protected void onPostExecute(String psString)
+        {
+            super.onPostExecute(psString);
+
+            _signin_progressbar.setProgress(100);
+            _signin_progresslabel.setText("Upload: Settings (100%)");
         }
     }
     //endregion
@@ -712,8 +740,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put(oHeader.HEADER_COLUMN_STARTMILEAGE, oHeader.getStartMileage());
                             joParams.put(oHeader.HEADER_COLUMN_ENDMILEAGE, oHeader.getEndMileage());
                             joParams.put(oHeader.HEADER_COLUMN_TOTALMILEAGE, oHeader.getTotalMileage());
-                            joParams.put(oHeader.HEADER_COLUMN_INSERTDATE, oHeader.getInsertDate());
-                            joParams.put(oHeader.HEADER_COLUMN_MODIFIEDDATE, oHeader.getModifiedDate());
+                            joParams.put(oHeader.HEADER_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getInsertDate()));
+                            joParams.put(oHeader.HEADER_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getModifiedDate()));
 
                             //Add the JSON object to the array of JSON objects
                             jaParams.put(joParams);
@@ -766,8 +794,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         {
             super.onPostExecute(psString);
 
-            _signin_progressbar.setProgress(33);
-            _signin_progresslabel.setText("Upload: Headers (33%)");
+            _signin_progressbar.setProgress(25);
+            _signin_progresslabel.setText("Upload: Headers (25%)");
         }
     }
     //endregion
@@ -827,14 +855,14 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put(oLine.LINE_COLUMN_GAUGERODMINOR, oLine.getGaugeRodMinor());
                             joParams.put(oLine.LINE_COLUMN_CONVERTEDLBS, oLine.getConvertedLBS());
                             joParams.put(oLine.LINE_COLUMN_TEMPERATURE, oLine.getTemperature());
-                            joParams.put(oLine.LINE_COLUMN_PICKUPDATE, oLine.getPickupDate());
+                            joParams.put(oLine.LINE_COLUMN_PICKUPDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getPickupDate()));
                             joParams.put(oLine.LINE_COLUMN_DFATICKET, oLine.getDFATicket());
                             joParams.put(oLine.LINE_COLUMN_LABCODE, oLine.getLabCode());
                             joParams.put(oLine.LINE_COLUMN_LATITUDE, oLine.getLatitude());
                             joParams.put(oLine.LINE_COLUMN_LONGITUDE, oLine.getLongitude());
                             joParams.put(oLine.LINE_COLUMN_ACCURRACY, oLine.getAccurracy());
-                            joParams.put(oLine.LINE_COLUMN_INSERTDATE, oLine.getInsertDate());
-                            joParams.put(oLine.LINE_COLUMN_MODIFIEDDATE, oLine.getModifiedDate());
+                            joParams.put(oLine.LINE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getInsertDate()));
+                            joParams.put(oLine.LINE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getModifiedDate()));
 
                             //Add the JSON object to the array of JSON objects
                             jaParams.put(joParams);
@@ -887,8 +915,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         {
             super.onPostExecute(psString);
 
-            _signin_progressbar.setProgress(66);
-            _signin_progresslabel.setText("Upload: Lines (66%)");
+            _signin_progressbar.setProgress(50);
+            _signin_progresslabel.setText("Upload: Lines (50%)");
         }
     }
     //endregion
@@ -943,7 +971,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, "00000000-0000-0000-0000-000000000000");
                             joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, oReceive.getDrugTestDevice());
                             joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTRESULT, oReceive.getDrugTestResult());
-                            joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, oReceive.getReceiveDateTime());
+                            joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getReceiveDateTime()));
                             joParams.put(oReceive.RECEIVE_COLUMN_TANK, oReceive.getTank());
                             joParams.put(oReceive.RECEIVE_COLUMN_SCALEMETER, oReceive.getScaleMeter());
                             joParams.put(oReceive.RECEIVE_COLUMN_TOPSEAL, oReceive.getTopSeal());
@@ -951,8 +979,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDLBS, oReceive.getReceivedLBS());
                             joParams.put(oReceive.RECEIVE_COLUMN_LOADTEMP, oReceive.getLoadTemp());
                             joParams.put(oReceive.RECEIVE_COLUMN_INTAKENUMBER, oReceive.getIntakeNumber());
-                            joParams.put(oReceive.RECEIVE_COLUMN_INSERTDATE, oReceive.getInsertDate());
-                            joParams.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, oReceive.getModifiedDate());
+                            joParams.put(oReceive.RECEIVE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getInsertDate()));
+                            joParams.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getModifiedDate()));
 
                             //Add the JSON object to the array of JSON objects
                             jaParams.put(joParams);
@@ -1007,15 +1035,13 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         {
             super.onPostExecute(psString);
 
-            _signin_progressbar.setProgress(100);
-            _signin_progresslabel.setText("Upload: Receives (100%)");
-
-            _signin_progresslabel.setText("End of data syncronization (100%)");
+            _signin_progressbar.setProgress(75);
+            _signin_progresslabel.setText("Upload: Receives (75%)");
         }
     }
     //endregion
 
-    //region Class PostReceive Background Task
+    //region Class PostActivity Background Task
     private class PostActivity extends AsyncTask<String, Void, String>
     {
         @Override
@@ -1039,7 +1065,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Instantiate the database handler
                 dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
 
-                olActivity = oDBHandler.findActivityNonTransmitted();
+                olActivity = oDBHandler.findActivityNonTransmitted(getApplicationContext(), "N/A");
 
                 if (olActivity != null)
                 {
@@ -1066,7 +1092,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                             joParams.put(oActivity.ACTIVITYHEADER_COLUMN_USERNAME, oActivity.getUsername());
                             joParams.put(oActivity.ACTIVITYHEADER_COLUMN_MESSAGE, oActivity.getMessage());
                             joParams.put(oActivity.ACTIVITYHEADER_COLUMN_STACKTRACE, oActivity.getStackTrace());
-                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE, oActivity.getInsertDate());
+                            joParams.put(oActivity.ACTIVITYHEADER_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oActivity.getInsertDate()));
 
                             //Add the JSON object to the array of JSON objects
                             jaParams.put(joParams);
@@ -1125,6 +1151,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             _signin_progresslabel.setText("Upload: Activity (100%)");
 
             _signin_progresslabel.setText("End of data syncronization (100%)");
+
+            //Sync finished enable the signin button
+            _signin_login_button.setEnabled(true);
         }
     }
     //endregion

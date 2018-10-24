@@ -271,7 +271,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "menu_pickup_activity item selected", "");
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "Pickup menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -287,7 +287,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     startActivity(logout_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "menu_pickup_logout item selected", "");
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "Pickup menu back to SignIn selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -325,7 +325,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             if (v.getId() == R.id.pickup_scanproducer_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_scanproducer_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup scan producer button pressed", "");
 
                 //Instantiate a new producer scanning intent integrator
                 IntentIntegrator scanProducerIntegrator = new IntentIntegrator(this);
@@ -337,7 +337,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             else if (v.getId() == R.id.pickup_scanlabcode_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_scanlabcode_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup scan labcode button pressed", "");
 
                 //Instantiate a new labcode scanning intent integrator
                 IntentIntegrator scanLabCodeIntegrator = new IntentIntegrator(this);
@@ -349,7 +349,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             else if (v.getId() == R.id.pickup_save_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_save_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup save button pressed", "");
 
                 //Save the pickup
                 String sLineIDSaved = saveNewPickup();
@@ -400,7 +400,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             else if (v.getId() == R.id.pickup_gotoreceive_button)
             {
                 //Log message to activity
-                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "pickup_gotoreceive_button pressed", "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup go to receive button pressed", "");
 
                 //Instantiate a new intent of ReceiveActivity
                 Intent receive_intent = new Intent(this, ReceiveActivity.class);

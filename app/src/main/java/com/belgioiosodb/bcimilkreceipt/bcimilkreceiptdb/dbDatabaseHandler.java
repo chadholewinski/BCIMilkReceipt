@@ -2469,7 +2469,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
     //findActivityNonTransmitted
     // - Get list of activity objects not transmitted
-    public List<dbActivityHeader> findActivityNonTransmitted()
+    public List<dbActivityHeader> findActivityNonTransmitted(Context poContext, String psUsername)
     {
         String query;
         List<dbActivityHeader> olActivity = new ArrayList<>();
@@ -2503,14 +2503,14 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oActivity.setModule(cursor.getString(3));
                 oActivity.setRoutine(cursor.getString(4));
                 oActivity.setUsername(cursor.getString(5));
-                oActivity.setMessage(cursor.getString(7));
-                oActivity.setStackTrace(cursor.getString(8));
-                oActivity.setTransmitted(Integer.parseInt(cursor.getString(9)));
+                oActivity.setMessage(cursor.getString(6));
+                oActivity.setStackTrace(cursor.getString(7));
+                oActivity.setTransmitted(Integer.parseInt(cursor.getString(8)));
 
                 try
                 {
-                    oActivity.setTransmittedDate(dfDate.parse(cursor.getString(10)));
-                    oActivity.setInsertDate(dfDate.parse(cursor.getString(11)));
+                    oActivity.setTransmittedDate(dfDate.parse(cursor.getString(9)));
+                    oActivity.setInsertDate(dfDate.parse(cursor.getString(10)));
                 }
                 catch(ParseException pe)
                 {
