@@ -326,8 +326,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Check if the total receive LBS is the sames as total pickup LBS
                 if (getTotalLBSLeftOnTicket() == 0)
                 {
-                    //Flag header, line and receive records as finished and check status returned
-                    if (setTicketAsFinished())
+                    //Check if this is a waiting for scale data ticket
+                    if (checkTicketWaitingForScaleData())
                     {
                         //Instantiate a new intent of SignInActivity
                         Intent signin_intent = new Intent(this, SignInActivity.class);
@@ -337,8 +337,20 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     }
                     else
                     {
-                        //Display finished failed message on bottom of screen
-                        _receive_Bottom_SaveMessage.setText("Receive finish failed");
+                        //Flag header, line and receive records as finished and check status returned
+                        if (setTicketAsFinished())
+                        {
+                            //Instantiate a new intent of SignInActivity
+                            Intent signin_intent = new Intent(this, SignInActivity.class);
+
+                            //Navigate to the signin screen
+                            startActivity(signin_intent);
+                        }
+                        else
+                        {
+                            //Display finished failed message on bottom of screen
+                            _receive_Bottom_SaveMessage.setText("Receive finish failed");
+                        }
                     }
                 }
                 else
@@ -552,7 +564,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             if (polLines != null)
             {
                 //Loop through all pickup lines on ticket
-                for (int i = 0; i < polLines.size(); i++) {
+                for (int i = 0; i < polLines.size(); i++)
+                {
                     //Instantiate a new line object
                     oLine = new dbLine();
 
@@ -1223,6 +1236,88 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return iStartMileage;
+    }
+
+    /**
+     * checkTicketWaitingForScaleData
+     *  - checks if the ticket is a waiting for scale data ticket
+     * @return (Boolean) - true/false if the ticket is waiting for scale data
+     */
+    private boolean checkTicketWaitingForScaleData()
+    {
+        List<dbLine> olLine;
+        dbLine oLine;
+        List<dbReceive> olReceive;
+        dbReceive oReceive;
+        dbHeader oHeader;
+        boolean bReturn = false;
+
+        try
+        {
+            //Instantiate a new database connection object
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+            olReceive  = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+
+            if (getTotalPickupLBS(olLine) == 0 && getTotalReceiveLBS(olReceive) == 0)
+            {
+                //Instantiate the header object and get header from database
+                oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
+
+                //Set waiting on scale data flag
+                oHeader.setWaitingForScaleData(1);
+
+                //Update the header record
+                oDBHandler.updateHeader(oHeader);
+
+                //Loop through all of the line records
+                for (int i = 0; i < olLine.size(); i++)
+                {
+                    //Instantiate a new line object
+                    oLine = new dbLine();
+
+                    //Get the next line in list
+                    oLine = olLine.get(i);
+
+                    //Update the line waiting for scale data flag
+                    oLine.setWaitingForScaleData(1);
+
+                    //Update line object in database
+                    oDBHandler.updateLine(oLine);
+                }
+
+                //Loop through all of the receive records
+                for (int j = 0; j < olReceive.size(); j++)
+                {
+                    //Instantiate a new receive object
+                    oReceive = new dbReceive();
+
+                    //Get the next receive in list
+                    oReceive = olReceive.get(j);
+
+                    //Update the receive waiting for scale data flag
+                    oReceive.setWaitingForScaleData(1);
+
+                    //Update receive object in database
+                    oDBHandler.updateReceive(oReceive);
+                }
+
+                bReturn = true;
+            }
+            else
+            {
+                bReturn = false;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "checkTicketWaitingForScaleData", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        return bReturn;
     }
 
     /**

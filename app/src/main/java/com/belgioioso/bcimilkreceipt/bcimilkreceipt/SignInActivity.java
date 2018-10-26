@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -370,6 +371,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostActivity().execute(oSettings.getWebServiceURL() + "/PostActivityDataJSON");
+
+                //Connect to web service and get ticket numbers for partially completed tickets
+                new SignInActivity.GetHeaderTicketNumbers().execute(oSettings.getWebServiceURL() + "/GetHeaderTicketNumberDataJSON");
             }
             else
             {
@@ -393,6 +397,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                 //Connect to web service and post non-transferred receive data
                 new SignInActivity.PostActivity().execute(_sWSURL + "/PostActivityDataJSON");
+
+                //Connect to web service and get ticket numbers for partially completed tickets
+                new SignInActivity.GetHeaderTicketNumbers().execute(_sWSURL + "/GetHeaderTicketNumberDataJSON");
             }
         }
         catch(Exception ex)
@@ -1154,6 +1161,124 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
             //Sync finished enable the signin button
             _signin_login_button.setEnabled(true);
+        }
+    }
+    //endregion
+
+    //region Class Header Ticket Number Background Task
+    private class GetHeaderTicketNumbers extends AsyncTask<String, Void, List<dbHeader>>
+    {
+        @Override
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<dbHeader> doInBackground(String... psURL)
+        {
+            svcMilkReceipt oService = new svcMilkReceipt();
+            JSONObject joParams;
+            JSONArray jaParams;
+            dbHeader oHeader;
+            List<dbHeader> olHeader = new ArrayList<>();
+            String sResult;
+
+            try
+            {
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
+
+                olHeader = oDBHandler.findHeadersNonFinished();
+
+                if (olHeader != null)
+                {
+                    if (!olHeader.isEmpty())
+                    {
+                        //Instantiate the JSON Array
+                        jaParams = new JSONArray();
+
+                        //Loop through all header records in the list
+                        for (int i = 0; i < olHeader.size(); i++)
+                        {
+                            //Get the current header record
+                            oHeader = olHeader.get(i);
+
+                            //Instantiate a new JSON object
+                            joParams = new JSONObject();
+
+                            //Fill the JSON object with data
+                            joParams.put(oHeader.HEADER_COLUMN_PKHEADERID, oHeader.getPkHeaderID());
+                            joParams.put(oHeader.HEADER_COLUMN_FKPROFILEID, oHeader.getFkProfileID());
+                            joParams.put("fkSettingsID", _spkSettingsID);
+                            joParams.put(oHeader.HEADER_COLUMN_TICKETNUMBER, oHeader.getTicketNumber());
+                            joParams.put(oHeader.HEADER_COLUMN_ROUTEIDENTIFIER, oHeader.getRouteIdentifier());
+                            joParams.put(oHeader.HEADER_COLUMN_TRUCKLICENSENUMBER, oHeader.getTruckLicenseNumber());
+                            joParams.put(oHeader.HEADER_COLUMN_STARTMILEAGE, oHeader.getStartMileage());
+                            joParams.put(oHeader.HEADER_COLUMN_ENDMILEAGE, oHeader.getEndMileage());
+                            joParams.put(oHeader.HEADER_COLUMN_TOTALMILEAGE, oHeader.getTotalMileage());
+                            joParams.put(oHeader.HEADER_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getInsertDate()));
+                            joParams.put(oHeader.HEADER_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getModifiedDate()));
+
+                            //Add the JSON object to the array of JSON objects
+                            jaParams.put(joParams);
+                        }
+
+                        //Get the settings record from the web service
+                        sResult = oService.postJSONData(psURL[0], jaParams);
+
+                        //Parse the header records and create the header object array
+                        olHeader = oService.ParseHeader(sResult);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Toast.makeText(SignInActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+
+            //Return the header object array
+            return olHeader;
+        }
+
+        @Override
+        protected void onPostExecute(List<dbHeader> polHeader)
+        {
+            super.onPostExecute(polHeader);
+
+            //Check if the header list is null
+            if(polHeader != null)
+            {
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
+
+                //Setup the header and headerfound objects
+                dbHeader oHeader, oHeaderFound;
+
+                //Loop through all header records in the list
+                for (int i = 0; i < polHeader.size(); i++) {
+                    //Get the header object in list
+                    oHeader = polHeader.get(i);
+
+                    //Get the header record from the database
+                    oHeaderFound = oDBHandler.findHeaderByID(oHeader.getPkHeaderID());
+
+                    //Check if the header record was found
+                    if (oHeaderFound == null) {
+                        //Insert header from web service
+                        oDBHandler.addHeader(oHeader);
+                    } else {
+                        //Set the ticket number from the web service
+                        oHeaderFound.setTicketNumber(oHeader.getTicketNumber());
+
+                        //Update the settings record
+                        oDBHandler.updateHeader(oHeaderFound);
+                    }
+                }
+            }
+
+            _signin_progressbar.setProgress(100);
+            _signin_progresslabel.setText("Download: Header Ticket Numbers (100%)");
         }
     }
     //endregion

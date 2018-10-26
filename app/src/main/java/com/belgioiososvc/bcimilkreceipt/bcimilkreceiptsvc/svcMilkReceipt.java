@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.belgioioso.bcimilkreceipt.bcimilkreceipt.Utilities;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbPlant;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
@@ -283,6 +284,66 @@ public class svcMilkReceipt
         }
 
         return olProfile;
+    }
+
+    /**
+     * ParseHeader
+     *  - parses the JSON feed to create a list of header objects
+     * @param psJSONStr - JSON data string to be parsed
+     * @return (List of Headers) - list of header objects
+     */
+    public List<dbHeader> ParseHeader(String psJSONStr)
+    {
+        List<dbHeader> olHeader = new ArrayList<>();
+        dbHeader oHeader;
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+        try
+        {
+            //Check if the JSON string is empty
+            if (psJSONStr != null)
+            {
+                //Instantiate a new JSON object from JSON string
+                JSONObject objHeader = new JSONObject(psJSONStr);
+
+                //Instantiate a new JSON array from the JSON object
+                JSONArray arrHeader = objHeader.getJSONArray("GetHeaderDataJSONResult");
+
+                //Loop through all of the Header objects in the JSON array
+                for (int i = 0; i < arrHeader.length(); i++)
+                {
+                    //Instantiate a new dbHeader object
+                    oHeader = new dbHeader();
+
+                    //Read the current JSON object
+                    JSONObject objHeaderSingle = arrHeader.getJSONObject(i);
+
+                    //Load the data into the dbHeader object
+                    oHeader.setPkHeaderID(objHeaderSingle.getString("pkHeaderID"));
+                    oHeader.setFkProfileID(objHeaderSingle.getString("fkProfileID"));
+                    oHeader.setTicketNumber(objHeaderSingle.getString("TicketNumber"));
+                    oHeader.setRouteIdentifier(objHeaderSingle.getString("RouteIdentifier"));
+                    oHeader.setTruckLicenseNumber(objHeaderSingle.getString("TruckLicenseNumber"));
+                    oHeader.setStartMileage(objHeaderSingle.getInt("StartMileage"));
+                    oHeader.setEndMileage(objHeaderSingle.getInt("EndMileage"));
+                    oHeader.setFinished(objHeaderSingle.getInt("Finished"));
+                    oHeader.setWaitingForScaleData(objHeaderSingle.getInt("WaitingForScaleData"));
+                    oHeader.setTransmitted(objHeaderSingle.getInt("Transmitted"));
+                    oHeader.setTransmittedDate(_oUtils.convertJSONDateToDate(objHeaderSingle.getString("TransmittedDate")));
+                    oHeader.setInsertDate(_oUtils.convertJSONDateToDate(objHeaderSingle.getString("InsertDate")));
+                    oHeader.setModifiedDate(_oUtils.convertJSONDateToDate(objHeaderSingle.getString("ModifiedDate")));
+
+                    //Add the Header object to the Header list
+                    olHeader.add(oHeader);
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            Log.d("ParseHeader", e.getLocalizedMessage());
+        }
+
+        return olHeader;
     }
     //endregion
 }
