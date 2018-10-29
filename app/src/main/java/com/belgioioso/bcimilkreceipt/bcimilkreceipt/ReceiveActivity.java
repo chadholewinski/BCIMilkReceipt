@@ -1260,7 +1260,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
             olReceive  = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
 
-            if (getTotalPickupLBS(olLine) == 0 && getTotalReceiveLBS(olReceive) == 0)
+            if ((getTotalPickupLBS(olLine) == 0) && (getTotalReceiveLBS(olReceive) == 0))
             {
                 //Instantiate the header object and get header from database
                 oHeader = oDBHandler.findHeaderByID(_spkHeaderID);

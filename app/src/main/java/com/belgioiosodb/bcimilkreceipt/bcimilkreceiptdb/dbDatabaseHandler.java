@@ -698,6 +698,81 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         return olHeader;
     }
 
+    //findHeadersNonTransmittedWaitingOnScale
+    // - Get list of header objects not transmitted and waiting on scale data
+    public List<dbHeader> findHeadersNonTransmittedWaitingOnScale()
+    {
+        String query;
+        List<dbHeader> olHeader = new ArrayList<>();
+        dbHeader oHeader = new dbHeader();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+        //Create the query string
+        query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_FINISHED + " = 0" + " AND " + oHeader.HEADER_COLUMN_TRANSMITTED + " = 0" + " AND " + oHeader.HEADER_COLUMN_WAITINGFORSCALEDATA + " = 1";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast())
+            {
+                //Get values from database
+                oHeader.setPkHeaderID(cursor.getString(0));
+                oHeader.setFkProfileID(cursor.getString(1));
+                oHeader.setTicketNumber(cursor.getString(2));
+                oHeader.setRouteIdentifier(cursor.getString(3));
+                oHeader.setTruckLicenseNumber(cursor.getString(4));
+                oHeader.setStartMileage(Integer.parseInt(cursor.getString(5)));
+                oHeader.setEndMileage(Integer.parseInt(cursor.getString(6)));
+                oHeader.setTotalMileage(Integer.parseInt(cursor.getString(7)));
+                oHeader.setFinished(Integer.parseInt(cursor.getString(8)));
+                oHeader.setWaitingForScaleData(Integer.parseInt(cursor.getString(9)));
+                oHeader.setTransmitted(Integer.parseInt(cursor.getString(10)));
+
+                try
+                {
+                    oHeader.setTransmittedDate(dfDate.parse(cursor.getString(11)));
+                    oHeader.setInsertDate(dfDate.parse(cursor.getString(12)));
+                    oHeader.setModifiedDate(dfDate.parse(cursor.getString(13)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oHeader.setTransmittedDate(dDate);
+                    oHeader.setInsertDate(dDate);
+                    oHeader.setModifiedDate(dDate);
+                }
+
+                //Add the header object to the header list object
+                olHeader.add(oHeader);
+
+                //Move to the next record from database
+                cursor.moveToNext();
+            }
+        }
+        else
+        {
+            //No records found, set header object to null
+            olHeader = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the header list object
+        return olHeader;
+    }
+
     //deleteHeaderByID
     // - Delete a header record by ID
     public boolean deleteHeaderByID(String psHeaderID)
@@ -1111,6 +1186,94 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         //Return the line list object
         return olLine;
     }
+
+    //findLinesNonTransmittedWaitingOnScale
+    // - Get list of line objects not transmitted and waiting on scale data
+    public List<dbLine> findLinesNonTransmittedWaitingOnScale()
+    {
+        String query;
+        List<dbLine> olLine = new ArrayList<>();
+        dbLine oLine = new dbLine();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+        //Create the query string
+        query = "SELECT * FROM " + oLine.TABLE_LINE + " WHERE " + oLine.LINE_COLUMN_FINISHED + " = 0" + " AND " + oLine.LINE_COLUMN_TRANSMITTED + " = 0" + " AND " + oLine.LINE_COLUMN_WAITINGFORSCALEDATA + " = 1";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast())
+            {
+                //Instantiate new line object
+                oLine = new dbLine();
+
+                //Get values from database
+                oLine.setPkLineID(cursor.getString(0));
+                oLine.setFkHeaderID(cursor.getString(1));
+                oLine.setTank(cursor.getString(2));
+                oLine.setProducer(cursor.getString(3));
+                oLine.setCompany(cursor.getString(4));
+                oLine.setDivision(cursor.getString(5));
+                oLine.setType(cursor.getString(6));
+                oLine.setGaugeRodMajor(Integer.parseInt(cursor.getString(7)));
+                oLine.setGaugeRodMinor(Integer.parseInt(cursor.getString(8)));
+                oLine.setConvertedLBS(Integer.parseInt(cursor.getString(9)));
+                oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
+                oLine.setDFATicket(cursor.getString(12));
+                oLine.setLabCode(cursor.getString(13));
+                oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
+                oLine.setLongitude(Double.parseDouble(cursor.getString(15)));
+                oLine.setAccurracy(Double.parseDouble(cursor.getString(16)));
+                oLine.setFinished(Integer.parseInt(cursor.getString(17)));
+                oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
+                oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
+
+                try
+                {
+                    oLine.setPickupDate(dfDate.parse(cursor.getString(11)));
+                    oLine.setTransmittedDate(dfDate.parse(cursor.getString(20)));
+                    oLine.setInsertDate(dfDate.parse(cursor.getString(21)));
+                    oLine.setModifiedDate(dfDate.parse(cursor.getString(22)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oLine.setPickupDate(dDate);
+                    oLine.setTransmittedDate(dDate);
+                    oLine.setInsertDate(dDate);
+                    oLine.setModifiedDate(dDate);
+                }
+
+                //Add the line object to the line list object
+                olLine.add(oLine);
+
+                //Move to the next record from database
+                cursor.moveToNext();
+            }
+        }
+        else
+        {
+            //No records found, set line object to null
+            olLine = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the line list object
+        return olLine;
+    }
     
     //deleteLineByID
     // - Delete a line record by ID
@@ -1436,6 +1599,91 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
         //Create the query string
         query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_FINISHED + " = 1" + " AND " + oReceive.RECEIVE_COLUMN_TRANSMITTED + " = 0";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            while(!cursor.isAfterLast())
+            {
+                //Instantiate new receive object
+                oReceive = new dbReceive();
+
+                //Get values from database
+                oReceive.setPkReceiveID(cursor.getString(0));
+                oReceive.setFkHeaderID(cursor.getString(1));
+                oReceive.setFkPlantID(cursor.getString(2));
+                oReceive.setFkPlantOriginalID(cursor.getString(3));
+                oReceive.setDrugTestDevice(cursor.getString(4));
+                oReceive.setDrugTestResult(cursor.getString(5));
+                oReceive.setTank(cursor.getString(7));
+                oReceive.setScaleMeter(Integer.parseInt(cursor.getString(8)));
+                oReceive.setTopSeal(cursor.getString(9));
+                oReceive.setBottomSeal(cursor.getString(10));
+                oReceive.setReceivedLBS(Integer.parseInt(cursor.getString(11)));
+                oReceive.setLoadTemp(Integer.parseInt(cursor.getString(12)));
+                oReceive.setIntakeNumber(Integer.parseInt(cursor.getString(13)));
+                oReceive.setFinished(Integer.parseInt(cursor.getString(14)));
+                oReceive.setWaitingForScaleData(Integer.parseInt(cursor.getString(15)));
+                oReceive.setTransmitted(Integer.parseInt(cursor.getString(16)));
+
+                try
+                {
+                    oReceive.setReceiveDateTime(dfDate.parse(cursor.getString(6)));
+                    oReceive.setTransmittedDate(dfDate.parse(cursor.getString(17)));
+                    oReceive.setInsertDate(dfDate.parse(cursor.getString(18)));
+                    oReceive.setModifiedDate(dfDate.parse(cursor.getString(19)));
+                }
+                catch(ParseException pe)
+                {
+                    Date dDate = new Date();
+                    dDate = Calendar.getInstance().getTime();
+
+                    oReceive.setReceiveDateTime(dDate);
+                    oReceive.setTransmittedDate(dDate);
+                    oReceive.setInsertDate(dDate);
+                    oReceive.setModifiedDate(dDate);
+                }
+
+                //Add the receive object to the receive list object
+                olReceive.add(oReceive);
+
+                //Move to the next record from database
+                cursor.moveToNext();
+            }
+        }
+        else
+        {
+            //No records found, set receive object to null
+            olReceive = null;
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the receive list object
+        return olReceive;
+    }
+
+    //findReceivesNonTransmittedWaitingForScale
+    // - Get list of receive objects not transmitted waiting for scale data
+    public List<dbReceive> findReceivesNonTransmittedWaitingForScale()
+    {
+        String query;
+        List<dbReceive> olReceive = new ArrayList<>();
+        dbReceive oReceive = new dbReceive();
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+        //Create the query string
+        query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_FINISHED + " = 0" + " AND " + oReceive.RECEIVE_COLUMN_TRANSMITTED + " = 0" + " AND " + oReceive.RECEIVE_COLUMN_WAITINGFORSCALEDATA + " = 1";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();
