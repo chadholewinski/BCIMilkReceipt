@@ -555,7 +555,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
-        query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_FINISHED + " = 0 AND " + oHeader.HEADER_COLUMN_TICKETNUMBER + " = \"\"";
+        query = "SELECT * FROM " + oHeader.TABLE_HEADER + " WHERE " + oHeader.HEADER_COLUMN_FINISHED + " = 0"; //" AND " + oHeader.HEADER_COLUMN_TICKETNUMBER + " = \"\"";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();

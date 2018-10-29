@@ -303,11 +303,13 @@ public class svcMilkReceipt
             //Check if the JSON string is empty
             if (psJSONStr != null)
             {
+                psJSONStr = "{\"GetHeaderTicketNumberDataJSON\":" + psJSONStr + "}";
+
                 //Instantiate a new JSON object from JSON string
                 JSONObject objHeader = new JSONObject(psJSONStr);
 
                 //Instantiate a new JSON array from the JSON object
-                JSONArray arrHeader = objHeader.getJSONArray("GetHeaderDataJSONResult");
+                JSONArray arrHeader = objHeader.getJSONArray("GetHeaderTicketNumberDataJSON");
 
                 //Loop through all of the Header objects in the JSON array
                 for (int i = 0; i < arrHeader.length(); i++)
@@ -326,12 +328,6 @@ public class svcMilkReceipt
                     oHeader.setTruckLicenseNumber(objHeaderSingle.getString("TruckLicenseNumber"));
                     oHeader.setStartMileage(objHeaderSingle.getInt("StartMileage"));
                     oHeader.setEndMileage(objHeaderSingle.getInt("EndMileage"));
-                    oHeader.setFinished(objHeaderSingle.getInt("Finished"));
-                    oHeader.setWaitingForScaleData(objHeaderSingle.getInt("WaitingForScaleData"));
-                    oHeader.setTransmitted(objHeaderSingle.getInt("Transmitted"));
-                    oHeader.setTransmittedDate(_oUtils.convertJSONDateToDate(objHeaderSingle.getString("TransmittedDate")));
-                    oHeader.setInsertDate(_oUtils.convertJSONDateToDate(objHeaderSingle.getString("InsertDate")));
-                    oHeader.setModifiedDate(_oUtils.convertJSONDateToDate(objHeaderSingle.getString("ModifiedDate")));
 
                     //Add the Header object to the Header list
                     olHeader.add(oHeader);

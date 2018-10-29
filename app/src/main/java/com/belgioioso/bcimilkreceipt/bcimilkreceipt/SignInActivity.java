@@ -723,8 +723,25 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 olHeader = oDBHandler.findHeadersNonTransmitted();
                 olHeaderWaitingScaleData = oDBHandler.findHeadersNonTransmittedWaitingOnScale();
 
-                if (olHeader == null && olHeaderWaitingScaleData == null)
+                //Check if the header array is null and the headerwaitingscaledata is not null
+                if (olHeader == null && olHeaderWaitingScaleData != null)
                 {
+                    //Instantiate the header array
+                    olHeader = new ArrayList<>();
+
+                    //Add the waitingscaledata list to the header list
+                    olHeader.addAll(olHeaderWaitingScaleData);   
+                }
+                else if (olHeader != null && olHeaderWaitingScaleData != null)
+                {
+                    //Add the waitingscaledata list to the header list
+                    olHeader.addAll(olHeaderWaitingScaleData);
+                }
+
+                //Check if the header array is null or empty
+                if (olHeader == null || olHeader.isEmpty())
+                {
+                    //Return 0
                     sResult = "0";
                 }
                 else
@@ -732,81 +749,41 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     //Instantiate the JSON Array
                     jaParams = new JSONArray();
 
-                    //Check if the olHeader array is null
-                    if (olHeader != null)
+                    //Loop through all header records in the list
+                    for (int i = 0; i < olHeader.size(); i++)
                     {
-                        //Check if the olHeader array is empty
-                        if (!olHeader.isEmpty())
-                        {
-                            //Loop through all header records in the list
-                            for (int i = 0; i < olHeader.size(); i++)
-                            {
-                                //Get the current header record
-                                oHeader = olHeader.get(i);
+                        //Get the current header record
+                        oHeader = olHeader.get(i);
 
-                                //Instantiate a new JSON object
-                                joParams = new JSONObject();
+                        //Instantiate a new JSON object
+                        joParams = new JSONObject();
 
-                                //Fill the JSON object with data
-                                joParams.put(oHeader.HEADER_COLUMN_PKHEADERID, oHeader.getPkHeaderID());
-                                joParams.put(oHeader.HEADER_COLUMN_FKPROFILEID, oHeader.getFkProfileID());
-                                joParams.put("fkSettingsID", _spkSettingsID);
-                                joParams.put(oHeader.HEADER_COLUMN_TICKETNUMBER, oHeader.getTicketNumber());
-                                joParams.put(oHeader.HEADER_COLUMN_ROUTEIDENTIFIER, oHeader.getRouteIdentifier());
-                                joParams.put(oHeader.HEADER_COLUMN_TRUCKLICENSENUMBER, oHeader.getTruckLicenseNumber());
-                                joParams.put(oHeader.HEADER_COLUMN_STARTMILEAGE, oHeader.getStartMileage());
-                                joParams.put(oHeader.HEADER_COLUMN_ENDMILEAGE, oHeader.getEndMileage());
-                                joParams.put(oHeader.HEADER_COLUMN_TOTALMILEAGE, oHeader.getTotalMileage());
-                                joParams.put(oHeader.HEADER_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getInsertDate()));
-                                joParams.put(oHeader.HEADER_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getModifiedDate()));
+                        //Fill the JSON object with data
+                        joParams.put(oHeader.HEADER_COLUMN_PKHEADERID, oHeader.getPkHeaderID());
+                        joParams.put(oHeader.HEADER_COLUMN_FKPROFILEID, oHeader.getFkProfileID());
+                        joParams.put("fkSettingsID", _spkSettingsID);
+                        joParams.put(oHeader.HEADER_COLUMN_TICKETNUMBER, oHeader.getTicketNumber());
+                        joParams.put(oHeader.HEADER_COLUMN_ROUTEIDENTIFIER, oHeader.getRouteIdentifier());
+                        joParams.put(oHeader.HEADER_COLUMN_TRUCKLICENSENUMBER, oHeader.getTruckLicenseNumber());
+                        joParams.put(oHeader.HEADER_COLUMN_STARTMILEAGE, oHeader.getStartMileage());
+                        joParams.put(oHeader.HEADER_COLUMN_ENDMILEAGE, oHeader.getEndMileage());
+                        joParams.put(oHeader.HEADER_COLUMN_TOTALMILEAGE, oHeader.getTotalMileage());
+                        joParams.put(oHeader.HEADER_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getInsertDate()));
+                        joParams.put(oHeader.HEADER_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getModifiedDate()));
 
-                                //Add the JSON object to the array of JSON objects
-                                jaParams.put(joParams);
-                            }
-                        }
-                    }
-
-                    //Check if the olHeaderWaitingScaleData array is null
-                    if (olHeaderWaitingScaleData != null)
-                    {
-                        //Check if the olHeaderWaitingScaleData array is empty
-                        if (!olHeaderWaitingScaleData.isEmpty())
-                        {
-                            //Loop through all header records in the list
-                            for (int j = 0; j < olHeaderWaitingScaleData.size(); j++)
-                            {
-                                //Get the current header record
-                                oHeader = olHeaderWaitingScaleData.get(j);
-
-                                //Instantiate a new JSON object
-                                joParams = new JSONObject();
-
-                                //Fill the JSON object with data
-                                joParams.put(oHeader.HEADER_COLUMN_PKHEADERID, oHeader.getPkHeaderID());
-                                joParams.put(oHeader.HEADER_COLUMN_FKPROFILEID, oHeader.getFkProfileID());
-                                joParams.put("fkSettingsID", _spkSettingsID);
-                                joParams.put(oHeader.HEADER_COLUMN_TICKETNUMBER, oHeader.getTicketNumber());
-                                joParams.put(oHeader.HEADER_COLUMN_ROUTEIDENTIFIER, oHeader.getRouteIdentifier());
-                                joParams.put(oHeader.HEADER_COLUMN_TRUCKLICENSENUMBER, oHeader.getTruckLicenseNumber());
-                                joParams.put(oHeader.HEADER_COLUMN_STARTMILEAGE, oHeader.getStartMileage());
-                                joParams.put(oHeader.HEADER_COLUMN_ENDMILEAGE, oHeader.getEndMileage());
-                                joParams.put(oHeader.HEADER_COLUMN_TOTALMILEAGE, oHeader.getTotalMileage());
-                                joParams.put(oHeader.HEADER_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getInsertDate()));
-                                joParams.put(oHeader.HEADER_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oHeader.getModifiedDate()));
-
-                                //Add the JSON object to the array of JSON objects
-                                jaParams.put(joParams);
-                            }
-                        }
+                        //Add the JSON object to the array of JSON objects
+                        jaParams.put(joParams);
                     }
 
                     //Post the header data to the web service
                     sResult = oService.postJSONData(psURL[0], jaParams);
 
                     //Check if the result of posted header records is the same as what was sent
-                    if (Integer.parseInt(sResult) == olHeader.size()) {
+                    if (Integer.parseInt(sResult) == olHeader.size())
+                    {
                         //Loop through all header records in the list
-                        for (int j = 0; j < olHeader.size(); j++) {
+                        for (int j = 0; j < olHeader.size(); j++)
+                        {
                             //Get the current header record
                             oHeader = olHeader.get(j);
 
@@ -869,8 +846,23 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 olLine = oDBHandler.findLinesNonTransmitted();
                 olLineWaitingScaleData = oDBHandler.findLinesNonTransmittedWaitingOnScale();
 
-                //Check if both line arrays are null
-                if (olLine == null && olLineWaitingScaleData == null)
+                //Check if the line array is null and the linewaitingscaledata is not null
+                if (olLine == null && olLineWaitingScaleData != null)
+                {
+                    //Instantiate the line array
+                    olLine = new ArrayList<>();
+
+                    //Add the waitingscaledata list to the line list
+                    olLine.addAll(olLineWaitingScaleData);
+                }
+                else if (olLine != null && olLineWaitingScaleData != null)
+                {
+                    //Add the waitingscaledata list to the line list
+                    olLine.addAll(olLineWaitingScaleData);
+                }
+
+                //Check if line array is null or empty
+                if (olLine == null || olLine.isEmpty())
                 {
                     //Return 0
                     sResult = "0";
@@ -880,90 +872,39 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     //Instantiate the JSON Array
                     jaParams = new JSONArray();
 
-                    //Check if the line array is null
-                    if (olLine != null)
+                    //Loop through all line records in the list
+                    for (int i = 0; i < olLine.size(); i++)
                     {
-                        //Check if the line array is empty
-                        if (!olLine.isEmpty())
-                        {
-                            //Loop through all line records in the list
-                            for (int i = 0; i < olLine.size(); i++)
-                            {
-                                //Get the current line record
-                                oLine = olLine.get(i);
+                        //Get the current line record
+                        oLine = olLine.get(i);
 
-                                //Instantiate a new JSON object
-                                joParams = new JSONObject();
+                        //Instantiate a new JSON object
+                        joParams = new JSONObject();
 
-                                //Fill the JSON object with data
-                                joParams.put(oLine.LINE_COLUMN_PKLINEID, oLine.getPkLineID());
-                                joParams.put(oLine.LINE_COLUMN_FKHEADERID, oLine.getFkHeaderID());
-                                joParams.put("fkSettingsID", _spkSettingsID);
-                                joParams.put(oLine.LINE_COLUMN_TANK, oLine.getTank());
-                                joParams.put(oLine.LINE_COLUMN_PRODUCER, oLine.getProducer());
-                                joParams.put(oLine.LINE_COLUMN_COMPANY, _oUtils.checkNullString(oLine.getCompany()));
-                                joParams.put(oLine.LINE_COLUMN_DIVISION, _oUtils.checkNullString(oLine.getDivision()));
-                                joParams.put(oLine.LINE_COLUMN_TYPE, _oUtils.checkNullString(oLine.getType()));
-                                joParams.put(oLine.LINE_COLUMN_GAUGERODMAJOR, oLine.getGaugeRodMajor());
-                                joParams.put(oLine.LINE_COLUMN_GAUGERODMINOR, oLine.getGaugeRodMinor());
-                                joParams.put(oLine.LINE_COLUMN_CONVERTEDLBS, oLine.getConvertedLBS());
-                                joParams.put(oLine.LINE_COLUMN_TEMPERATURE, oLine.getTemperature());
-                                joParams.put(oLine.LINE_COLUMN_PICKUPDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getPickupDate()));
-                                joParams.put(oLine.LINE_COLUMN_DFATICKET, oLine.getDFATicket());
-                                joParams.put(oLine.LINE_COLUMN_LABCODE, oLine.getLabCode());
-                                joParams.put(oLine.LINE_COLUMN_LATITUDE, oLine.getLatitude());
-                                joParams.put(oLine.LINE_COLUMN_LONGITUDE, oLine.getLongitude());
-                                joParams.put(oLine.LINE_COLUMN_ACCURRACY, oLine.getAccurracy());
-                                joParams.put(oLine.LINE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getInsertDate()));
-                                joParams.put(oLine.LINE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getModifiedDate()));
+                        //Fill the JSON object with data
+                        joParams.put(oLine.LINE_COLUMN_PKLINEID, oLine.getPkLineID());
+                        joParams.put(oLine.LINE_COLUMN_FKHEADERID, oLine.getFkHeaderID());
+                        joParams.put("fkSettingsID", _spkSettingsID);
+                        joParams.put(oLine.LINE_COLUMN_TANK, oLine.getTank());
+                        joParams.put(oLine.LINE_COLUMN_PRODUCER, oLine.getProducer());
+                        joParams.put(oLine.LINE_COLUMN_COMPANY, _oUtils.checkNullString(oLine.getCompany()));
+                        joParams.put(oLine.LINE_COLUMN_DIVISION, _oUtils.checkNullString(oLine.getDivision()));
+                        joParams.put(oLine.LINE_COLUMN_TYPE, _oUtils.checkNullString(oLine.getType()));
+                        joParams.put(oLine.LINE_COLUMN_GAUGERODMAJOR, oLine.getGaugeRodMajor());
+                        joParams.put(oLine.LINE_COLUMN_GAUGERODMINOR, oLine.getGaugeRodMinor());
+                        joParams.put(oLine.LINE_COLUMN_CONVERTEDLBS, oLine.getConvertedLBS());
+                        joParams.put(oLine.LINE_COLUMN_TEMPERATURE, oLine.getTemperature());
+                        joParams.put(oLine.LINE_COLUMN_PICKUPDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getPickupDate()));
+                        joParams.put(oLine.LINE_COLUMN_DFATICKET, oLine.getDFATicket());
+                        joParams.put(oLine.LINE_COLUMN_LABCODE, oLine.getLabCode());
+                        joParams.put(oLine.LINE_COLUMN_LATITUDE, oLine.getLatitude());
+                        joParams.put(oLine.LINE_COLUMN_LONGITUDE, oLine.getLongitude());
+                        joParams.put(oLine.LINE_COLUMN_ACCURRACY, oLine.getAccurracy());
+                        joParams.put(oLine.LINE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getInsertDate()));
+                        joParams.put(oLine.LINE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getModifiedDate()));
 
-                                //Add the JSON object to the array of JSON objects
-                                jaParams.put(joParams);
-                            }
-                        }
-                    }
-
-                    //Check if the linewaitingscaledata is null
-                    if (olLineWaitingScaleData != null)
-                    {
-                        //Check if the lienwaitingscaledata is empty
-                        if (!olLineWaitingScaleData.isEmpty())
-                        {
-                            //Loop through all line records in the list
-                            for (int j = 0; j < olLineWaitingScaleData.size(); j++)
-                            {
-                                //Get the current line record
-                                oLine = olLine.get(j);
-
-                                //Instantiate a new JSON object
-                                joParams = new JSONObject();
-
-                                //Fill the JSON object with data
-                                joParams.put(oLine.LINE_COLUMN_PKLINEID, oLine.getPkLineID());
-                                joParams.put(oLine.LINE_COLUMN_FKHEADERID, oLine.getFkHeaderID());
-                                joParams.put("fkSettingsID", _spkSettingsID);
-                                joParams.put(oLine.LINE_COLUMN_TANK, oLine.getTank());
-                                joParams.put(oLine.LINE_COLUMN_PRODUCER, oLine.getProducer());
-                                joParams.put(oLine.LINE_COLUMN_COMPANY, _oUtils.checkNullString(oLine.getCompany()));
-                                joParams.put(oLine.LINE_COLUMN_DIVISION, _oUtils.checkNullString(oLine.getDivision()));
-                                joParams.put(oLine.LINE_COLUMN_TYPE, _oUtils.checkNullString(oLine.getType()));
-                                joParams.put(oLine.LINE_COLUMN_GAUGERODMAJOR, oLine.getGaugeRodMajor());
-                                joParams.put(oLine.LINE_COLUMN_GAUGERODMINOR, oLine.getGaugeRodMinor());
-                                joParams.put(oLine.LINE_COLUMN_CONVERTEDLBS, oLine.getConvertedLBS());
-                                joParams.put(oLine.LINE_COLUMN_TEMPERATURE, oLine.getTemperature());
-                                joParams.put(oLine.LINE_COLUMN_PICKUPDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getPickupDate()));
-                                joParams.put(oLine.LINE_COLUMN_DFATICKET, oLine.getDFATicket());
-                                joParams.put(oLine.LINE_COLUMN_LABCODE, oLine.getLabCode());
-                                joParams.put(oLine.LINE_COLUMN_LATITUDE, oLine.getLatitude());
-                                joParams.put(oLine.LINE_COLUMN_LONGITUDE, oLine.getLongitude());
-                                joParams.put(oLine.LINE_COLUMN_ACCURRACY, oLine.getAccurracy());
-                                joParams.put(oLine.LINE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getInsertDate()));
-                                joParams.put(oLine.LINE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oLine.getModifiedDate()));
-
-                                //Add the JSON object to the array of JSON objects
-                                jaParams.put(joParams);
-                            }
-                        }
+                        //Add the JSON object to the array of JSON objects
+                        jaParams.put(joParams);
                     }
 
                     //Post the line data to the web service
@@ -1036,9 +977,24 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Get the receives non-transmitted and waiting on scale data
                 olReceive = oDBHandler.findReceivesNonTransmitted();
                 olReceiveWaitingScaleData = oDBHandler.findReceivesNonTransmittedWaitingForScale();
+                
+                //Check if the receive array is null and the receivewaitingscaledata is not null
+                if (olReceive == null && olReceiveWaitingScaleData != null)
+                {
+                    //Instantiate the receive array
+                    olReceive = new ArrayList<>();
 
-                //Check if the receives non-transmitted and receives waiting for scale data are null
-                if (olReceive == null && olReceiveWaitingScaleData == null)
+                    //Add the waitingscaledata list to the receive list
+                    olReceive.addAll(olReceiveWaitingScaleData);
+                }
+                else if (olReceive != null && olReceiveWaitingScaleData != null)
+                {
+                    //Add the waitingscaledata list to the receive list
+                    olReceive.addAll(olReceiveWaitingScaleData);
+                }
+
+                //Check if the receives array is null or empty
+                if (olReceive == null || olReceive.isEmpty())
                 {
                     //Return 0
                     sResult = "0";
@@ -1048,84 +1004,36 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     //Instantiate the JSON Array
                     jaParams = new JSONArray();
 
-                    //Check if the receive array is null
-                    if (olReceive != null)
+                    //Loop through all receive records in the list
+                    for (int i = 0; i < olReceive.size(); i++)
                     {
-                        //Check if the receive array is empty
-                        if (!olReceive.isEmpty())
-                        {
-                            //Loop through all receive records in the list
-                            for (int i = 0; i < olReceive.size(); i++)
-                            {
-                                //Get the current receive record
-                                oReceive = olReceive.get(i);
+                        //Get the current receive record
+                        oReceive = olReceive.get(i);
 
-                                //Instantiate a new JSON object
-                                joParams = new JSONObject();
+                        //Instantiate a new JSON object
+                        joParams = new JSONObject();
 
-                                //Fill the JSON object with data
-                                joParams.put(oReceive.RECEIVE_COLUMN_PKRECEIVEID, oReceive.getPkReceiveID());
-                                joParams.put(oReceive.RECEIVE_COLUMN_FKHEADERID, oReceive.getFkHeaderID());
-                                joParams.put("fkSettingsID", _spkSettingsID);
-                                joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTID, oReceive.getFkPlantID());
-                                joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, "00000000-0000-0000-0000-000000000000");
-                                joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, oReceive.getDrugTestDevice());
-                                joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTRESULT, oReceive.getDrugTestResult());
-                                joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getReceiveDateTime()));
-                                joParams.put(oReceive.RECEIVE_COLUMN_TANK, oReceive.getTank());
-                                joParams.put(oReceive.RECEIVE_COLUMN_SCALEMETER, oReceive.getScaleMeter());
-                                joParams.put(oReceive.RECEIVE_COLUMN_TOPSEAL, oReceive.getTopSeal());
-                                joParams.put(oReceive.RECEIVE_COLUMN_BOTTOMSEAL, oReceive.getBottomSeal());
-                                joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDLBS, oReceive.getReceivedLBS());
-                                joParams.put(oReceive.RECEIVE_COLUMN_LOADTEMP, oReceive.getLoadTemp());
-                                joParams.put(oReceive.RECEIVE_COLUMN_INTAKENUMBER, oReceive.getIntakeNumber());
-                                joParams.put(oReceive.RECEIVE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getInsertDate()));
-                                joParams.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getModifiedDate()));
+                        //Fill the JSON object with data
+                        joParams.put(oReceive.RECEIVE_COLUMN_PKRECEIVEID, oReceive.getPkReceiveID());
+                        joParams.put(oReceive.RECEIVE_COLUMN_FKHEADERID, oReceive.getFkHeaderID());
+                        joParams.put("fkSettingsID", _spkSettingsID);
+                        joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTID, oReceive.getFkPlantID());
+                        joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, "00000000-0000-0000-0000-000000000000");
+                        joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, oReceive.getDrugTestDevice());
+                        joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTRESULT, oReceive.getDrugTestResult());
+                        joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getReceiveDateTime()));
+                        joParams.put(oReceive.RECEIVE_COLUMN_TANK, oReceive.getTank());
+                        joParams.put(oReceive.RECEIVE_COLUMN_SCALEMETER, oReceive.getScaleMeter());
+                        joParams.put(oReceive.RECEIVE_COLUMN_TOPSEAL, oReceive.getTopSeal());
+                        joParams.put(oReceive.RECEIVE_COLUMN_BOTTOMSEAL, oReceive.getBottomSeal());
+                        joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDLBS, oReceive.getReceivedLBS());
+                        joParams.put(oReceive.RECEIVE_COLUMN_LOADTEMP, oReceive.getLoadTemp());
+                        joParams.put(oReceive.RECEIVE_COLUMN_INTAKENUMBER, oReceive.getIntakeNumber());
+                        joParams.put(oReceive.RECEIVE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getInsertDate()));
+                        joParams.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getModifiedDate()));
 
-                                //Add the JSON object to the array of JSON objects
-                                jaParams.put(joParams);
-                            }
-                        }
-                    }
-
-                    //Check if the receivewaitingscaledata array is null
-                    if (olReceiveWaitingScaleData != null)
-                    {
-                        //Check if the receivewaitingscaledata array is empty
-                        if (!olReceiveWaitingScaleData.isEmpty())
-                        {
-                            //Loop through all receive records in the list
-                            for (int j = 0; j < olReceive.size(); j++)
-                            {
-                                //Get the current receive record
-                                oReceive = olReceiveWaitingScaleData.get(j);
-
-                                //Instantiate a new JSON object
-                                joParams = new JSONObject();
-
-                                //Fill the JSON object with data
-                                joParams.put(oReceive.RECEIVE_COLUMN_PKRECEIVEID, oReceive.getPkReceiveID());
-                                joParams.put(oReceive.RECEIVE_COLUMN_FKHEADERID, oReceive.getFkHeaderID());
-                                joParams.put("fkSettingsID", _spkSettingsID);
-                                joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTID, oReceive.getFkPlantID());
-                                joParams.put(oReceive.RECEIVE_COLUMN_FKPLANTORIGINALID, "00000000-0000-0000-0000-000000000000");
-                                joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTDEVICE, oReceive.getDrugTestDevice());
-                                joParams.put(oReceive.RECEIVE_COLUMN_DRUGTESTRESULT, oReceive.getDrugTestResult());
-                                joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDATETIME, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getReceiveDateTime()));
-                                joParams.put(oReceive.RECEIVE_COLUMN_TANK, oReceive.getTank());
-                                joParams.put(oReceive.RECEIVE_COLUMN_SCALEMETER, oReceive.getScaleMeter());
-                                joParams.put(oReceive.RECEIVE_COLUMN_TOPSEAL, oReceive.getTopSeal());
-                                joParams.put(oReceive.RECEIVE_COLUMN_BOTTOMSEAL, oReceive.getBottomSeal());
-                                joParams.put(oReceive.RECEIVE_COLUMN_RECEIVEDLBS, oReceive.getReceivedLBS());
-                                joParams.put(oReceive.RECEIVE_COLUMN_LOADTEMP, oReceive.getLoadTemp());
-                                joParams.put(oReceive.RECEIVE_COLUMN_INTAKENUMBER, oReceive.getIntakeNumber());
-                                joParams.put(oReceive.RECEIVE_COLUMN_INSERTDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getInsertDate()));
-                                joParams.put(oReceive.RECEIVE_COLUMN_MODIFIEDDATE, _oUtils.getFormattedDateString(getApplicationContext(), "N/A", oReceive.getModifiedDate()));
-
-                                //Add the JSON object to the array of JSON objects
-                                jaParams.put(joParams);
-                            }
-                        }
+                        //Add the JSON object to the array of JSON objects
+                        jaParams.put(joParams);
                     }
 
                     //Post the receive data to the web service
@@ -1383,7 +1291,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 dbHeader oHeader, oHeaderFound;
 
                 //Loop through all header records in the list
-                for (int i = 0; i < polHeader.size(); i++) {
+                for (int i = 0; i < polHeader.size(); i++)
+                {
                     //Get the header object in list
                     oHeader = polHeader.get(i);
 
@@ -1391,10 +1300,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oHeaderFound = oDBHandler.findHeaderByID(oHeader.getPkHeaderID());
 
                     //Check if the header record was found
-                    if (oHeaderFound == null) {
-                        //Insert header from web service
-                        oDBHandler.addHeader(oHeader);
-                    } else {
+                    if (oHeaderFound != null)
+                    {
                         //Set the ticket number from the web service
                         oHeaderFound.setTicketNumber(oHeader.getTicketNumber());
 
