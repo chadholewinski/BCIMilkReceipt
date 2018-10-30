@@ -7,4 +7,5 @@
     <color name="valueText_Lime">#00FF00</color>
     <color name="valueText_Red">#FF0000</color>
     <color name="valueText_Yellow">#FFFF00</color>
+    <color name="valueBlack">#000000</color>
 </resources>

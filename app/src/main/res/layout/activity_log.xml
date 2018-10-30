@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/valueBlack"
     tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.LogActivity">
 
     <TextView
@@ -82,7 +83,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="700dp"
         android:id="@+id/actlog_activityrecords"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"

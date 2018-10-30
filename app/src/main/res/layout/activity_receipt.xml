@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/valueBlack"
     tools:context="com.belgioioso.bcimilkreceipt.bcimilkreceipt.ReceiptActivity">
 
     <TextView
@@ -29,7 +30,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/receipt_spacer2"
         android:text=""
-        android:textSize="30dp"
+        android:textSize="100dp"
         app:layout_constraintTop_toBottomOf="@id/receipt_descriptionlabel"/>
 
     <TextView
@@ -107,7 +108,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/receipt_spacer5"
         android:text=""
-        android:textSize="173dp"
+        android:textSize="300dp"
         app:layout_constraintTop_toBottomOf="@id/receipt_existing_button"/>
 
     <TextView
