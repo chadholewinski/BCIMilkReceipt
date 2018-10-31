@@ -43,6 +43,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     private dbProfile _oProfile;
     private List<String> _oPlantIDList = new ArrayList<>();
     private Map<String, String> _oPlantLookup = new HashMap<String, String>();
+    boolean bIPCheck = false;
+    boolean bDumpHotCheck = false;
+    boolean bOkToRunSave = false;
 
     //region Class Constructor Methods
     @Override
@@ -253,8 +256,12 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Disable the save button
                 _receive_save_button.setEnabled(false);
 
+                //Check for IP and Dump/Hot loads
+                bIPCheck = checkIPtoSelectedReceivePlant(_receive_plant.getSelectedItem().toString());
+                bDumpHotCheck = checkForDumpOrHot(_receive_plant.getSelectedItem().toString());
+
                 //Check if the plant selected is correct for the current ip location
-                if (!checkIPtoSelectedReceivePlant(_receive_plant.getSelectedItem().toString()))
+                if (!bIPCheck)
                 {
                     // Use the Builder class for convenient dialog construction
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -265,8 +272,10 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    //Run the save process
-                                    runSaveProcess();
+                                    if (!bDumpHotCheck)
+                                    {
+                                        bOkToRunSave = true;
+                                    }
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -286,7 +295,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 //Check if the plant selected is correct for the current ip location
-                if (!checkForDumpOrHot(_receive_plant.getSelectedItem().toString()))
+                if (!bDumpHotCheck)
                 {
                     // Use the Builder class for convenient dialog construction
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -297,8 +306,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    //Run the save process
-                                    runSaveProcess();
+                                    bOkToRunSave = true;
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -315,6 +323,11 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                     AlertDialog aDialog = builder.create();
                     aDialog.show();
+                }
+
+                if (bOkToRunSave)
+                {
+                    runSaveProcess();
                 }
             }
             //Check if the receive finish ticket button was pressed

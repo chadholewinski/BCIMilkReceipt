@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbActivityHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
@@ -27,13 +26,9 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import com.belgioiososvc.bcimilkreceipt.bcimilkreceiptsvc.svcMilkReceipt;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class SignInActivity extends AppCompatActivity implements OnClickListener
 {
