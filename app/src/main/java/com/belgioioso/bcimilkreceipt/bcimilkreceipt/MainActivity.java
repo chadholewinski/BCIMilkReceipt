@@ -211,6 +211,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
     {
         try
         {
+            //Lock the user inputs
+            lockUserInputs();
+
             //Save the new header record
             _spkHeaderID = saveNewHeader();
 
@@ -255,6 +258,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "MainActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -356,6 +362,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "MainActivity", "saveNewHeader", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
@@ -391,8 +400,53 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         }
         catch(Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "MainActivity", "updateSettingsWithLastReceiptID", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * lockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void lockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _main_savereceipt_button.setEnabled(false);
+            _route.setEnabled(false);
+            _license.setEnabled(false);
+            _startmileage.setEnabled(false);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "MainActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * unlockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void unlockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _main_savereceipt_button.setEnabled(true);
+            _route.setEnabled(true);
+            _license.setEnabled(true);
+            _startmileage.setEnabled(true);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "MainActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

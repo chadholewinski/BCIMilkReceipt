@@ -123,6 +123,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _sLongitude = "0";
         _sAccurracy = "0";
 
+        //Set focus to the producer input
+        _pickup_producer.requestFocus();
+
         //Setup GPS provider
         //setupGPS();
     }
@@ -321,6 +324,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     {
         try
         {
+            //Lock the user inputs
+            lockUserInputs();
+
             //Check if the scan producer button was pressed
             if (v.getId() == R.id.pickup_scanproducer_button)
             {
@@ -422,6 +428,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "PickupActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -680,6 +689,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "PickupActivity", "saveNewPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -814,6 +826,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "PickupActivity", "checkPickupForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
@@ -882,11 +897,77 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             _convertedLBS_confirm.setText("");
             _temperature.setText("");
             _dfa_ticket.setText("");
+
+            //Unlock the user inputs
+            unlockUserInputs();
+
+            //Set focus to the producer input
+            _pickup_producer.requestFocus();
         }
         catch(Exception ex)
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * lockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void lockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _pickup_scanproducer_button.setEnabled(false);
+            _pickup_scanlabcode_button.setEnabled(false);
+            _pickup_save_button.setEnabled(false);
+            _pickup_gotoreceive_button.setEnabled(false);
+            _pickup_producer.setEnabled(false);
+            _pickup_tank.setEnabled(false);
+            _pickup_labcode.setEnabled(false);
+            _gaugerod_major.setEnabled(false);
+            _gaugerod_minor.setEnabled(false);
+            _convertedLBS.setEnabled(false);
+            _convertedLBS_confirm.setEnabled(false);
+            _temperature.setEnabled(false);
+            _dfa_ticket.setEnabled(false);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * unlockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void unlockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _pickup_scanproducer_button.setEnabled(true);
+            _pickup_scanlabcode_button.setEnabled(true);
+            _pickup_save_button.setEnabled(true);
+            _pickup_gotoreceive_button.setEnabled(true);
+            _pickup_producer.setEnabled(true);
+            _pickup_tank.setEnabled(true);
+            _pickup_labcode.setEnabled(true);
+            _gaugerod_major.setEnabled(true);
+            _gaugerod_minor.setEnabled(true);
+            _convertedLBS.setEnabled(true);
+            _convertedLBS_confirm.setEnabled(true);
+            _temperature.setEnabled(true);
+            _dfa_ticket.setEnabled(true);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

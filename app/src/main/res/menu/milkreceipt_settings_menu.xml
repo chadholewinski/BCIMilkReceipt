@@ -3,5 +3,5 @@
     <item android:id="@+id/menu_settings_activity"
         android:title="View Activity" />
     <item android:id="@+id/menu_settings_logout"
-        android:title="LogOut to SignIn" />
+        android:title="Back to Reciept" />
 </menu>

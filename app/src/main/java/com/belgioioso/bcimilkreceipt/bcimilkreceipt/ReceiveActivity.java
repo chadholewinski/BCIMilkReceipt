@@ -247,6 +247,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     {
         try
         {
+            //Lock the user inputs
+            lockUserInputs();
+
             //Check if the receive save button was pressed
             if (v.getId() == R.id.receive_save_button)
             {
@@ -375,6 +378,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -699,6 +705,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "runSaveProcess", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -797,6 +806,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch(Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "saveNewReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -912,6 +924,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "checkReceiveForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
@@ -1148,6 +1163,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "setTicketAsFinished", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
 
@@ -1357,6 +1375,68 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "clearScreenValues", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * lockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void lockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _receive_save_button.setEnabled(false);
+            _receive_finishticket_button.setEnabled(false);
+            _receive_DrugTestDevice.setEnabled(false);
+            _receive_DrugTestResult.setEnabled(false);
+            _receive_Silo.setEnabled(false);
+            _receive_Temperature.setEnabled(false);
+            _receive_TopSeal.setEnabled(false);
+            _receive_BottomSeal.setEnabled(false);
+            _receive_ReceivedLBS.setEnabled(false);
+            _receive_ReceivedLBSConfirmation.setEnabled(false);
+            _receive_EndMileage.setEnabled(false);
+            _receive_IntakeNumber.setEnabled(false);
+            _receive_plant.setEnabled(false);
+            _receive_scalemeter.setEnabled(false);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * unlockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void unlockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _receive_save_button.setEnabled(true);
+            _receive_finishticket_button.setEnabled(true);
+            _receive_DrugTestDevice.setEnabled(true);
+            _receive_DrugTestResult.setEnabled(true);
+            _receive_Silo.setEnabled(true);
+            _receive_Temperature.setEnabled(true);
+            _receive_TopSeal.setEnabled(true);
+            _receive_BottomSeal.setEnabled(true);
+            _receive_ReceivedLBS.setEnabled(true);
+            _receive_ReceivedLBSConfirmation.setEnabled(true);
+            _receive_EndMileage.setEnabled(true);
+            _receive_IntakeNumber.setEnabled(true);
+            _receive_plant.setEnabled(true);
+            _receive_scalemeter.setEnabled(true);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

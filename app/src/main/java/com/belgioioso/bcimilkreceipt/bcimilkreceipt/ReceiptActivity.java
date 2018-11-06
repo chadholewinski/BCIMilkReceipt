@@ -268,10 +268,13 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
     {
         try
         {
+            //Lock out the user inputs
+            lockUserInputs();
+
             //Check if the new receipt button was pressed
             if (v.getId() == R.id.receipt_new_button)
             {
-                //Log message to activity
+               //Log message to activity
                 _oUtils.insertActivity(this, "1", "ReceiptActivity", "onClick", _sUsername, "Receipt new receipt button pressed", "");
 
                //Instantiate a new intent of Main Activity
@@ -340,6 +343,9 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch (Exception ex)
         {
+            //Unlock the user inputs
+            unlockUserInputs();
+
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiptActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
@@ -471,6 +477,46 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
             //Close the source and destination file streams
             src.close();
             dst.close();
+        }
+    }
+
+    /**
+     * lockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void lockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _receipt_new_button.setEnabled(false);
+            _receipt_existing_button.setEnabled(false);
+            spn_Existing_Tickets.setEnabled(false);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * unlockUserInputs
+     *  - lock out the user inputs on the screen
+     */
+    private void unlockUserInputs()
+    {
+        try
+        {
+            //Lock out the user inputs on the screen
+            _receipt_new_button.setEnabled(true);
+            _receipt_existing_button.setEnabled(true);
+            spn_Existing_Tickets.setEnabled(true);
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion
