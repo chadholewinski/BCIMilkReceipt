@@ -39,14 +39,15 @@ import java.util.UUID;
 
 public class PickupActivity extends AppCompatActivity implements View.OnClickListener//, LocationListener
 {
-    private Button _pickup_scanproducer_button, _pickup_scanlabcode_button, _pickup_save_button, _pickup_gotoreceive_button;
-    private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals;
+    private Button _pickup_scanproducer_button, _pickup_scanlabcode_button, _pickup_save_button, _pickup_gotoreceive_button, _pickup_previous_button, _pickup_next_button;
+    private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals, _pickup_pickupcount_message;
     private EditText _pickup_producer, _pickup_tank, _pickup_labcode, _gaugerod_major, _gaugerod_minor, _convertedLBS, _convertedLBS_confirm, _temperature, _dfa_ticket;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sProvider, _sUsername;
     //private LocationManager _oLocationManager;
     //private Location _oLocation;
     private Utilities _oUtils;
     private dbProfile _oProfile;
+    private Integer _iTotalPickupsOnTicket, _iCurrentPickup;
 
     //region Class Constructor Methods
     /**
@@ -62,8 +63,10 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         //Set the keyboard to not show automatically
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        //Initialization
+        _iTotalPickupsOnTicket = 0;
+        _iCurrentPickup = 0;
         _sUsername = "N/A";
-        
         _oUtils = new Utilities();
 
         //Instantiate the on screen buttons
@@ -71,11 +74,14 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _pickup_scanlabcode_button = (Button)findViewById(R.id.pickup_scanlabcode_button);
         _pickup_save_button = (Button)findViewById(R.id.pickup_save_button);
         _pickup_gotoreceive_button = (Button)findViewById(R.id.pickup_gotoreceive_button);
+        _pickup_previous_button = (Button)findViewById(R.id.pickup_previous_button);
+        _pickup_next_button = (Button)findViewById(R.id.pickup_next_button);
 
         //Instantiate the pickup bottom message and savemessage text view
         _pickup_Bottom_Message = (TextView)findViewById(R.id.pickup_bottom_message);
         _pickup_Bottom_SaveMessage = (TextView)findViewById(R.id.pickup_bottom_savemessage);
         _pickup_Totals = (TextView)findViewById(R.id.pickup_totals);
+        _pickup_pickupcount_message = (TextView)findViewById(R.id.pickup_pickupcount_message);
 
         //Instantiate the pickup edit text boxes
         _pickup_producer = (EditText)findViewById(R.id.producer);
@@ -93,6 +99,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _pickup_scanlabcode_button.setOnClickListener(this);
         _pickup_save_button.setOnClickListener(this);
         _pickup_gotoreceive_button.setOnClickListener(this);
+        _pickup_previous_button.setOnClickListener(this);
+        _pickup_next_button.setOnClickListener(this);
 
         //Setup the bundle object
         Bundle oBundle = getIntent().getExtras();
@@ -389,6 +397,13 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                         //Display the pickup info on UI
                         _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
+
+                        //Update the total pickups on ticket register
+                        _iTotalPickupsOnTicket = olLine.size();
+
+                        //Update pickup count message
+                        _pickup_pickupcount_message.setText("NEW of " + _iTotalPickupsOnTicket);
+                        _iCurrentPickup = _iTotalPickupsOnTicket + 1;
                     }
                     else
                     {
@@ -424,6 +439,24 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                 //Navigate to the receive screen
                 startActivity(receive_intent);
+            }
+            //Check if the previous pickup button was pressed
+            else if (v.getId() == R.id.pickup_previous_button)
+            {
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup previous button pressed", "");
+
+
+                unlockUserInputs();
+            }
+            //Check if the next pickup button was pressed
+            else if (v.getId() == R.id.pickup_next_button)
+            {
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup next button pressed", "");
+
+
+                unlockUserInputs();
             }
         }
         catch (Exception ex)
@@ -525,12 +558,31 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Get the total pickups
                 iPickups = olLine.size();
 
+                //Set the global total pickups register
+                _iTotalPickupsOnTicket = iPickups;
+
                 //Get the total LBS on ticket
                 iTotalLBS = getTotalPickupLBS(olLine);
             }
 
             //Display the pickup info on UI
             _pickup_Totals.setText("Total Pickups: " + iPickups + " --- Total LBS: " + iTotalLBS);
+
+            //Setup pickup count and buttons
+            _pickup_pickupcount_message.setText("NEW of " + iPickups);
+            _pickup_next_button.setEnabled(false);
+
+            //Check if the total pickups count is 0
+            if (_iTotalPickupsOnTicket == 0)
+            {
+                //Disable the previous button
+                _pickup_previous_button.setEnabled(false);
+            }
+            else
+            {
+                //Enable the previous button
+                _pickup_previous_button.setEnabled(true);
+            }
 
             //Check if the profile record was found
             if (_oProfile != null)
@@ -856,7 +908,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             if (polLines != null)
             {
                 //Loop through all pickup lines on ticket
-                for (int i = 0; i < polLines.size(); i++) {
+                for (int i = 0; i < polLines.size(); i++)
+                {
                     //Instantiate a new line object
                     oLine = new dbLine();
 
@@ -968,6 +1021,42 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * loadNextPickup
+     *  - load the next pickup of the ticket
+     * @param pspkLineID
+     */
+    private void loadNextPickup(String pspkLineID)
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "loadNextPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * loadPreviousPickup
+     *  - load the previous pickup of the ticket
+     * @param pspkLineID
+     */
+    private void loadPreviousPickup(String pspkLineID)
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "loadPreviousPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

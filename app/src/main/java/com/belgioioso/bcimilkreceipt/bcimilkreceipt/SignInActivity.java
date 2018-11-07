@@ -34,7 +34,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 {
 
     private Button _signin_login_button;
-    private ProgressBar _signin_progressbar;
     private TextView _signin_progresslabel;
     private String _spkSettingsID;
     private Utilities _oUtils;
@@ -58,9 +57,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
         //Instantiate the login button
         _signin_login_button = (Button)findViewById(R.id.signin_login_button);
-
-        //Instantiate the progress bar
-        _signin_progressbar = (ProgressBar)findViewById(R.id.signin_progressbar);
 
         //Instantiate the progress bar label
         _signin_progresslabel = (TextView)findViewById(R.id.signin_progresslabel);
@@ -329,9 +325,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
     {
         try
         {
-            //Set the progress bar to 0
-            _signin_progressbar.setProgress(0);
-            _signin_progresslabel.setText("Start of data syncronization (0%)");
+            //Set the progress label
+            _signin_progresslabel.setText("Data Syncronization In Progress");
 
             //Instantiate the database handler
             dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
@@ -488,9 +483,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
-
-            _signin_progressbar.setProgress(100);
-            _signin_progresslabel.setText("Upload: Settings (100%)");
         }
     }
     //endregion
@@ -553,9 +545,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oDBHandler.updateSettings(oSettings);
                 }
             }
-
-            _signin_progressbar.setProgress(33);
-            _signin_progresslabel.setText("Download: Settings (33%)");
         }
     }
     //endregion
@@ -618,9 +607,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oDBHandler.updateProfile(oProfile);
                 }
             }
-
-            _signin_progressbar.setProgress(66);
-            _signin_progresslabel.setText("Download: Profiles (66%)");
         }
     }
     //endregion
@@ -683,9 +669,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     oDBHandler.updatePlant(oPlant);
                 }
             }
-
-            _signin_progressbar.setProgress(100);
-            _signin_progresslabel.setText("Download: Plants (100%)");
         }
     }
     //endregion
@@ -805,9 +788,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
-
-            _signin_progressbar.setProgress(25);
-            _signin_progresslabel.setText("Upload: Headers (25%)");
         }
     }
     //endregion
@@ -937,9 +917,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
-
-            _signin_progressbar.setProgress(50);
-            _signin_progresslabel.setText("Upload: Lines (50%)");
         }
     }
     //endregion
@@ -1068,9 +1045,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
-
-            _signin_progressbar.setProgress(75);
-            _signin_progresslabel.setText("Upload: Receives (75%)");
         }
     }
     //endregion
@@ -1180,14 +1154,6 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         protected void onPostExecute(String psString)
         {
             super.onPostExecute(psString);
-
-            _signin_progressbar.setProgress(100);
-            _signin_progresslabel.setText("Upload: Activity (100%)");
-
-            _signin_progresslabel.setText("End of data syncronization (100%)");
-
-            //Sync finished enable the signin button
-            _signin_login_button.setEnabled(true);
         }
     }
     //endregion
@@ -1306,8 +1272,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 }
             }
 
-            _signin_progressbar.setProgress(100);
-            _signin_progresslabel.setText("Download: Header Ticket Numbers (100%)");
+            //Finshed data sync
+            _signin_progresslabel.setText("Data Syncronization Finished");
+            _signin_login_button.setEnabled(true);
         }
     }
     //endregion

@@ -1021,7 +1021,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
-        query = "SELECT * FROM " + oLine.TABLE_LINE + " WHERE " + oLine.LINE_COLUMN_FKHEADERID + " = \"" + psHeaderID + "\"";
+        query = "SELECT * FROM " + oLine.TABLE_LINE + " WHERE " + oLine.LINE_COLUMN_FKHEADERID + " = \"" + psHeaderID + "\" ORDER BY " + oLine.LINE_COLUMN_INSERTDATE + " ASC";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1514,7 +1514,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
-        query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_FKHEADERID + " = \"" + psHeaderID + "\"";
+        query = "SELECT * FROM " + oReceive.TABLE_RECEIVE + " WHERE " + oReceive.RECEIVE_COLUMN_FKHEADERID + " = \"" + psHeaderID + "\" ORDER BY " + oReceive.RECEIVE_COLUMN_INSERTDATE + " ASC";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();

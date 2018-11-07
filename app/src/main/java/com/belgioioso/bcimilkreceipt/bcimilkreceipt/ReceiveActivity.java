@@ -34,8 +34,8 @@ import java.util.UUID;
 
 public class ReceiveActivity extends AppCompatActivity implements View.OnClickListener//, View.OnFocusChangeListener
 {
-    private Button _receive_save_button, _receive_finishticket_button;
-    private TextView _receive_Bottom_Message, _receive_ReceiveLBSAvailable, _receive_Bottom_SaveMessage;
+    private Button _receive_save_button, _receive_finishticket_button, _receive_previous_button, _receive_next_button;
+    private TextView _receive_Bottom_Message, _receive_ReceiveLBSAvailable, _receive_Bottom_SaveMessage, _receive_receivecount_message;
     private EditText _receive_DrugTestDevice, _receive_DrugTestResult, _receive_Silo, _receive_Temperature, _receive_TopSeal, _receive_BottomSeal, _receive_ReceivedLBS, _receive_ReceivedLBSConfirmation, _receive_EndMileage, _receive_IntakeNumber;
     private Spinner _receive_plant, _receive_scalemeter;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sUsername;
@@ -43,9 +43,10 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     private dbProfile _oProfile;
     private List<String> _oPlantIDList = new ArrayList<>();
     private Map<String, String> _oPlantLookup = new HashMap<String, String>();
-    boolean bIPCheck = false;
-    boolean bDumpHotCheck = false;
-    boolean bOkToRunSave = false;
+    private boolean bIPCheck = false;
+    private boolean bDumpHotCheck = false;
+    private boolean bOkToRunSave = false;
+    private Integer _iTotalReceiveCount, _iCurrentReceive;
 
     //region Class Constructor Methods
     @Override
@@ -57,13 +58,17 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         //Set the keyboard to not show automatically
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        //Initialization
+        _iTotalReceiveCount = 0;
+        _iCurrentReceive = 0;
         _sUsername = "N/A";
-        
         _oUtils = new Utilities();
 
         //Instantiate the on screen buttons
         _receive_save_button = (Button)findViewById(R.id.receive_save_button);
         _receive_finishticket_button = (Button)findViewById(R.id.receive_finishticket_button);
+        _receive_previous_button = (Button)findViewById(R.id.receive_previous_button);
+        _receive_next_button = (Button)findViewById(R.id.receive_next_button);
 
         //Instantiate the spinners
         _receive_plant = (Spinner)findViewById(R.id.receive_plant);
@@ -73,6 +78,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         _receive_Bottom_Message = (TextView)findViewById(R.id.receive_bottom_message);
         _receive_ReceiveLBSAvailable = (TextView)findViewById(R.id.receive_receivelbsavailable);
         _receive_Bottom_SaveMessage = (TextView)findViewById(R.id.receive_bottom_savemessage);
+        _receive_receivecount_message = (TextView)findViewById(R.id.receive_receivecount_message);
 
         //Instantiate the receive edit text boxes
         _receive_DrugTestDevice = (EditText)findViewById(R.id.receive_drugtestdevice);
@@ -89,6 +95,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         //Set the on click listener for page to the screen buttons
         _receive_save_button.setOnClickListener(this);
         _receive_finishticket_button.setOnClickListener(this);
+        _receive_previous_button.setOnClickListener(this);
+        _receive_next_button.setOnClickListener(this);
 
         //Set the focus change listener for drug test result edit text
         //_receive_DrugTestResult.setOnFocusChangeListener(hasFocusListener);
@@ -121,6 +129,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         //Load the drop down fields
         populatePlantSpinner();
         populateScaleMeterSpinner();
+
+        //Set focus to drug test result field
+        _receive_DrugTestResult.requestFocus();
     }
 
     /**
@@ -375,6 +386,24 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     _receive_Bottom_SaveMessage.setText("Receive finish failed because not all pickup LBS are used");
                 }
             }
+            //Check if the receive previous button was pressed
+            else if (v.getId() == R.id.receive_previous_button)
+            {
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "Receive previous button pressed", "");
+
+
+                unlockUserInputs();
+            }
+            //Check if the receive next button was pressed
+            else if (v.getId() == R.id.receive_next_button)
+            {
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "Receive next button pressed", "");
+
+
+                unlockUserInputs();
+            }
         }
         catch (Exception ex)
         {
@@ -401,6 +430,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     private void setupScreen()
     {
         Integer iTotalLBS = 0;
+        ArrayList<dbReceive> olReceive;
 
         try
         {
@@ -409,6 +439,32 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
+
+            //Get the list of receives for ticket
+            olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+
+            //Check if there are any receives in array list
+            if (olReceive != null)
+            {
+                //Set the total receives count
+                _iTotalReceiveCount = olReceive.size();
+            }
+
+            //Setup receive count and buttons
+            _receive_receivecount_message.setText("NEW of " + _iTotalReceiveCount);
+            _receive_next_button.setEnabled(false);
+
+            //Check if the total receive count is 0
+            if (_iTotalReceiveCount == 0)
+            {
+                //Disable the previous button
+                _receive_previous_button.setEnabled(false);
+            }
+            else
+            {
+                //Enable the previous button
+                _receive_previous_button.setEnabled(true);
+            }
 
             //Get the total LBS left available on ticket
             iTotalLBS = getTotalLBSLeftOnTicket();
@@ -1370,6 +1426,12 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_ReceivedLBSConfirmation.setText("");
             _receive_EndMileage.setText("");
             _receive_IntakeNumber.setText("");
+
+            //Unlock the user inputs
+            unlockUserInputs();
+
+            //Set focus to drug test result field
+            _receive_DrugTestResult.requestFocus();
         }
         catch(Exception ex)
         {
@@ -1437,6 +1499,42 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * loadNextReceive
+     *  - load the next receive of the ticket
+     * @param pspkReceiveID
+     */
+    private void loadNextReceive(String pspkReceiveID)
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "loadNextReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * loadPreviousReceive
+     *  - load the previous receive of the ticket
+     * @param pspkReceiveID
+     */
+    private void loadPreviousReceive(String pspkReceiveID)
+    {
+        try
+        {
+
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "loadPreviousReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

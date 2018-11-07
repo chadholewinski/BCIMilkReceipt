@@ -30,6 +30,8 @@
     <string name="pickup_gotoreceive_button">GO TO RECEIVE</string>
     <string name="pickup_scanproducer_button">Scan Producer</string>
     <string name="pickup_scanlabcode_button">Scan Lab Code</string>
+    <string name="pickup_previous_button">Previous</string>
+    <string name="pickup_next_button">Next</string>
     <string name="main_description">MILK RECEIPT NEW RECEIPT ENTRY</string>
     <string name="main_routelabel">Route Identifier</string>
     <string name="main_licenselabel">Truck License Number</string>
@@ -72,4 +74,6 @@
     <string name="receive_temperaturelabel">Receive Temperature</string>
     <string name="receive_endmileagelabel">End Mileage (Odometer) / Intake Number</string>
     <string name="receive_endmileage_spacer">/</string>
+    <string name="receive_previous_button">Previous</string>
+    <string name="receive_next_button">Next</string>
 </resources>
