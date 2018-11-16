@@ -1002,7 +1002,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 oReceive.setBottomSeal(_receive_BottomSeal.getText().toString());
                 oReceive.setReceivedLBS(iReceivedLBS);
                 oReceive.setLoadTemp(Integer.parseInt(_receive_Temperature.getText().toString()));
-                oReceive.setIntakeNumber(0);
+                oReceive.setIntakeNumber(Integer.parseInt(_receive_IntakeNumber.getText().toString()));
                 oReceive.setFinished(0);
                 oReceive.setWaitingForScaleData(0);
                 oReceive.setTransmitted(0);
@@ -1013,17 +1013,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Setup the arraylist for receive insertion
                 olReceive.add(oReceive);
 
-                //Check if this is a new receive or existing receive
-                if (_iCurrentReceive == _iTotalReceiveCount + 1)
-                {
-                    //Add the receive to the database
-                    oDBHandler.addReceive(olReceive);
-                }
-                else
-                {
-                    //Update the receive in the database
-                    oDBHandler.updateReceive(oReceive);
-                }
+                //Add the receive to the database
+                oDBHandler.addReceive(olReceive);
 
                 //Set the return ReceiveID
                 sReceiveID = gID.toString();
@@ -1059,6 +1050,100 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         
         return sReceiveID;
+    }
+
+    /**
+     * saveExistingReceive
+     *  - save the existing receive to the database
+     * @param pspkReceiveID
+     * @return (String) - returns the recieveid
+     */
+    private String saveExistingReceive(String pspkReceiveID)
+    {
+        dbReceive oReceive = new dbReceive();
+        Integer iReceivedLBS = 0;
+
+        try
+        {
+            //Check if any errors are present for receive
+            if (!checkReceiveForErrors())
+            {
+                //Check if the user left receive LBS fields blank, then assume full load
+                if (_receive_ReceivedLBS.getText().toString().isEmpty() && _receive_ReceivedLBSConfirmation.getText().toString().isEmpty())
+                {
+                    //Get the total LBS left
+                    iReceivedLBS = getTotalLBSLeftOnTicket();
+                }
+                else
+                {
+                    //Use what the driver entered into field
+                    iReceivedLBS = Integer.parseInt(_receive_ReceivedLBS.getText().toString());
+                }
+
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+                                //Get the plant id selected
+                Integer iPosition = _receive_plant.getSelectedItemPosition();
+                String sPlantID = _oPlantIDList.get(iPosition);
+
+                //Get the receive data from database
+                oReceive = oDBHandler.findReceiveByID(pspkReceiveID);
+
+                //Setup the new receive object data
+                oReceive.setPkReceiveID(pspkReceiveID);
+                oReceive.setFkHeaderID(_spkHeaderID);
+                oReceive.setFkPlantID(sPlantID);
+                oReceive.setFkPlantOriginalID("");
+                oReceive.setDrugTestDevice(_receive_DrugTestDevice.getText().toString());
+                oReceive.setDrugTestResult(_receive_DrugTestResult.getText().toString());
+                oReceive.setTank(_receive_Silo.getText().toString());
+                oReceive.setScaleMeter(getScaleMeterSpinnerSelection());
+                oReceive.setTopSeal(_receive_TopSeal.getText().toString());
+                oReceive.setBottomSeal(_receive_BottomSeal.getText().toString());
+                oReceive.setReceivedLBS(iReceivedLBS);
+                oReceive.setLoadTemp(Integer.parseInt(_receive_Temperature.getText().toString()));
+                oReceive.setIntakeNumber(Integer.parseInt(_receive_IntakeNumber.getText().toString()));
+                oReceive.setFinished(0);
+                oReceive.setWaitingForScaleData(0);
+                oReceive.setTransmitted(0);
+                oReceive.setTransmittedDate(_oUtils.getFormattedDate(this, _sUsername,"1900-01-01 00:00:00.000"));
+                oReceive.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
+
+                //Update the receive in the database
+                oDBHandler.updateReceive(oReceive);
+
+                //Check if the start mileage was entered
+                if (getStartMileage() > 0)
+                {
+                    //Instantiate a new header record
+                    dbHeader oHeader = new dbHeader();
+
+                    //Get the header record
+                    oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
+
+                    //Set the end mileage on the header record
+                    oHeader.setEndMileage(Integer.parseInt(_receive_EndMileage.getText().toString()));
+
+                    //Update the header record
+                    oDBHandler.updateHeader(oHeader);
+                }
+
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "saveExistingReceive", _sUsername, "Existing Receive Saved:: ID: " + pspkReceiveID, "");
+                _oUtils.insertActivity(this, "1", "ReceiveActivity", "saveExistingReceive", _sUsername, "Existing Receive Saved:: Plant: " + _receive_plant.getSelectedItem() + " DrugTestResult: " + oReceive.getDrugTestResult() + " Scale/Meter: " + oReceive.getScaleMeter() + " Silo: " + oReceive.getTank() + " Load Temp: " + oReceive.getLoadTemp() + " TopSeal: " + oReceive.getTopSeal() + " BottomSeal: " + oReceive.getBottomSeal() + " ReceivedLBS: " + oReceive.getReceivedLBS() + " End Mileage: " + _receive_EndMileage.getText() + " Intake Number: " + oReceive.getIntakeNumber(), "");
+            }
+        }
+        catch(Exception ex)
+        {
+            //Unlock the user inputs
+            unlockUserInputs();
+
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "saveExistingReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        return pspkReceiveID;
     }
 
     /**

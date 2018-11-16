@@ -412,8 +412,22 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup save button pressed", "");
 
-                //Save the pickup
-                String sLineIDSaved = saveNewPickup();
+                String sLineIDSaved;
+
+                //Check if this is an existing pickup save
+                if (_iCurrentPickup <= _iTotalPickupsOnTicket)
+                {
+                    //Get the lineid from hash map
+                    String sExistingLineID = _oAllPickupIDs.get(_iCurrentPickup);
+
+                    //Save the existing pickup
+                    sLineIDSaved = saveExistingPickup(sExistingLineID);
+                }
+                else
+                {
+                    //Save the new pickup
+                    sLineIDSaved = saveNewPickup();
+                }
 
                 //Format the date for insert and modified
                 DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
@@ -890,17 +904,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Setup the arraylist for line insertion
                 olLine.add(oLine);
 
-                //Check if this is a new pickup or existing pickup
-                if (_iCurrentPickup == _iTotalPickupsOnTicket + 1)
-                {
-                    //Add the line to the database
-                    oDBHandler.addLine(olLine);
-                }
-                else
-                {
-                    //Update the line in the database
-                    oDBHandler.updateLine(oLine);
-                }
+                //Add the line to the database
+                oDBHandler.addLine(olLine);
 
                 //Set the return LineID
                 sLineID = gID.toString();
@@ -921,6 +926,70 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
         //Return the lineID
         return sLineID;
+    }
+
+    /**
+     * saveExistingPickup
+     *  - save the existing pickup to database
+     * @param pspkLineID
+     * @return (String) - the line id of the existing pickup
+     */
+    private String saveExistingPickup(String pspkLineID)
+    {
+        dbLine oLine = new dbLine();
+
+        try
+        {
+            if (!checkPickupForErrors())
+            {
+                //Instantiate the database handler
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+                //Get the existing line from database
+                oLine = oDBHandler.findLineByID(pspkLineID);
+
+                //Setup the new line object data
+                oLine.setPkLineID(pspkLineID);
+                oLine.setFkHeaderID(_spkHeaderID);
+                oLine.setTank(_pickup_tank.getText().toString());
+                oLine.setProducer(_pickup_producer.getText().toString());
+                oLine.setCompany(_sCompany);
+                oLine.setDivision(_sDivision);
+                oLine.setType(_sType);
+                oLine.setGaugeRodMajor(_gaugerod_major.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
+                oLine.setGaugeRodMinor(_gaugerod_minor.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
+                oLine.setConvertedLBS(Integer.parseInt(_convertedLBS.getText().toString()));
+                oLine.setTemperature(Integer.parseInt(_temperature.getText().toString()));
+                oLine.setDFATicket(_dfa_ticket.getText().toString());
+                oLine.setLabCode(_pickup_labcode.getText().toString());
+                oLine.setLatitude(Double.parseDouble(_sLatitude));
+                oLine.setLongitude(Double.parseDouble(_sLongitude));
+                oLine.setAccurracy(Double.parseDouble(_sAccurracy));
+                oLine.setFinished(0);
+                oLine.setWaitingForScaleData(0);
+                oLine.setTransmitted(0);
+                oLine.setTransmittedDate(_oUtils.getFormattedDate(this, _sUsername, "1900-01-01 00:00:00.000"));
+                oLine.setModifiedDate(_oUtils.getFormattedDate(this, _sUsername));
+
+                 //Update the line in the database
+                oDBHandler.updateLine(oLine);
+
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "PickupActivity", "saveExistingPickup", _sUsername, "New Pickup Saved:: ID: " + pspkLineID, "");
+                _oUtils.insertActivity(this, "1", "PickupActivity", "saveExistingPickup", _sUsername, "New Pickup Saved:: Producer: " + oLine.getProducer() + " Tank: " + oLine.getTank() + " GaugeRod: " + oLine.getGaugeRodMajor() + "/" + oLine.getGaugeRodMinor() + " Temp: " + oLine.getTemperature() + " ConvertedLBS: " + oLine.getConvertedLBS() + " LabCode: " + oLine.getLabCode() + " DFATicket: " + oLine.getDFATicket(), "");
+            }
+        }
+        catch (Exception ex)
+        {
+            //Unlock the user inputs
+            unlockUserInputs();
+
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "saveExistingPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+
+        //Return the lineID
+        return pspkLineID;
     }
 
     /**
