@@ -1,5 +1,7 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -34,7 +36,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class PickupActivity extends AppCompatActivity implements View.OnClickListener//, LocationListener
@@ -48,6 +52,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     private Utilities _oUtils;
     private dbProfile _oProfile;
     private Integer _iTotalPickupsOnTicket, _iCurrentPickup;
+    private Map<Integer, String> _oAllPickupIDs = new HashMap<Integer, String>();
 
     //region Class Constructor Methods
     /**
@@ -289,6 +294,46 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                     break;
 
+                //Menu Pickup Delete Current Pickup
+                case R.id.menu_pickup_delete:
+                    //Log message to activity
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "Pickup menu delete pickup selected", "");
+
+                    //Check that the pickup screen is not in a new add state
+                    if (_iCurrentPickup <= _iTotalPickupsOnTicket)
+                    {
+                        // Use the Builder class for convenient dialog construction
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                        //Build the message
+                        builder.setMessage("Are you sure you want to delete this pickup?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //Get the lineid from hash map
+                                        String sLineID = _oAllPickupIDs.get(_iCurrentPickup);
+
+                                        //Run the deletion process
+                                        deleteCurrentPickup(sLineID);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //Log message
+                                        _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the pickup deletion process", "");
+
+                                    }
+                                });
+
+                        //Show the dialog box
+                        AlertDialog aDialog = builder.create();
+                        aDialog.show();
+                    }
+
+                    //Set the return value to true
+                    bReturn = true;
+
+                    break;
+
                 //Logout item selected
                 case R.id.menu_pickup_logout:
                     //Instantiate a new intent of SignInActivity
@@ -330,6 +375,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
      */
     public void onClick(View v)
     {
+        String sLineID;
+
         try
         {
             //Lock the user inputs
@@ -395,6 +442,19 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                         //Get the total LBS on ticket
                         iTotalLBS = getTotalPickupLBS(olLine);
 
+                        //Clear the pickups hashmap
+                        _oAllPickupIDs = new HashMap<Integer, String>();
+
+                        //Loop through the line records
+                        for (int i=0; i<olLine.size(); i++)
+                        {
+                            //Get the line from list of records
+                            dbLine oLine = olLine.get(i);
+
+                            //Add the lineid to the line array
+                            _oAllPickupIDs.put(i + 1,oLine.getPkLineID());
+                        }
+
                         //Display the pickup info on UI
                         _pickup_Totals.setText("Total Pickups: " + olLine.size() + " --- Total LBS: " + iTotalLBS);
 
@@ -404,6 +464,18 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                         //Update pickup count message
                         _pickup_pickupcount_message.setText("NEW of " + _iTotalPickupsOnTicket);
                         _iCurrentPickup = _iTotalPickupsOnTicket + 1;
+
+                        //Check if the total pickups count is 0
+                        if (_iTotalPickupsOnTicket == 0)
+                        {
+                            //Disable the previous button
+                            _pickup_previous_button.setEnabled(false);
+                        }
+                        else
+                        {
+                            //Enable the previous button
+                            _pickup_previous_button.setEnabled(true);
+                        }
                     }
                     else
                     {
@@ -446,8 +518,38 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup previous button pressed", "");
 
+                //Check if current pickup count is greater than 1
+                if (_iCurrentPickup > 1)
+                {
+                    //Decrement current pickup
+                    _iCurrentPickup = _iCurrentPickup - 1;
 
-                unlockUserInputs();
+                    //Get the lineid from hash map
+                    sLineID = _oAllPickupIDs.get(_iCurrentPickup);
+
+                    //Load previous pickup
+                    loadPickup(sLineID);
+
+                    //Check if the current pickup is 1
+                    if (_iCurrentPickup == 1)
+                    {
+                        //Disable the previous button
+                        _pickup_previous_button.setEnabled(false);
+                    }
+
+                    //Reset the pickup message
+                    _pickup_pickupcount_message.setText(_iCurrentPickup + " of " + _iTotalPickupsOnTicket);
+
+                    //Unlock the user inputs
+                    unlockUserInputs();
+                }
+
+                //Check if current count is less than or equal to total pickups
+                if (_iCurrentPickup <= _iTotalPickupsOnTicket)
+                {
+                    //Enable the next button
+                    _pickup_next_button.setEnabled(true);
+                }
             }
             //Check if the next pickup button was pressed
             else if (v.getId() == R.id.pickup_next_button)
@@ -455,8 +557,54 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup next button pressed", "");
 
+                //Check if current pickup count is less than total pickups count
+                if (_iCurrentPickup < _iTotalPickupsOnTicket)
+                {
+                    //Increment current pickup
+                    _iCurrentPickup = _iCurrentPickup + 1;
 
-                unlockUserInputs();
+                    //Get the lineid from hash map
+                    sLineID = _oAllPickupIDs.get(_iCurrentPickup);
+
+                    //Load next pickup
+                    loadPickup(sLineID);
+
+                    //Reset the pickup message
+                    _pickup_pickupcount_message.setText(_iCurrentPickup + " of " + _iTotalPickupsOnTicket);
+
+                    //Check if current count is less than or equal to total pickups
+                    if (_iCurrentPickup <= _iTotalPickupsOnTicket)
+                    {
+                        //Enable the previous button
+                        _pickup_previous_button.setEnabled(true);
+                    }
+
+                    //Unlock the user inputs
+                    unlockUserInputs();
+                }
+                //Check if current pickup count is equal to total pickup count
+                else if (_iCurrentPickup == _iTotalPickupsOnTicket)
+                {
+                    //Incement current counter to set the count greater than the total count by 1 (means new pickup)
+                    _iCurrentPickup = _iCurrentPickup + 1;
+
+                    //Reset the pickup message
+                    _pickup_pickupcount_message.setText("NEW of " + _iTotalPickupsOnTicket);
+
+                    //Clear the screen values
+                    clearScreenValues();
+
+                    //Check if current count is less than or equal to total pickups
+                    if (_iCurrentPickup == _iTotalPickupsOnTicket + 1)
+                    {
+                        //Enable the previous button
+                        _pickup_previous_button.setEnabled(true);
+                        _pickup_next_button.setEnabled(false);
+                    }
+
+                    //Unlock the user inputs
+                    unlockUserInputs();
+                }
             }
         }
         catch (Exception ex)
@@ -563,6 +711,20 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                 //Get the total LBS on ticket
                 iTotalLBS = getTotalPickupLBS(olLine);
+
+                //Loop through the line records
+                for (int i=0; i<olLine.size(); i++)
+                {
+                    //Get the line from list of records
+                    dbLine oLine = olLine.get(i);
+
+                    //Add the lineid to the line array
+                    _oAllPickupIDs.put(i + 1,oLine.getPkLineID());
+                }
+
+                //Set total pickups to line count and current pickup to number of pickups plus 1 so we know we are adding a new pickup
+                _iCurrentPickup = olLine.size() + 1;
+                _iTotalPickupsOnTicket = olLine.size();
             }
 
             //Display the pickup info on UI
@@ -728,8 +890,17 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Setup the arraylist for line insertion
                 olLine.add(oLine);
 
-                //Add the line to the database
-                oDBHandler.addLine(olLine);
+                //Check if this is a new pickup or existing pickup
+                if (_iCurrentPickup == _iTotalPickupsOnTicket + 1)
+                {
+                    //Add the line to the database
+                    oDBHandler.addLine(olLine);
+                }
+                else
+                {
+                    //Update the line in the database
+                    oDBHandler.updateLine(oLine);
+                }
 
                 //Set the return LineID
                 sLineID = gID.toString();
@@ -750,6 +921,46 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
         //Return the lineID
         return sLineID;
+    }
+
+    /**
+     * deleteCurrentPickup
+     *  - delete the current pickup and reset totals
+     * @param pspkLineID
+     */
+    private void deleteCurrentPickup(String pspkLineID)
+    {
+        dbLine oLine;
+
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get line from database
+            oLine = oDBHandler.findLineByID(pspkLineID);
+
+            //Check if the line object is populated
+            if (oLine != null)
+            {
+                //Delete the line from the database
+                oDBHandler.deleteLineByID(oLine.getPkLineID());
+            }
+
+            //Clear the screen
+            clearScreenValues();
+
+            //Run the setup again to get all counters and messages reset
+            setupScreen();
+        }
+        catch (Exception ex)
+        {
+            //Unlock the user inputs
+            unlockUserInputs();
+
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "PickupActivity", "deleteCurrentPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
     }
 
     /**
@@ -986,6 +1197,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             _convertedLBS_confirm.setEnabled(false);
             _temperature.setEnabled(false);
             _dfa_ticket.setEnabled(false);
+            _pickup_previous_button.setEnabled(false);
+            _pickup_next_button.setEnabled(false);
         }
         catch (Exception ex)
         {
@@ -1016,6 +1229,25 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             _convertedLBS_confirm.setEnabled(true);
             _temperature.setEnabled(true);
             _dfa_ticket.setEnabled(true);
+
+            //Check if current count is less than or equal to total pickups
+            if (_iCurrentPickup <= _iTotalPickupsOnTicket && _iCurrentPickup > 1)
+            {
+                //Enable the next and previous buttons
+                _pickup_next_button.setEnabled(true);
+                _pickup_previous_button.setEnabled(true);
+            }
+            else if (_iCurrentPickup == 1)
+            {
+                _pickup_next_button.setEnabled(true);
+                _pickup_previous_button.setEnabled(false);
+            }
+            else if (_iCurrentPickup == _iTotalPickupsOnTicket + 1)
+            {
+                //Enable the previous button
+                _pickup_previous_button.setEnabled(true);
+                _pickup_next_button.setEnabled(false);
+            }
         }
         catch (Exception ex)
         {
@@ -1025,38 +1257,40 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     /**
-     * loadNextPickup
-     *  - load the next pickup of the ticket
+     * loadPickup
+     *  - load the pickup of the ticket
      * @param pspkLineID
      */
-    private void loadNextPickup(String pspkLineID)
+    private void loadPickup(String pspkLineID)
     {
+        dbLine oLine = new dbLine();
+
         try
         {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
+            //Get the line information from the database
+            oLine = oDBHandler.findLineByID(pspkLineID);
+
+            //Check if the line object is populated
+            if (oLine != null)
+            {
+                _pickup_producer.setText(oLine.getProducer());
+                _pickup_tank.setText(oLine.getTank());
+                _gaugerod_major.setText(oLine.getGaugeRodMajor().toString());
+                _gaugerod_minor.setText(oLine.getGaugeRodMinor().toString());
+                _convertedLBS.setText(oLine.getConvertedLBS().toString());
+                _convertedLBS_confirm.setText(oLine.getConvertedLBS().toString());
+                _temperature.setText(oLine.getTemperature().toString());
+                _dfa_ticket.setText(oLine.getDFATicket());
+                _pickup_labcode.setText(oLine.getLabCode());
+            }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "loadNextPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-    }
-
-    /**
-     * loadPreviousPickup
-     *  - load the previous pickup of the ticket
-     * @param pspkLineID
-     */
-    private void loadPreviousPickup(String pspkLineID)
-    {
-        try
-        {
-
-        }
-        catch (Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "loadPreviousPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "loadPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

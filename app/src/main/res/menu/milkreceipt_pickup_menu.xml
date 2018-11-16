@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_pickup_activity"
         android:title="View Activity" />
+    <item android:id="@+id/menu_pickup_delete"
+        android:title="Delete Current Pickup" />
     <item android:id="@+id/menu_pickup_logout"
         android:title="Log Out" />
 </menu>

@@ -45,8 +45,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     private Map<String, String> _oPlantLookup = new HashMap<String, String>();
     private boolean bIPCheck = false;
     private boolean bDumpHotCheck = false;
-    private boolean bOkToRunSave = false;
     private Integer _iTotalReceiveCount, _iCurrentReceive;
+    private Map<Integer, String> _oAllReceiveIDs = new HashMap<Integer, String>();
 
     //region Class Constructor Methods
     @Override
@@ -203,11 +203,62 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     //Instantiate a new intent of PickupActivity
                     Intent pickup_intent = new Intent(this, PickupActivity.class);
 
+                    //Instantiate the bundle object
+                    Bundle oBundle_new = new Bundle();
+
+                    //Set the headerID, profileID and settingsID in the bundle
+                    oBundle_new.putString("pkHeaderID", _spkHeaderID);
+                    oBundle_new.putString("pkProfileID", _spkProfileID);
+                    oBundle_new.putString("pkSettingsID", _spkSettingsID);
+
+                    //Setup bundle into intent
+                    pickup_intent.putExtras(oBundle_new);
+
                     //Navigate to the pickup screen
                     startActivity(pickup_intent);
 
                     //Log message to activity
                     _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "Receive menu back to pickups selected", "");
+
+                    //Set the return value to true
+                    bReturn = true;
+
+                    break;
+
+                //Menu Delete Receive selected
+                case R.id.menu_receive_delete:
+                    //Log message to activity
+                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "Receive menu delete receive selected", "");
+
+                    //Check that the receive screen is not in a new add state
+                    if (_iCurrentReceive <= _iTotalReceiveCount)
+                    {
+                        // Use the Builder class for convenient dialog construction
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                        //Build the message
+                        builder.setMessage("Are you sure you want to delete this receive?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //Get the receiveid from hash map
+                                        String sReceiveID = _oAllReceiveIDs.get(_iCurrentReceive);
+
+                                        //Run the deletion process
+                                        deleteCurrentReceive(sReceiveID);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //Log message
+                                        _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the receive deletion process", "");
+
+                                    }
+                                });
+
+                        //Show the dialog box
+                        AlertDialog aDialog = builder.create();
+                        aDialog.show();
+                    }
 
                     //Set the return value to true
                     bReturn = true;
@@ -256,6 +307,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v)
     {
+        String sReceiveID;
+        
         try
         {
             //Lock the user inputs
@@ -286,9 +339,11 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
+                                    //Check if the dump or hot selections were selected
                                     if (!bDumpHotCheck)
                                     {
-                                        bOkToRunSave = true;
+                                        //Run the save process
+                                        runSaveProcess();
                                     }
                                 }
                             })
@@ -304,12 +359,13 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                                 }
                             });
 
+                    //Show the dialog box
                     AlertDialog aDialog = builder.create();
                     aDialog.show();
                 }
 
                 //Check if the plant selected is correct for the current ip location
-                if (!bDumpHotCheck)
+                if (bDumpHotCheck)
                 {
                     // Use the Builder class for convenient dialog construction
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -320,7 +376,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                             {
                                 public void onClick(DialogInterface dialog, int id)
                                 {
-                                    bOkToRunSave = true;
+                                    //Run the save process
+                                    runSaveProcess();
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
@@ -335,13 +392,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                                 }
                             });
 
+                    //Show the dialog box
                     AlertDialog aDialog = builder.create();
                     aDialog.show();
-                }
-
-                if (bOkToRunSave)
-                {
-                    runSaveProcess();
                 }
             }
             //Check if the receive finish ticket button was pressed
@@ -392,8 +445,38 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "Receive previous button pressed", "");
 
+                //Check if current receive count is greater than 1
+                if (_iCurrentReceive > 1)
+                {
+                    //Decrement current receive
+                    _iCurrentReceive = _iCurrentReceive - 1;
 
-                unlockUserInputs();
+                    //Get the receiveid from hash map
+                    sReceiveID = _oAllReceiveIDs.get(_iCurrentReceive);
+
+                    //Load previous receive
+                    loadReceive(sReceiveID);
+
+                    //Check if the current receive is 1
+                    if (_iCurrentReceive == 1)
+                    {
+                        //Disable the previous button
+                        _receive_previous_button.setEnabled(false);
+                    }
+
+                    //Reset the receive message
+                    _receive_receivecount_message.setText(_iCurrentReceive + " of " + _iTotalReceiveCount);
+
+                    //Unlock the user inputs
+                    unlockUserInputs();
+                }
+
+                //Check if current count is less than or equal to total receives
+                if (_iCurrentReceive <= _iTotalReceiveCount)
+                {
+                    //Enable the next button
+                    _receive_next_button.setEnabled(true);
+                }
             }
             //Check if the receive next button was pressed
             else if (v.getId() == R.id.receive_next_button)
@@ -401,8 +484,54 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "ReceiveActivity", "onClick", _sUsername, "Receive next button pressed", "");
 
+                //Check if current receive count is less than total receives count
+                if (_iCurrentReceive < _iTotalReceiveCount)
+                {
+                    //Increment current receive
+                    _iCurrentReceive = _iCurrentReceive + 1;
 
-                unlockUserInputs();
+                    //Get the receiveid from hash map
+                    sReceiveID = _oAllReceiveIDs.get(_iCurrentReceive);
+
+                    //Load next receive
+                    loadReceive(sReceiveID);
+
+                    //Reset the receive message
+                    _receive_receivecount_message.setText(_iCurrentReceive + " of " + _iTotalReceiveCount);
+
+                    //Check if current count is less than or equal to total receives
+                    if (_iCurrentReceive <= _iTotalReceiveCount)
+                    {
+                        //Enable the previous button
+                        _receive_previous_button.setEnabled(true);
+                    }
+
+                    //Unlock the user inputs
+                    unlockUserInputs();
+                }
+                //Check if current receive count is equal to total receive count
+                else if (_iCurrentReceive == _iTotalReceiveCount)
+                {
+                    //Incement current counter to set the count greater than the total count by 1 (means new receive)
+                    _iCurrentReceive = _iCurrentReceive + 1;
+
+                    //Reset the receive message
+                    _receive_receivecount_message.setText("NEW of " + _iTotalReceiveCount);
+
+                    //Clear the screen values
+                    clearScreenValues();
+
+                    //Check if current count is less than or equal to total receives
+                    if (_iCurrentReceive == _iTotalReceiveCount + 1)
+                    {
+                        //Enable the previous button
+                        _receive_previous_button.setEnabled(true);
+                        _receive_next_button.setEnabled(false);
+                    }
+
+                    //Unlock the user inputs
+                    unlockUserInputs();
+                }
             }
         }
         catch (Exception ex)
@@ -447,6 +576,20 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             if (olReceive != null)
             {
                 //Set the total receives count
+                _iTotalReceiveCount = olReceive.size();
+
+                //Loop through the receive records
+                for (int i=0; i<olReceive.size(); i++)
+                {
+                    //Get the receive from list of records
+                    dbReceive oReceive = olReceive.get(i);
+
+                    //Add the receiveid to the receive array
+                    _oAllReceiveIDs.put(i + 1,oReceive.getPkReceiveID());
+                }
+
+                //Set total receives to receive count and current receive to number of receives plus 1 so we know we are adding a new receive
+                _iCurrentReceive = olReceive.size() + 1;
                 _iTotalReceiveCount = olReceive.size();
             }
 
@@ -732,8 +875,45 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Get the total LBS left available on ticket
                 iTotalLBS = getTotalLBSLeftOnTicket();
 
+                dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+                List<dbReceive> olReceive;
+                olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
+                _oAllReceiveIDs = new HashMap<Integer, String>();
+
+                if (olReceive.size() > 0)
+                {
+                    //Loop through the receive records
+                    for (int i=0; i<olReceive.size(); i++)
+                    {
+                        //Get the receive from list of records
+                        dbReceive oReceive = olReceive.get(i);
+
+                        //Add the receiveid to the receive array
+                        _oAllReceiveIDs.put(i + 1,oReceive.getPkReceiveID());
+                    }
+                }
+
                 //Display the pickup info on UI
                 _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
+
+                //Set total receives to receive count and current receive to number of receives plus 1 so we know we are adding a new receive
+                _iCurrentReceive = olReceive.size() + 1;
+                _iTotalReceiveCount = olReceive.size();
+
+                //Setup receive count and buttons
+                _receive_receivecount_message.setText("NEW of " + _iTotalReceiveCount);
+
+                //Check if the total receive count is 0
+                if (_iTotalReceiveCount == 0)
+                {
+                    //Disable the previous button
+                    _receive_previous_button.setEnabled(false);
+                }
+                else
+                {
+                    //Enable the previous button
+                    _receive_previous_button.setEnabled(true);
+                }
 
                 //Check if there are still LBS available for receives
                 if (iTotalLBS > 0)
@@ -833,8 +1013,17 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Setup the arraylist for receive insertion
                 olReceive.add(oReceive);
 
-                //Add the receive to the database
-                oDBHandler.addReceive(olReceive);
+                //Check if this is a new receive or existing receive
+                if (_iCurrentReceive == _iTotalReceiveCount + 1)
+                {
+                    //Add the receive to the database
+                    oDBHandler.addReceive(olReceive);
+                }
+                else
+                {
+                    //Update the receive in the database
+                    oDBHandler.updateReceive(oReceive);
+                }
 
                 //Set the return ReceiveID
                 sReceiveID = gID.toString();
@@ -870,6 +1059,43 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         
         return sReceiveID;
+    }
+
+    /**
+     * deleteCurrentReceive
+     *  - delete the current receive from the database
+     * @param pspkReceiveID
+     */
+    private void deleteCurrentReceive(String pspkReceiveID)
+    {
+        dbReceive oReceive;
+
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get receive from database
+            oReceive = oDBHandler.findReceiveByID(pspkReceiveID);
+
+            //Check if the receive object is populated
+            if (oReceive != null)
+            {
+                //Delete the receive from the database
+                oDBHandler.deleteReceiveByID(oReceive.getPkReceiveID());
+            }
+
+            //Clear the screen
+            clearScreenValues();
+
+            //Run the setup again to get all counters and messages reset
+            setupScreen();
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "deleteCurrentReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
     }
 
     /**
@@ -1463,11 +1689,13 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_IntakeNumber.setEnabled(false);
             _receive_plant.setEnabled(false);
             _receive_scalemeter.setEnabled(false);
+            _receive_previous_button.setEnabled(false);
+            _receive_next_button.setEnabled(false);
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
@@ -1494,47 +1722,89 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_IntakeNumber.setEnabled(true);
             _receive_plant.setEnabled(true);
             _receive_scalemeter.setEnabled(true);
+
+            //Check if current count is less than or equal to total receives
+            if (_iCurrentReceive <= _iTotalReceiveCount && _iCurrentReceive > 1)
+            {
+                //Enable the next and previous buttons
+                _receive_next_button.setEnabled(true);
+                _receive_previous_button.setEnabled(true);
+            }
+            else if (_iCurrentReceive == 1)
+            {
+                _receive_next_button.setEnabled(true);
+                _receive_previous_button.setEnabled(false);
+            }
+            else if (_iCurrentReceive == _iTotalReceiveCount + 1)
+            {
+                //Enable the previous button
+                _receive_previous_button.setEnabled(true);
+                _receive_next_button.setEnabled(false);
+            }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 
     /**
-     * loadNextReceive
-     *  - load the next receive of the ticket
+     * loadReceive
+     *  - load the receive of the ticket by ID
      * @param pspkReceiveID
      */
-    private void loadNextReceive(String pspkReceiveID)
+    private void loadReceive(String pspkReceiveID)
     {
+        dbReceive oReceive = new dbReceive();
+        dbPlant oPlant = new dbPlant();
+        dbHeader oHeader = new dbHeader();
+
         try
         {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 
+            //Get the receive information from the database
+            oReceive = oDBHandler.findReceiveByID(pspkReceiveID);
+
+            //Check if the receive object is populated
+            if (oReceive != null)
+            {
+                //Set controls on screen with data
+                _receive_DrugTestDevice.setText(oReceive.getDrugTestDevice());
+                _receive_DrugTestResult.setText(oReceive.getDrugTestResult());
+                _receive_Silo.setText(oReceive.getTank());
+                _receive_Temperature.setText(oReceive.getLoadTemp().toString());
+                _receive_TopSeal.setText(oReceive.getTopSeal());
+                _receive_BottomSeal.setText(oReceive.getBottomSeal());
+                _receive_ReceivedLBS.setText(oReceive.getReceivedLBS().toString());
+                _receive_ReceivedLBSConfirmation.setText(oReceive.getReceivedLBS().toString());
+                _receive_IntakeNumber.setText(oReceive.getIntakeNumber() == 0 ? "" : oReceive.getIntakeNumber().toString());
+
+                //Get the header record to get the end mileage
+                oHeader = oDBHandler.findHeaderByID(_spkHeaderID);
+                _receive_EndMileage.setText(oHeader.getEndMileage() == 0 ? "" : oHeader.getEndMileage().toString());
+
+                //Get the plant to set the plant spinner
+                oPlant = oDBHandler.findPlantByID(oReceive.getFkPlantID());
+                _receive_plant.setSelection(((ArrayAdapter)_receive_plant.getAdapter()).getPosition(oPlant.getPlantName()));
+
+                //Check if the scale meter is set to 0 (Meter) or 1 (Scale)
+                if (oReceive.getScaleMeter() == 0)
+                {
+                    _receive_scalemeter.setSelection(0);
+                }
+                else
+                {
+                    _receive_scalemeter.setSelection(1);
+                }
+            }
         }
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "ReceiveActivity", "loadNextReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-    }
-
-    /**
-     * loadPreviousReceive
-     *  - load the previous receive of the ticket
-     * @param pspkReceiveID
-     */
-    private void loadPreviousReceive(String pspkReceiveID)
-    {
-        try
-        {
-
-        }
-        catch (Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.insertActivity(this, "3", "ReceiveActivity", "loadPreviousReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "loadReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
     //endregion

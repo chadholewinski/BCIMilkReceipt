@@ -4,6 +4,8 @@
         android:title="View Activity" />
     <item android:id="@+id/menu_receive_backtopickups"
         android:title="Back to Pickups" />
+    <item android:id="@+id/menu_receive_delete"
+        android:title="Delete Current Receive" />
     <item android:id="@+id/menu_receive_logout"
         android:title="Log Out" />
 </menu>
