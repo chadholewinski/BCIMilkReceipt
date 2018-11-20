@@ -856,8 +856,23 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Instantiate the total lbs
             Integer iTotalLBS = 0;
 
-            //Save the pickup
-            String sReceiveIDSaved = saveNewReceive();
+            //Instantiate a receive id saved string
+            String sReceiveIDSaved;
+
+            //Check if this is an existing receive save
+            if (_iCurrentReceive <= _iTotalReceiveCount)
+            {
+                //Get the receiveid from hash map
+                String sExistingReceiveID = _oAllReceiveIDs.get(_iCurrentReceive);
+
+                //Save the existing receive
+                sReceiveIDSaved = saveExistingReceive(sExistingReceiveID);
+            }
+            else
+            {
+                //Save the new receive
+                sReceiveIDSaved = saveNewReceive();
+            }
 
             //Format the date for insert and modified
             DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
@@ -1724,10 +1739,18 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
      */
     private void clearScreenValues()
     {
+        dbSettings oSettings = new dbSettings();
+
         try
         {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the settings from the database
+            oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
             //Clear the screen contents values
-            _receive_DrugTestDevice.setText("");
+            _receive_DrugTestDevice.setText(oSettings.getDrugTestDevice());
             _receive_DrugTestResult.setText("");
             _receive_Silo.setText("");
             _receive_Temperature.setText("");
