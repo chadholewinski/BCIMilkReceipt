@@ -34,7 +34,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 {
 
     private Button _signin_login_button;
-    private TextView _signin_progresslabel;
+    private TextView _signin_progresslabel, _signin_message;
     private String _spkSettingsID;
     private Utilities _oUtils;
     private String _sWSURL = "http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc";
@@ -60,6 +60,10 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
         //Instantiate the progress bar label
         _signin_progresslabel = (TextView)findViewById(R.id.signin_progresslabel);
+
+        //Instantiate the signin message label
+        _signin_message = (TextView)findViewById(R.id.signin_message);
+        _signin_message.setVisibility(View.INVISIBLE);
 
         //Set the on click listener for page to the login button
         _signin_login_button.setOnClickListener(this);
@@ -210,6 +214,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     //Log activity
                     _oUtils.insertActivity(this, "1", "SignInActivity", "onClick", spkProfileID, "SignIn successful", "");
 
+                    //Set visibility of signin message
+                    _signin_message.setVisibility(View.INVISIBLE);
+
                     //Update the settings information
                     updateSettingsForLastUserLoggedIn(spkProfileID);
 
@@ -228,6 +235,14 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     //Navigate to the receipt activity page
                     startActivity(intent);
+                }
+                else
+                {
+                    //Log activity
+                    _oUtils.insertActivity(this, "1", "SignInActivity", "onClick", "N/A", "SignIn failed", "");
+
+                    //Set visibility of signin message
+                    _signin_message.setVisibility(View.VISIBLE);
                 }
             }
         }

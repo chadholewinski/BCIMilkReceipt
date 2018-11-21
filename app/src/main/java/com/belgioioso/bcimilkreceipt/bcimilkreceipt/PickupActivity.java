@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -415,7 +416,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 String sLineIDSaved;
 
                 //Check if this is an existing pickup save
-                if (_iCurrentPickup <= _iTotalPickupsOnTicket)
+                if ((_iCurrentPickup <= _iTotalPickupsOnTicket) && (_iCurrentPickup > 0))
                 {
                     //Get the lineid from hash map
                     String sExistingLineID = _oAllPickupIDs.get(_iCurrentPickup);
@@ -442,8 +443,19 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                         //Clear the screen contents/colors
                         clearScreenValues();
 
-                        //Display save successful message on bottom of screen
-                        _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate).toString());
+                        //Check if this is an existing pickup save
+                        if ((_iCurrentPickup <= _iTotalPickupsOnTicket) && (_iCurrentPickup > 0))
+                        {
+                            //Display update successful message on bottom of screen
+                            _pickup_Bottom_SaveMessage.setText("Pickup updated successfully at: " + dfDate.format(dDate));
+                            _pickup_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Lime));
+                        }
+                        else
+                        {
+                            //Display save successful message on bottom of screen
+                            _pickup_Bottom_SaveMessage.setText("Pickup saved successfully at: " + dfDate.format(dDate));
+                            _pickup_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Lime));
+                        }
 
                         //Instantiate the database handler
                         dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
@@ -494,13 +506,15 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     else
                     {
                         //Display save failed message on bottom of screen
-                        _pickup_Bottom_SaveMessage.setText("Pickup saved failed at: " + dfDate.format(dDate).toString());
+                        _pickup_Bottom_SaveMessage.setText("Pickup save failed at: " + dfDate.format(dDate));
+                        _pickup_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
                     }
                 }
                 else
                 {
                     //Display save failed message on bottom of screen
-                    _pickup_Bottom_SaveMessage.setText("Pickup saved failed at: " + dfDate.format(dDate).toString());
+                    _pickup_Bottom_SaveMessage.setText("Pickup save failed at: " + dfDate.format(dDate));
+                    _pickup_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
                 }
             }
             //Check if the goto receive button was pressed
@@ -884,8 +898,8 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setCompany(_sCompany);
                 oLine.setDivision(_sDivision);
                 oLine.setType(_sType);
-                oLine.setGaugeRodMajor(_gaugerod_major.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
-                oLine.setGaugeRodMinor(_gaugerod_minor.getText().toString() == "" ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
+                oLine.setGaugeRodMajor(TextUtils.isEmpty(_gaugerod_major.getText().toString()) ? 0 : Integer.parseInt(_gaugerod_major.getText().toString()));
+                oLine.setGaugeRodMinor(TextUtils.isEmpty(_gaugerod_minor.getText().toString()) ? 0 : Integer.parseInt(_gaugerod_minor.getText().toString()));
                 oLine.setConvertedLBS(Integer.parseInt(_convertedLBS.getText().toString()));
                 oLine.setTemperature(Integer.parseInt(_temperature.getText().toString()));
                 oLine.setPickupDate(_oUtils.getFormattedDate(this, _sUsername));

@@ -167,7 +167,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 //Logout item selected
                 case R.id.menu_settings_logout:
                     //Instantiate a new intent of ReceiptActivity
-                    Intent receipt_intent = new Intent(this, SignInActivity.class);
+                    Intent receipt_intent = new Intent(this, ReceiptActivity.class);
 
                     //Instantiate the bundle object
                     Bundle oBundle = new Bundle();
@@ -183,7 +183,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                     startActivity(receipt_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "Settings menu back to SignIn selected", "");
+                    _oUtils.insertActivity(this, "1", "SettingsActivity", "onOptionsItemSelected", _sUsername, "Settings menu back to Receipt selected", "");
 
                     //Set the return value to true
                     bReturn = true;

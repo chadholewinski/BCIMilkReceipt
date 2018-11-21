@@ -3,8 +3,10 @@ package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -860,7 +862,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             String sReceiveIDSaved;
 
             //Check if this is an existing receive save
-            if (_iCurrentReceive <= _iTotalReceiveCount)
+            if (_iCurrentReceive <= _iTotalReceiveCount && _iCurrentReceive > 0)
             {
                 //Get the receiveid from hash map
                 String sExistingReceiveID = _oAllReceiveIDs.get(_iCurrentReceive);
@@ -884,8 +886,19 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Clear the screen
                 clearScreenValues();
 
-                //Display save successful message on bottom of screen
-                _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate).toString());
+                //Check if this is an existing receive save
+                if (_iCurrentReceive <= _iTotalReceiveCount && _iCurrentReceive > 0)
+                {
+                    //Display update successful message on bottom of screen
+                    _receive_Bottom_SaveMessage.setText("Receive updated successfully at: " + dfDate.format(dDate));
+                    _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Lime));
+                }
+                else
+                {
+                    //Display save successful message on bottom of screen
+                    _receive_Bottom_SaveMessage.setText("Receive saved successfully at: " + dfDate.format(dDate));
+                    _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Lime));
+                }
 
                 //Get the total LBS left available on ticket
                 iTotalLBS = getTotalLBSLeftOnTicket();
@@ -951,11 +964,20 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             else
             {
                 //Display save failed message on bottom of screen
-                _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate).toString());
+                _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate));
+                _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
             }
         }
         catch (Exception ex)
         {
+            //Format the date for insert and modified
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+            Date dDate = new Date();
+
+            //Display save failed message on bottom of screen
+            _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate));
+            _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
+
             //Unlock the user inputs
             unlockUserInputs();
 
@@ -990,7 +1012,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 else
                 {
                     //Use what the driver entered into field
-                    iReceivedLBS = Integer.parseInt(_receive_ReceivedLBS.getText().toString());
+                    iReceivedLBS = TextUtils.isEmpty(_receive_ReceivedLBS.getText().toString()) ? 0 : Integer.parseInt(_receive_ReceivedLBS.getText().toString());
                 }
 
                 //Instantiate the database handler
@@ -1016,8 +1038,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 oReceive.setTopSeal(_receive_TopSeal.getText().toString());
                 oReceive.setBottomSeal(_receive_BottomSeal.getText().toString());
                 oReceive.setReceivedLBS(iReceivedLBS);
-                oReceive.setLoadTemp(Integer.parseInt(_receive_Temperature.getText().toString()));
-                oReceive.setIntakeNumber(Integer.parseInt(_receive_IntakeNumber.getText().toString()));
+                oReceive.setLoadTemp(TextUtils.isEmpty(_receive_Temperature.getText().toString()) ? 0 : Integer.parseInt(_receive_Temperature.getText().toString()));
+                oReceive.setIntakeNumber(TextUtils.isEmpty(_receive_IntakeNumber.getText().toString()) ? 0 : Integer.parseInt(_receive_IntakeNumber.getText().toString()));
                 oReceive.setFinished(0);
                 oReceive.setWaitingForScaleData(0);
                 oReceive.setTransmitted(0);
@@ -1057,6 +1079,14 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch(Exception ex)
         {
+            //Format the date for insert and modified
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+            Date dDate = new Date();
+
+            //Display save failed message on bottom of screen
+            _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate));
+            _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
+
             //Unlock the user inputs
             unlockUserInputs();
 
@@ -1092,7 +1122,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 else
                 {
                     //Use what the driver entered into field
-                    iReceivedLBS = Integer.parseInt(_receive_ReceivedLBS.getText().toString());
+                    iReceivedLBS = TextUtils.isEmpty(_receive_ReceivedLBS.getText().toString()) ? 0 : Integer.parseInt(_receive_ReceivedLBS.getText().toString());
                 }
 
                 //Instantiate the database handler
@@ -1117,8 +1147,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 oReceive.setTopSeal(_receive_TopSeal.getText().toString());
                 oReceive.setBottomSeal(_receive_BottomSeal.getText().toString());
                 oReceive.setReceivedLBS(iReceivedLBS);
-                oReceive.setLoadTemp(Integer.parseInt(_receive_Temperature.getText().toString()));
-                oReceive.setIntakeNumber(Integer.parseInt(_receive_IntakeNumber.getText().toString()));
+                oReceive.setLoadTemp(TextUtils.isEmpty(_receive_Temperature.getText().toString()) ? 0 : Integer.parseInt(_receive_Temperature.getText().toString()));
+                oReceive.setIntakeNumber(TextUtils.isEmpty(_receive_IntakeNumber.getText().toString()) ? 0 : Integer.parseInt(_receive_IntakeNumber.getText().toString()));
                 oReceive.setFinished(0);
                 oReceive.setWaitingForScaleData(0);
                 oReceive.setTransmitted(0);
@@ -1151,6 +1181,14 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         }
         catch(Exception ex)
         {
+            //Format the date for insert and modified
+            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+            Date dDate = new Date();
+
+            //Display save failed message on bottom of screen
+            _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate));
+            _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
+
             //Unlock the user inputs
             unlockUserInputs();
 
