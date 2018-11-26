@@ -849,6 +849,10 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         return iTotalLBS;
     }
 
+    /**
+     * runSaveProcess
+     *  - Run the save process for the recieve
+     */
     private void runSaveProcess()
     {
         try
@@ -1068,6 +1072,14 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     //Set the end mileage on the header record
                     oHeader.setEndMileage(Integer.parseInt(_receive_EndMileage.getText().toString()));
 
+                    //Calculate the total mileage
+                    Integer iStartMileage = oHeader.getStartMileage();
+                    Integer iEndMileage = oHeader.getEndMileage();
+                    Integer iTotalMileage = iEndMileage - iStartMileage;
+
+                    //Set the total mileage on the header record
+                    oHeader.setTotalMileage(iTotalMileage);
+
                     //Update the header record
                     oDBHandler.updateHeader(oHeader);
                 }
@@ -1169,6 +1181,14 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                     //Set the end mileage on the header record
                     oHeader.setEndMileage(Integer.parseInt(_receive_EndMileage.getText().toString()));
+
+                    //Calculate the total mileage
+                    Integer iStartMileage = oHeader.getStartMileage();
+                    Integer iEndMileage = oHeader.getEndMileage();
+                    Integer iTotalMileage = iEndMileage - iStartMileage;
+
+                    //Set the total mileage on the header record
+                    oHeader.setTotalMileage(iTotalMileage);
 
                     //Update the header record
                     oDBHandler.updateHeader(oHeader);
@@ -1459,13 +1479,13 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Check if scale was selected
             if (_receive_scalemeter.getSelectedItem().toString() == "Scale")
             {
-                //Set the scale meter to 1
-                iScaleMeter = 1;
+                //Set the scale meter to 0
+                iScaleMeter = 0;
             }
             else
             {
-                //Set the scale meter to 0
-                iScaleMeter = 0;
+                //Set the scale meter to 1
+                iScaleMeter = 1;
             }
         }
         catch(Exception ex)

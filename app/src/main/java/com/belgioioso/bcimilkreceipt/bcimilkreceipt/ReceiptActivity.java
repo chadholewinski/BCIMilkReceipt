@@ -1,5 +1,7 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
@@ -19,7 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
+import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbReceive;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import java.io.File;
 import java.io.FileInputStream;
@@ -178,7 +182,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                     break;
 
                 //Menu Settings item selected
-                case R.id.menu_signin_settings:
+                case R.id.menu_receipt_settings:
                     //Instantiate a new intent of SettingsActivity
                     Intent settings_intent = new Intent(this, SettingsActivity.class);
 
@@ -203,8 +207,41 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
                     break;
 
+                //Menu delete item selected
+                case R.id.menu_receipt_delete:
+                    //Log message to activity
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu delete existing ticket selected", "");
+
+                    // Use the Builder class for convenient dialog construction
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    //Build the message
+                    builder.setMessage("Are you sure you want to delete this ticket?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //Run the deletion process
+                                    deleteExistingTicket();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //Log message
+                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the ticket deletion process", "");
+
+                                }
+                            });
+
+                    //Show the dialog box
+                    AlertDialog aDialog = builder.create();
+                    aDialog.show();
+
+                    //Set the return value to true
+                    bReturn = true;
+
+                    break;
+
                 //Menu CopyDB item selected
-                case R.id.menu_signin_copydb:
+                case R.id.menu_receipt_copydb:
                     //Check if required permissions are set for external storage
                     if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED )
                     {
@@ -477,6 +514,82 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
             //Close the source and destination file streams
             src.close();
             dst.close();
+        }
+    }
+
+    /**
+     * deleteExistingTicket
+     *  - Deletes the existing ticket selected from database
+     */
+    public void deleteExistingTicket()
+    {
+        dbHeader oHeader = new dbHeader();
+        List<dbLine> olLine = new ArrayList<dbLine>();
+        dbLine oLine = new dbLine();
+        List<dbReceive> olReceive = new ArrayList<dbReceive>();
+        dbReceive oReceive = new dbReceive();
+
+        try
+        {
+            //Instantiate a new database connection object
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the selected ticket number from spinner
+            Integer iPosition = spn_Existing_Tickets.getSelectedItemPosition();
+            String sTicketID = _olTicketIDs.get(iPosition);
+
+            //Log message to activity
+            _oUtils.insertActivity(this, "1", "ReceiptActivity", "deleteExistingTicket", _sUsername, "Deleting ticket with ID: " + sTicketID, "");
+
+            oHeader = oDBHandler.findHeaderByID(sTicketID);
+            olLine = oDBHandler.findLinesByHeaderID(sTicketID);
+            olReceive = oDBHandler.findReceivesByHeaderID(sTicketID);
+
+            //Check if there are any receives to delete
+            if (olReceive != null)
+            {
+                //Loop through all receive records in the list
+                for (int i = 0; i < olReceive.size(); i++)
+                {
+                    //Get the current receive record
+                    oReceive = olReceive.get(i);
+
+                    //Log message to activity
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "deleteExistingTicket", _sUsername, "Deleting ticket Recieve with ID: " + oReceive.getPkReceiveID(), "");
+
+                    //Delete the receive from database
+                    oDBHandler.deleteReceiveByID(oReceive.getPkReceiveID());
+                }
+            }
+
+            //Check if there are any lines to delete
+            if (olLine != null)
+            {
+                //Loop through all line records in the list
+                for (int i = 0; i < olLine.size(); i++)
+                {
+                    //Get the current line record
+                    oLine = olLine.get(i);
+
+                    //Log message to activity
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "deleteExistingTicket", _sUsername, "Deleting ticket Pickup with ID: " + oLine.getPkLineID(), "");
+
+                    //Delete the line from database
+                    oDBHandler.deleteLineByID(oLine.getPkLineID());
+                }
+            }
+
+            //Delete the header from the database
+            oDBHandler.deleteHeaderByID(oHeader.getPkHeaderID());
+
+            //Clear ticket list and re-populate the existing ticket spinner
+            _olTicketIDs.clear();
+            populateExistingTicketSpinner();
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "deleteExistingTicket", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
 

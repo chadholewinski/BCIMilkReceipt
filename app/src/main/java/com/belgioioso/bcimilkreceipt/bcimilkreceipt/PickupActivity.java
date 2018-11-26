@@ -47,7 +47,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
     private Button _pickup_scanproducer_button, _pickup_scanlabcode_button, _pickup_save_button, _pickup_gotoreceive_button, _pickup_previous_button, _pickup_next_button;
     private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals, _pickup_pickupcount_message;
     private EditText _pickup_producer, _pickup_tank, _pickup_labcode, _gaugerod_major, _gaugerod_minor, _convertedLBS, _convertedLBS_confirm, _temperature, _dfa_ticket;
-    private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sProvider, _sUsername;
+    private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sProvider, _sUsername, _sTypeOfScan;
     //private LocationManager _oLocationManager;
     //private Location _oLocation;
     private Utilities _oUtils;
@@ -389,6 +389,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup scan producer button pressed", "");
 
+                //Set type of scan
+                _sTypeOfScan = "Producer";
+
                 //Instantiate a new producer scanning intent integrator
                 IntentIntegrator scanProducerIntegrator = new IntentIntegrator(this);
 
@@ -400,6 +403,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             {
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "PickupActivity", "onClick", _sUsername, "Pickup scan labcode button pressed", "");
+
+                //Set type of scan
+                _sTypeOfScan = "Lab";
 
                 //Instantiate a new labcode scanning intent integrator
                 IntentIntegrator scanLabCodeIntegrator = new IntentIntegrator(this);
@@ -567,9 +573,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                     //Reset the pickup message
                     _pickup_pickupcount_message.setText(_iCurrentPickup + " of " + _iTotalPickupsOnTicket);
-
-                    //Unlock the user inputs
-                    unlockUserInputs();
                 }
 
                 //Check if current count is less than or equal to total pickups
@@ -606,9 +609,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                         //Enable the previous button
                         _pickup_previous_button.setEnabled(true);
                     }
-
-                    //Unlock the user inputs
-                    unlockUserInputs();
                 }
                 //Check if current pickup count is equal to total pickup count
                 else if (_iCurrentPickup == _iTotalPickupsOnTicket)
@@ -629,11 +629,11 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                         _pickup_previous_button.setEnabled(true);
                         _pickup_next_button.setEnabled(false);
                     }
-
-                    //Unlock the user inputs
-                    unlockUserInputs();
                 }
             }
+
+            //Unlock the user inputs
+            unlockUserInputs();
         }
         catch (Exception ex)
         {
@@ -668,7 +668,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 String scanContent = scanningResult.getContents();
 
                 //Check if the scan content retrieved is 14 characters long
-                if (scanContent.length() == 14)
+                if ((scanContent.length() == 14) && (_sTypeOfScan == "Producer"))
                 {
                     //Log message to activity
                     _oUtils.insertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "Barcode scan found: " + scanContent, "");
