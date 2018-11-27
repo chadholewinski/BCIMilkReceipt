@@ -108,7 +108,7 @@ public class Utilities
         catch(Exception ex)
         {
             //Log error message to activity
-            insertActivity(poContext, "3", "Utilities", "findSettings", psUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            insertActivity(poContext, "3", "Utilities", "findSettings", psUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         //Return the settingsID
@@ -216,7 +216,7 @@ public class Utilities
         catch(Exception ex)
         {
             //Log error message to activity
-            insertActivity(poContext, "3", "Utilities", "findUsernameByID", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+            insertActivity(poContext, "3", "Utilities", "findUsernameByID", "N/A", ex.getMessage(), ex.getStackTrace().toString());
         }
 
         //Return the username
@@ -245,7 +245,7 @@ public class Utilities
         catch(Exception ex)
         {
             //Log error message to activity
-            insertActivity(poContext, "3", "Utilities", "getWiFiIPAddess", psUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            insertActivity(poContext, "3", "Utilities", "getWiFiIPAddess", psUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         return ipAddress;
@@ -309,7 +309,7 @@ public class Utilities
         catch(Exception ex)
         {
             //Log error message to activity
-            insertActivity(poContext, "3", "Utilities", "getFormattedDate", psUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            insertActivity(poContext, "3", "Utilities", "getFormattedDate", psUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         return dReturnDate;
@@ -338,7 +338,7 @@ public class Utilities
         catch(Exception ex)
         {
             //Log error message to activity
-            insertActivity(poContext, "3", "Utilities", "getFormattedDate", psUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            insertActivity(poContext, "3", "Utilities", "getFormattedDate", psUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         return dReturnDate;
@@ -366,7 +366,35 @@ public class Utilities
         catch(Exception ex)
         {
             //Log error message to activity
-            insertActivity(poContext, "3", "Utilities", "getFormattedDateString", psUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            insertActivity(poContext, "3", "Utilities", "getFormattedDateString", psUsername, ex.getMessage(), ex.getStackTrace().toString());
+        }
+
+        return sReturnDate;
+    }
+
+    /**
+     * converts date to the proper JSON date format for get in webservice
+     * @param poContext
+     * @param psUsername
+     * @param pdDate
+     * @return (String) - date string in correct format
+     */
+    public String getFormattedJSONDateString(Context poContext, String psUsername, Date pdDate)
+    {
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        String sReturnDate = "1900-01-01T000000";
+
+        try
+        {
+            //Parse the date into the correct format
+            sReturnDate = parser.format(pdDate);
+            sReturnDate = sReturnDate.substring(0,19);
+            sReturnDate = sReturnDate.replace(":","");
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            insertActivity(poContext, "3", "Utilities", "getFormattedJSONDateString", psUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         return sReturnDate;

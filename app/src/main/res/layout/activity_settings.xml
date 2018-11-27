@@ -243,11 +243,20 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/settings_lastprofileuploaddate"
+        android:text="Last Profile Upload Date: "
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        app:layout_constraintTop_toBottomOf="@id/settings_lastuserlogindate"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/settings_createddate"
         android:text="Created Date: "
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        app:layout_constraintTop_toBottomOf="@id/settings_lastuserlogindate"/>
+        app:layout_constraintTop_toBottomOf="@id/settings_lastprofileuploaddate"/>
 
     <TextView
         android:layout_width="match_parent"

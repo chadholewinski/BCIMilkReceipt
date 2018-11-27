@@ -2046,7 +2046,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         dbProfile oProfile = new dbProfile();
 
         //Create the query string
-        query = "SELECT TOP 1 * FROM " + oProfile.TABLE_PROFILE + " ORDER BY " + oProfile.PROFILE_COLUMN_MODIFIEDDATE + " DESC";
+        query = "SELECT * FROM " + oProfile.TABLE_PROFILE + " ORDER BY " + oProfile.PROFILE_COLUMN_MODIFIEDDATE + " DESC LIMIT 1";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();
@@ -3055,6 +3055,53 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
 
         //Return the plant list object
         return olPlant;
+    }
+
+    //findPlantLastDate
+    // - Get a plant record last date
+    public Date findPlantLastDate()
+    {
+        String query;
+        String sLastDate;
+        Date dLastDate = new Date("1/1/1900");
+        dbPlant oPlant = new dbPlant();
+
+        //Instantiate a date formatter
+        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+
+        //Create the query string
+        query = "SELECT * FROM " + oPlant.TABLE_PLANT + " ORDER BY " + oPlant.PLANT_COLUMN_MODIFIEDDATE + " DESC LIMIT 1";
+
+        //Instantiate the database connection
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Execute query and place in cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        //Check if cursor has records from database
+        if (cursor.moveToFirst())
+        {
+            //Move to the first record
+            cursor.moveToFirst();
+
+            //Get values from database
+            sLastDate = cursor.getString(10);
+
+            try
+            {
+                dLastDate = dfDate.parse(sLastDate);
+            }
+            catch(ParseException pex)
+            {
+                dLastDate = new Date("1/1/1900");
+            }
+        }
+
+        //Close the database connection
+        db.close();
+
+        //Return the last date
+        return dLastDate;
     }
 
     //findPlantByName

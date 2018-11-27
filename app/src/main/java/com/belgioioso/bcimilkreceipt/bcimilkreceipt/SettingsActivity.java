@@ -25,7 +25,7 @@ import java.util.UUID;
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener
 {
     private Button _settings_ButtonEditCancel, _settings_ButtonSave;
-    private TextView _settings_SettingsID, _settings_TabletName, _settings_MachineID, _settings_LastMilkReceiptID, _settings_LastUserLogin, _settings_LastUserLoginDate, _settings_CreatedDate, _settings_ModifiedDate;
+    private TextView _settings_SettingsID, _settings_TabletName, _settings_MachineID, _settings_LastMilkReceiptID, _settings_LastUserLogin, _settings_LastUserLoginDate, _settings_LastProfileUploadDate, _settings_CreatedDate, _settings_ModifiedDate;
     private EditText _settings_WebServiceURL, _settings_DrugTestDevice, _settings_ScanLoop;
     private Switch _settings_TrackPickupGeoLocation, _settings_TrackRouteGeoLocation, _settings_EnableDebug, _settings_EnableAutoDBBackup, _settings_DownloadNotCompletedData;
     private String _spkSettingsID, _spkProfileID, _sUsername;
@@ -56,6 +56,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         _settings_LastMilkReceiptID = (TextView)findViewById(R.id.settings_lastmilkreceiptid);
         _settings_LastUserLogin = (TextView)findViewById(R.id.settings_lastuserlogin);
         _settings_LastUserLoginDate = (TextView)findViewById(R.id.settings_lastuserlogindate);
+        _settings_LastProfileUploadDate = (TextView)findViewById(R.id.settings_lastprofileuploaddate);
         _settings_CreatedDate = (TextView)findViewById(R.id.settings_createddate);
         _settings_ModifiedDate = (TextView)findViewById(R.id.settings_modifieddate);
 
@@ -302,6 +303,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 _settings_DownloadNotCompletedData.setChecked(Boolean.getBoolean(oSettings.getDownloadNotCompletedData().toString()));
                 _settings_LastUserLogin.setText("Last User Login: " + oSettings.getLastUserLoginID());
                 _settings_LastUserLoginDate.setText("Last User Login Date: " + oSettings.getLastUserLoginDate());
+                _settings_LastProfileUploadDate.setText("Last Profile Upload Date: " + oSettings.getLastProfileUpdate());
                 _settings_CreatedDate.setText("Created Date: " + oSettings.getInsertDate());
                 _settings_ModifiedDate.setText("Modified Date: " + oSettings.getModifiedDate());
             }

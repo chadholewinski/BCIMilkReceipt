@@ -1,6 +1,7 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
@@ -341,7 +342,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         try
         {
             //Set the progress label
-            _signin_progresslabel.setText("Data Syncronization In Progress");
+            _signin_progresslabel.setText("Data Sync In Progress....");
+            _signin_progresslabel.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
 
             //Instantiate the database handler
             dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
@@ -356,14 +358,15 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 new SignInActivity.PostSettings().execute(oSettings.getWebServiceURL() + "/PostSettingsDataJSON");
 
                 //Connect to web service and get the settings record by serial #
-                new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
+                //new SignInActivity.GetSettings().execute(oSettings.getWebServiceURL() + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
                 //Connect to web service and get the profile records by last date
-                //new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/" + oSettings.getLastProfileUpdate());
-                new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/1900-01-01T000000");
+                new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/" + _oUtils.getFormattedJSONDateString(this, "N/A", oSettings.getLastProfileUpdate()));
+                //new SignInActivity.GetProfiles().execute(oSettings.getWebServiceURL() + "/GetProfileDataJSON/1900-01-01T000000");
 
                 //Connect to web service and get the plant records by last date
-                new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/1900-01-01T000000");
+                new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/" + _oUtils.getFormattedJSONDateString(this, "N/A", oDBHandler.findPlantLastDate()));
+                //new SignInActivity.GetPlants().execute(oSettings.getWebServiceURL() + "/GetPlantDataJSON/1900-01-01T000000");
 
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(oSettings.getWebServiceURL() + "/PostHeaderDataJSON");
@@ -382,14 +385,19 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             }
             else
             {
+                //Connect to web service and post settings data
+                new SignInActivity.PostSettings().execute(_sWSURL + "/PostSettingsDataJSON");
+
                 //Connect to web service and get the settings record by serial #
-                new SignInActivity.GetSettings().execute(_sWSURL + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
+                //new SignInActivity.GetSettings().execute(_sWSURL + "/GetSettingsDataJSON/" + android.os.Build.SERIAL);
 
                 //Connect to web service and get the profile records by last date
-                new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/1900-01-01T000000");
+                new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/" + _oUtils.getFormattedJSONDateString(this, "N/A", oSettings.getLastProfileUpdate()));
+                //new SignInActivity.GetProfiles().execute(_sWSURL + "/GetProfileDataJSON/1900-01-01T000000");
 
                 //Connect to web service and get the plant records by last date
-                new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/1900-01-01T000000");
+                new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/" + _oUtils.getFormattedJSONDateString(this, "N/A", oDBHandler.findPlantLastDate()));
+                //new SignInActivity.GetPlants().execute(_sWSURL + "/GetPlantDataJSON/1900-01-01T000000");
 
                 //Connect to web service and post non-transferred header data
                 new SignInActivity.PostHeader().execute(_sWSURL + "/PostHeaderDataJSON");
@@ -406,11 +414,21 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Connect to web service and get ticket numbers for partially completed tickets
                 new SignInActivity.GetHeaderTicketNumbers().execute(_sWSURL + "/GetHeaderTicketNumberDataJSON");
             }
+
+            //Update the last profile date field
+            oSettings.setLastProfileUpdate(_oUtils.getFormattedDate(this, "N/A", oDBHandler.findProfileLastDate()));
+
+            //Update the settings record in database
+            oDBHandler.updateSettings(oSettings);
         }
         catch(Exception ex)
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "SignInActivity", "syncToWebService", "N/A", ex.getMessage().toString(), ex.getStackTrace().toString());
+
+            _signin_progresslabel.setText("Data Sync FAILED!");
+            _signin_progresslabel.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.valueText_Yellow));
+            _signin_login_button.setEnabled(true);
         }
     }
     //endregion
@@ -1288,7 +1306,8 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             }
 
             //Finshed data sync
-            _signin_progresslabel.setText("Data Syncronization Finished");
+            _signin_progresslabel.setText("Data Sync Complete!");
+            _signin_progresslabel.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.valueText_Lime));
             _signin_login_button.setEnabled(true);
         }
     }

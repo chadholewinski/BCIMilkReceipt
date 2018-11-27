@@ -671,7 +671,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 if ((scanContent.length() == 14) && (_sTypeOfScan == "Producer"))
                 {
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "Barcode scan found: " + scanContent, "");
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "Producer barcode scan found: " + scanContent, "");
 
                     //Get the parsed values from content
                     _sCompany = scanContent.substring(0,3);
@@ -687,6 +687,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 //Check if the scan content retrieved is 18 characters long
                 else
                 {
+                    //Log message to activity
+                    _oUtils.insertActivity(this, "1", "PickupActivity", "onActivityResult", _sUsername, "LabCode barcode scan found: " + scanContent, "");
+
                     //Set the labcode edit text field
                     _pickup_labcode.setText(scanContent);
                 }
@@ -1063,20 +1066,24 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             //Set the check to false
             bCheck = false;
 
-            //Try converting the strings to double values
-            fConvertedLBS = Double.parseDouble(psConvertedLBS);
-            fConvertedLBSConfirm = Double.parseDouble(psConvertedLBSConfirm);
+            //Check if the convertedLBS or convertedLBSConfirm is empty or null
+            if (!TextUtils.isEmpty(psConvertedLBS) && !TextUtils.isEmpty(psConvertedLBSConfirm))
+            {
+                //Try converting the strings to double values
+                fConvertedLBS = Double.parseDouble(psConvertedLBS);
+                fConvertedLBSConfirm = Double.parseDouble(psConvertedLBSConfirm);
 
-            //Check if the convertedLBS is equal to the convertedLBSConfirm
-            if (fConvertedLBS == fConvertedLBSConfirm)
-            {
-                //Both are equal, set check to valid
-                bCheck = true;
-            }
-            else
-            {
-                //Not equal, set check to invalid
-                bCheck = false;
+                //Check if the convertedLBS is equal to the convertedLBSConfirm
+                if (fConvertedLBS == fConvertedLBSConfirm)
+                {
+                    //Both are equal, set check to valid
+                    bCheck = true;
+                }
+                else
+                {
+                    //Not equal, set check to invalid
+                    bCheck = false;
+                }
             }
         }
         catch (Exception ex)
