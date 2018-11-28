@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -152,6 +154,12 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
         try
         {
+            //Instantiate a new database connection object
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the profile from database
+            dbProfile oProfile = oDBHandler.findProfileByID(_spkProfileID);
+
             //Check which items was clicked
             switch (item.getItemId())
             {
@@ -183,24 +191,32 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
                 //Menu Settings item selected
                 case R.id.menu_receipt_settings:
-                    //Instantiate a new intent of SettingsActivity
-                    Intent settings_intent = new Intent(this, SettingsActivity.class);
+                    //Check if the profile logged in has admin security
+                    if (oProfile.getAdminSecurity() == 1)
+                    {
+                        //Instantiate a new intent of SettingsActivity
+                        Intent settings_intent = new Intent(this, SettingsActivity.class);
 
-                    //Instantiate the bundle object
-                    Bundle oSetBundle = new Bundle();
+                        //Instantiate the bundle object
+                        Bundle oSetBundle = new Bundle();
 
-                    //Set the profileID and settingsID in the bundle
-                    oSetBundle.putString("pkProfileID", _spkProfileID);
-                    oSetBundle.putString("pkSettingsID", _spkSettingsID);
+                        //Set the profileID and settingsID in the bundle
+                        oSetBundle.putString("pkProfileID", _spkProfileID);
+                        oSetBundle.putString("pkSettingsID", _spkSettingsID);
 
-                    //Setup bundle into intent
-                    settings_intent.putExtras(oSetBundle);
+                        //Setup bundle into intent
+                        settings_intent.putExtras(oSetBundle);
 
-                    //Navigate to the settings screen
-                    startActivity(settings_intent);
+                        //Navigate to the settings screen
+                        startActivity(settings_intent);
 
-                    //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu settings selected", "");
+                        //Log message to activity
+                        _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu settings selected", "");
+                    }
+                    else
+                    {
+                        Toast.makeText(this, "Insufficient user privileges for this option!", Toast.LENGTH_LONG).show();
+                    }
 
                     //Set the return value to true
                     bReturn = true;
@@ -209,31 +225,39 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
                 //Menu delete item selected
                 case R.id.menu_receipt_delete:
-                    //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu delete existing ticket selected", "");
+                    //Check to see if there are existing tickets in the spinner for deletion
+                    if (!spn_Existing_Tickets.getAdapter().isEmpty())
+                    {
+                        //Log message to activity
+                        _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu delete existing ticket selected", "");
 
-                    // Use the Builder class for convenient dialog construction
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        // Use the Builder class for convenient dialog construction
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                    //Build the message
-                    builder.setMessage("Are you sure you want to delete this ticket?")
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //Run the deletion process
-                                    deleteExistingTicket();
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //Log message
-                                    _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the ticket deletion process", "");
+                        //Build the message
+                        builder.setMessage("Are you sure you want to delete this ticket?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //Run the deletion process
+                                        deleteExistingTicket();
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //Log message
+                                        _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", "N/A", "User cancelled the ticket deletion process", "");
 
-                                }
-                            });
+                                    }
+                                });
 
-                    //Show the dialog box
-                    AlertDialog aDialog = builder.create();
-                    aDialog.show();
+                        //Show the dialog box
+                        AlertDialog aDialog = builder.create();
+                        aDialog.show();
+                    }
+                    else
+                    {
+                        Toast.makeText(this, "There are no tickets for deletion!", Toast.LENGTH_LONG).show();
+                    }
 
                     //Set the return value to true
                     bReturn = true;
@@ -242,20 +266,33 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
 
                 //Menu CopyDB item selected
                 case R.id.menu_receipt_copydb:
-                    //Check if required permissions are set for external storage
-                    if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE ) != PackageManager.PERMISSION_GRANTED )
+                    //Check if the profile logged in has admin security
+                    if (oProfile.getAdminSecurity() == 0)
                     {
-                        //Request the external storage permissions
-                        ActivityCompat.requestPermissions( this, new String[] { android.Manifest.permission.WRITE_EXTERNAL_STORAGE }, 1 );
+                        //Check if required permissions are set for external storage
+                        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                        {
+                            //Request the external storage permissions
+                            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                        }
+                        else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+                        {
+                            //Request the external storage permissions
+                            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                        }
+                        else
+                        {
+                            //Copy the sqlite db file to accessible folder
+                            copyDBFile();
+                        }
+
+                        //Log message to activity
+                        _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu copy database selected", "");
                     }
                     else
                     {
-                        //Copy the sqlite db file to accessible folder
-                        copyDBFile();
+                        Toast.makeText(this, "Insufficient user privileges for this option!", Toast.LENGTH_LONG).show();
                     }
-
-                    //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", "N/A", "Receipt menu copy database selected", "");
 
                     //Set the return value to true
                     bReturn = true;
@@ -491,29 +528,44 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
      */
     public void copyDBFile() throws IOException
     {
-        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "MilkReceipt.db"); // for example "my_data_backup.db"
-        File currentDB = getApplicationContext().getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
+        try {
+            //Get the external file path
+            File fSDCardPath[] = this.getExternalFilesDirs(null);
+            String sPath = fSDCardPath[1].getPath();
 
-        //Check if the current DB file exists
-        if (currentDB.exists())
-        {
-            //Check if a copy of database has already been copied to folder
-            if (backupDB.exists())
+            //Setup the backup and current locations
+            File backupDB = new File(sPath, "MilkReceipt.db");
+            File currentDB = getApplicationContext().getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
+
+            //Check if the current DB file exists
+            if (currentDB.exists())
             {
-                //Delete the database copy file
-                backupDB.delete();
+                //Check if a copy of database has already been copied to folder
+                if (backupDB.exists())
+                {
+                    //Delete the database copy file
+                    backupDB.delete();
+                }
+
+                InputStream in = new FileInputStream(currentDB);
+                OutputStream out = new FileOutputStream(backupDB);
+
+                // Copy the bits from instream to outstream
+                byte[] buf = new byte[1024];
+                int len;
+
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+
+                in.close();
+                out.close();
             }
-
-            //Instantiate the source and destination file streams
-            FileChannel src = new FileInputStream(currentDB).getChannel();
-            FileChannel dst = new FileOutputStream(backupDB).getChannel();
-
-            //Copy the database file to destination folder
-            dst.transferFrom(src, 0, src.size());
-
-            //Close the source and destination file streams
-            src.close();
-            dst.close();
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "ReceiptActivity", "copyDBFile", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
