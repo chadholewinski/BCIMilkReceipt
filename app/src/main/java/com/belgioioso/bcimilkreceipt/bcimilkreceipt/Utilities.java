@@ -11,6 +11,12 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -326,14 +332,33 @@ public class Utilities
     public Date getFormattedDate(Context poContext, String psUsername, String psDateString)
     {
         Date dReturnDate = new Date();
+        String sDateString = "";
 
         try
         {
             //Format the date for insert and modified
             DateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
+            //Check if this is a date that is not in ORACLE format
+            if (psDateString.contains("/"))
+            {
+                //Get the year, month, day and time
+                String sYear = psDateString.substring(6, 10);
+                String sMonth = psDateString.substring(0, 2);
+                String sDay = psDateString.substring(3,5);
+                String sTime = psDateString.substring(11, psDateString.length());
+
+                //Format to the oracle standard date format
+                sDateString = sYear + "-" + sMonth + "-" + sDay + " " + sTime;
+            }
+            else
+            {
+                //Date is in an oracle format
+                sDateString = psDateString;
+            }
+
             //Reformat to a date type
-            dReturnDate = dfDate.parse(psDateString);
+            dReturnDate = dfDate.parse(sDateString);
         }
         catch(Exception ex)
         {
@@ -398,6 +423,72 @@ public class Utilities
         }
 
         return sReturnDate;
+    }
+
+    /**
+     * copyDBFile
+     * - Copies the database file to accessible folder
+     * @throws IOException
+     */
+    public void copyDBFile(Context poContext, String psUsername)
+    {
+        String sPath = "";
+
+        try
+        {
+            //Get all of the external file paths
+            File fSDCardPath[] = poContext.getExternalFilesDirs(null);
+
+            //Check if there is more than 1 path found
+            if (fSDCardPath.length > 1)
+            {
+                //More than 1 path found, use position 1, this is the SD card
+                sPath = fSDCardPath[1].getPath();
+            }
+            else
+            {
+                //Only 1 path found, use position 0, this is the internal memory
+                sPath = fSDCardPath[0].getPath();
+            }
+
+            //Setup the backup and current locations
+            File backupDB = new File(sPath, "MilkReceipt.db"); //where you want to copy the database to
+            File currentDB = poContext.getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
+
+            //Check if the current DB file exists
+            if (currentDB.exists())
+            {
+                //Check if a copy of database has already been copied to folder
+                if (backupDB.exists())
+                {
+                    //Delete the database copy file
+                    backupDB.delete();
+                }
+
+                //Setup the input and output streams
+                InputStream in = new FileInputStream(currentDB);
+                OutputStream out = new FileOutputStream(backupDB);
+
+                // Copy the bits from instream to outstream
+                byte[] buf = new byte[1024];
+                int len;
+
+                //Write the file to the new location
+                while ((len = in.read(buf)) > 0)
+                {
+                    out.write(buf, 0, len);
+                }
+
+                //Close out the streams
+                in.close();
+                out.close();
+            }
+        }
+        catch (Exception ex)
+        {
+            //Log error message to activity
+            insertActivity(poContext, "3", "Utilities", "copyDBFile", psUsername, ex.getMessage(), ex.getStackTrace().toString());
+        }
     }
     //endregion
 }

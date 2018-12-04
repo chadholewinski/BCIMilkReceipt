@@ -266,12 +266,16 @@ public class svcMilkReceipt
                     oProfile.setHaulerSignature(objProfileSingle.getString("HaulerSignature"));
                     oProfile.setHaulerLicenseNumber(objProfileSingle.getString("HaulerLicenseNumber"));
                     oProfile.setHaulerExpirationDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("HaulerExpirationDate")).toString());
+                    //oProfile.setHaulerNumber(objProfileSingle.getString("HaulerNumber"));
                     oProfile.setSignatureAgreement(objProfileSingle.getInt("SignatureAgreement"));
                     oProfile.setActive(objProfileSingle.getInt("Active"));
                     oProfile.setAdminSecurity(objProfileSingle.getInt("AdminSecurity"));
                     oProfile.setLastSignInDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("LastSignInDate")));
                     oProfile.setInsertDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("InsertDate")));
                     oProfile.setModifiedDate(_oUtils.convertJSONDateToDate(objProfileSingle.getString("ModifiedDate")));
+
+                    String sHaulerNumber = objProfileSingle.getString("HaulerNumber");
+                    oProfile.setHaulerNumber(sHaulerNumber);
 
                     //Add the Profile object to the Profile list
                     olProfile.add(oProfile);

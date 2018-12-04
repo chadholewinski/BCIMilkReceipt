@@ -267,7 +267,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                 //Menu CopyDB item selected
                 case R.id.menu_receipt_copydb:
                     //Check if the profile logged in has admin security
-                    if (oProfile.getAdminSecurity() == 0)
+                    if (oProfile.getAdminSecurity() == 1)
                     {
                         //Check if required permissions are set for external storage
                         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
@@ -283,7 +283,7 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
                         else
                         {
                             //Copy the sqlite db file to accessible folder
-                            copyDBFile();
+                            _oUtils.copyDBFile(this, _sUsername);
                         }
 
                         //Log message to activity
@@ -518,54 +518,6 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "ReceiptActivity", "findSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-        }
-    }
-
-    /**
-     * copyDBFile
-     * - Copies the database file to accessible folder
-     * @throws IOException
-     */
-    public void copyDBFile() throws IOException
-    {
-        try {
-            //Get the external file path
-            File fSDCardPath[] = this.getExternalFilesDirs(null);
-            String sPath = fSDCardPath[1].getPath();
-
-            //Setup the backup and current locations
-            File backupDB = new File(sPath, "MilkReceipt.db");
-            File currentDB = getApplicationContext().getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
-
-            //Check if the current DB file exists
-            if (currentDB.exists())
-            {
-                //Check if a copy of database has already been copied to folder
-                if (backupDB.exists())
-                {
-                    //Delete the database copy file
-                    backupDB.delete();
-                }
-
-                InputStream in = new FileInputStream(currentDB);
-                OutputStream out = new FileOutputStream(backupDB);
-
-                // Copy the bits from instream to outstream
-                byte[] buf = new byte[1024];
-                int len;
-
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-
-                in.close();
-                out.close();
-            }
-        }
-        catch (Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.insertActivity(this, "3", "ReceiptActivity", "copyDBFile", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 

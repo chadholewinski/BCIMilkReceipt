@@ -1979,7 +1979,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
         //Create the query string
-        query = "SELECT * FROM " + oProfile.TABLE_PROFILE + " WHERE " + oProfile.PROFILE_COLUMN_USERNAME + " = \"" + psUsername + "\" AND " + oProfile.PROFILE_COLUMN_PIN + " = " + psPin;
+        query = "SELECT * FROM " + oProfile.TABLE_PROFILE + " WHERE " + oProfile.PROFILE_COLUMN_USERNAME + " = \"" + psUsername + "\" AND " + oProfile.PROFILE_COLUMN_PIN + " = " + psPin + " AND " + oProfile.PROFILE_COLUMN_ACTIVE + " = 1";
 
         //Instantiate the database connection
         SQLiteDatabase db = this.getWritableDatabase();

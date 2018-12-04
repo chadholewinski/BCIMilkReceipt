@@ -74,6 +74,22 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
         //Sync data to the web service
         syncToWebService();
+
+        //Instantiate a new settings object
+        dbSettings oSettings = new dbSettings();
+
+        //Instantiate the database handler object
+        dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+        //Get the settings object from database
+        oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+        //Check if the auto db backup flag is set
+        if (oSettings.getAutoDBBackup() == 1)
+        {
+            //Backup the database
+            _oUtils.copyDBFile(this, "N/A");
+        }
     }
 
     /**

@@ -261,6 +261,10 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                         AlertDialog aDialog = builder.create();
                         aDialog.show();
                     }
+                    else
+                    {
+                        Toast.makeText(this, "Please move to an existing receive before delete option is selected!", Toast.LENGTH_LONG).show();
+                    }
 
                     //Set the return value to true
                     bReturn = true;
@@ -531,8 +535,22 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                         _receive_next_button.setEnabled(false);
                     }
 
-                    //Unlock the user inputs
-                    unlockUserInputs();
+                    //Check if there are no LBS left on ticket
+                    if (getTotalLBSLeftOnTicket() == 0)
+                    {
+                        //Lock the user inputs
+                        lockUserInputs();
+
+                        //Enable the finish ticket and previous button
+                        _receive_finishticket_button.setEnabled(true);
+                        _receive_previous_button.setEnabled(true);
+                    }
+                    else
+                    {
+                        //Unlock the user inputs
+                        unlockUserInputs();
+                    }
+
                 }
             }
         }
@@ -562,6 +580,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     {
         Integer iTotalLBS = 0;
         ArrayList<dbReceive> olReceive;
+        ArrayList<dbLine> olLine;
 
         try
         {
@@ -571,7 +590,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             //Get the profile object from database
             _oProfile = oDBHandler.findProfileByID(_spkProfileID);
 
-            //Get the list of receives for ticket
+            //Get the list of lines and receives for ticket
+            olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
             olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
 
             //Check if there are any receives in array list
@@ -618,15 +638,19 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_ReceiveLBSAvailable.setText("Total LBS Available: " + iTotalLBS);
 
             //Check if there are still LBS available for receives
-            if (iTotalLBS > 0)
+            if (iTotalLBS > 0 || (iTotalLBS == 0 && olLine.size() > 0 && getTotalPickupLBS(olLine) == 0))
             {
                 //Still LBS available so do not allow finish of the ticket
                 _receive_finishticket_button.setEnabled(false);
             }
             else
             {
-                //No LBS are available finishing of ticket is not available
+                //Lock the user inputs
+                lockUserInputs();
+
+                //No LBS are available finishing of ticket is ONLY available and previous button
                 _receive_finishticket_button.setEnabled(true);
+                _receive_previous_button.setEnabled(true);
             }
 
             //Check if the profile record was found
@@ -857,6 +881,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     {
         try
         {
+            //Log activity
             _oUtils.insertActivity(getApplicationContext(), "1", "YesNoDialog", "onCreateDialog", _sUsername, "User selected plant: " + _receive_plant.getSelectedItem().toString() + " but IP was: " + _oUtils.getWiFiIPAddress(getApplicationContext(), _sUsername).toString(), "");
 
             //Instantiate the total lbs
@@ -935,6 +960,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Setup receive count and buttons
                 _receive_receivecount_message.setText("NEW of " + _iTotalReceiveCount);
 
+                //Disable the next button
+                _receive_next_button.setEnabled(false);
+
                 //Check if the total receive count is 0
                 if (_iTotalReceiveCount == 0)
                 {
@@ -958,11 +986,27 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 }
                 else
                 {
-                    //No LBS are available finishing of ticket is not available
+                    //Lock user inputs
+                    lockUserInputs();
+
+                    //No LBS are available finishing of ticket is ONLY available
                     _receive_finishticket_button.setEnabled(true);
 
-                    //Disable the save button
-                    _receive_save_button.setEnabled(false);
+                    //Enable the previous button
+                    _receive_previous_button.setEnabled(true);
+                }
+
+                //Instantiate a new settings object
+                dbSettings oSettings = new dbSettings();
+
+                //Get the settings object from database
+                oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+                //Check if the auto db backup flag is set
+                if (oSettings.getAutoDBBackup() == 1)
+                {
+                    //Backup the database
+                    _oUtils.copyDBFile(this, _sUsername);
                 }
             }
             else
@@ -970,6 +1014,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Display save failed message on bottom of screen
                 _receive_Bottom_SaveMessage.setText("Receive saved failed at: " + dfDate.format(dDate));
                 _receive_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(this, R.color.valueText_Red));
+
+                //Unlock the user inputs
+                unlockUserInputs();
             }
         }
         catch (Exception ex)
@@ -1119,6 +1166,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     {
         dbReceive oReceive = new dbReceive();
         Integer iReceivedLBS = 0;
+        String sReturnID = "";
 
         try
         {
@@ -1194,6 +1242,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     oDBHandler.updateHeader(oHeader);
                 }
 
+                //Set the return ID
+                sReturnID = pspkReceiveID;
+
                 //Log message to activity
                 _oUtils.insertActivity(this, "1", "ReceiveActivity", "saveExistingReceive", _sUsername, "Existing Receive Saved:: ID: " + pspkReceiveID, "");
                 _oUtils.insertActivity(this, "1", "ReceiveActivity", "saveExistingReceive", _sUsername, "Existing Receive Saved:: Plant: " + _receive_plant.getSelectedItem() + " DrugTestResult: " + oReceive.getDrugTestResult() + " Scale/Meter: " + oReceive.getScaleMeter() + " Silo: " + oReceive.getTank() + " Load Temp: " + oReceive.getLoadTemp() + " TopSeal: " + oReceive.getTopSeal() + " BottomSeal: " + oReceive.getBottomSeal() + " ReceivedLBS: " + oReceive.getReceivedLBS() + " End Mileage: " + _receive_EndMileage.getText() + " Intake Number: " + oReceive.getIntakeNumber(), "");
@@ -1216,7 +1267,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "saveExistingReceive", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
 
-        return pspkReceiveID;
+        return sReturnID;
     }
 
     /**
@@ -1268,6 +1319,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
         try
         {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
             //Check for headerid being blank or null
             if (_spkHeaderID.length() == 0 || _spkHeaderID == null)
             {
@@ -1336,6 +1390,25 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                 //Set error for received LBS not matching
                 _receive_ReceivedLBSConfirmation.setError("Received LBS Must Match");
+            }
+
+            //Get list of lines from database
+            List<dbLine> olLine = oDBHandler.findLinesByHeaderID(_spkHeaderID);
+
+            //Get the LBS for checking
+            Integer iEnteredLBS = Integer.parseInt(TextUtils.isEmpty(_receive_ReceivedLBS.getText().toString()) ? "0" : _receive_ReceivedLBS.getText().toString());
+            Integer iTotalLBSLeft = getTotalLBSLeftOnTicket();
+            Integer iTotalPickupLBSOnTicket = getTotalPickupLBS(olLine);
+
+            //Check if received lbs is greater than what is available
+            if ((iEnteredLBS > iTotalLBSLeft && iTotalPickupLBSOnTicket > 0) || (iEnteredLBS > iTotalLBSLeft && iTotalPickupLBSOnTicket == 0))
+            {
+                //Set flag as error
+                bCheck = true;
+
+                //Set error for received LBS entered greater than available
+                _receive_ReceivedLBS.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than Equal to Available LBS");
             }
 
             //Get the start mileage
@@ -1819,6 +1892,20 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _receive_EndMileage.setText("");
             _receive_IntakeNumber.setText("");
 
+            //Reset the selections for drop downs to first selection
+            _receive_plant.setSelection(0);
+            _receive_scalemeter.setSelection(0);
+
+            //Clear errors
+            _receive_DrugTestResult.setError(null);
+            _receive_Silo.setError(null);
+            _receive_Temperature.setError(null);
+            _receive_TopSeal.setError(null);
+            _receive_BottomSeal.setError(null);
+            _receive_ReceivedLBS.setError(null);
+            _receive_ReceivedLBSConfirmation.setError(null);
+            _receive_EndMileage.setError(null);
+
             //Unlock the user inputs
             unlockUserInputs();
 
@@ -1928,6 +2015,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
         try
         {
+            //Clear the screen first
+            clearScreenValues();
+
             //Instantiate the database handler
             dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 

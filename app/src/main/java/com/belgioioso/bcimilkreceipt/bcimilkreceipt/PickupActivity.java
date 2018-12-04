@@ -329,6 +329,10 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                         AlertDialog aDialog = builder.create();
                         aDialog.show();
                     }
+                    else
+                    {
+                        Toast.makeText(this, "Please move to an existing pickup before delete option is selected!", Toast.LENGTH_LONG).show();
+                    }
 
                     //Set the return value to true
                     bReturn = true;
@@ -508,6 +512,19 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                             //Enable the previous button
                             _pickup_previous_button.setEnabled(true);
                         }
+
+                        //Instantiate a new settings object
+                        dbSettings oSettings = new dbSettings();
+
+                        //Get the settings object from database
+                        oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+                        //Check if the auto db backup flag is set
+                        if (oSettings.getAutoDBBackup() == 1)
+                        {
+                            //Backup the database
+                            _oUtils.copyDBFile(this, _sUsername);
+                        }
                     }
                     else
                     {
@@ -683,6 +700,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     //Set the producer and tank edit text fields
                     _pickup_producer.setText(sProducer);
                     _pickup_tank.setText(sTank);
+
+                    //Focus to the gauge rod major field
+                    _gaugerod_major.requestFocus();
                 }
                 //Check if the scan content retrieved is 18 characters long
                 else
@@ -692,6 +712,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                     //Set the labcode edit text field
                     _pickup_labcode.setText(scanContent);
+
+                    //Set focus to the lab code field
+                    _pickup_labcode.requestFocus();
                 }
             }
             else
@@ -1252,6 +1275,15 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             _temperature.setText("");
             _dfa_ticket.setText("");
 
+            //Clear the errors
+            _pickup_producer.setError(null);
+            _pickup_tank.setError(null);
+            _gaugerod_major.setError(null);
+            _gaugerod_minor.setError(null);
+            _convertedLBS.setError(null);
+            _convertedLBS_confirm.setError(null);
+            _temperature.setError(null);
+
             //Unlock the user inputs
             unlockUserInputs();
 
@@ -1357,6 +1389,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
         try
         {
+            //Clear the screen values
+            clearScreenValues();
+
             //Instantiate the database handler
             dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
 

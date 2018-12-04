@@ -217,6 +217,22 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
             //Save the new header record
             _spkHeaderID = saveNewHeader();
 
+            //Instantiate a new settings object
+            dbSettings oSettings = new dbSettings();
+
+            //Instantiate the database handler object
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Get the settings object from database
+            oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
+
+            //Check if the auto db backup flag is set
+            if (oSettings.getAutoDBBackup() == 1)
+            {
+                //Backup the database
+                _oUtils.copyDBFile(this, _sUsername);
+            }
+
             //Check if the save receipt button was pressed
             if (v.getId() == R.id.main_savereceipt_button)
             {
