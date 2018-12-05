@@ -67,32 +67,32 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
         _oUtils = new Utilities();
 
         //Instantiate the on screen buttons
-        _receive_save_button = (Button)findViewById(R.id.receive_save_button);
-        _receive_finishticket_button = (Button)findViewById(R.id.receive_finishticket_button);
-        _receive_previous_button = (Button)findViewById(R.id.receive_previous_button);
-        _receive_next_button = (Button)findViewById(R.id.receive_next_button);
+        _receive_save_button = findViewById(R.id.receive_save_button);
+        _receive_finishticket_button = findViewById(R.id.receive_finishticket_button);
+        _receive_previous_button = findViewById(R.id.receive_previous_button);
+        _receive_next_button = findViewById(R.id.receive_next_button);
 
         //Instantiate the spinners
-        _receive_plant = (Spinner)findViewById(R.id.receive_plant);
-        _receive_scalemeter = (Spinner)findViewById(R.id.receive_scalemeter);
+        _receive_plant = findViewById(R.id.receive_plant);
+        _receive_scalemeter = findViewById(R.id.receive_scalemeter);
 
         //Instantiate the receive bottom message text view
-        _receive_Bottom_Message = (TextView)findViewById(R.id.receive_bottom_message);
-        _receive_ReceiveLBSAvailable = (TextView)findViewById(R.id.receive_receivelbsavailable);
-        _receive_Bottom_SaveMessage = (TextView)findViewById(R.id.receive_bottom_savemessage);
-        _receive_receivecount_message = (TextView)findViewById(R.id.receive_receivecount_message);
+        _receive_Bottom_Message = findViewById(R.id.receive_bottom_message);
+        _receive_ReceiveLBSAvailable = findViewById(R.id.receive_receivelbsavailable);
+        _receive_Bottom_SaveMessage = findViewById(R.id.receive_bottom_savemessage);
+        _receive_receivecount_message = findViewById(R.id.receive_receivecount_message);
 
         //Instantiate the receive edit text boxes
-        _receive_DrugTestDevice = (EditText)findViewById(R.id.receive_drugtestdevice);
-        _receive_DrugTestResult = (EditText)findViewById(R.id.receive_drugtestresult);
-        _receive_Silo = (EditText)findViewById(R.id.receive_silo);
-        _receive_Temperature = (EditText)findViewById(R.id.receive_temperature);
-        _receive_TopSeal = (EditText)findViewById(R.id.receive_topseal);
-        _receive_BottomSeal = (EditText)findViewById(R.id.receive_bottomseal);
-        _receive_ReceivedLBS = (EditText)findViewById(R.id.receive_receivelbs);
-        _receive_ReceivedLBSConfirmation = (EditText)findViewById(R.id.receive_receivelbs_confirm);
-        _receive_EndMileage = (EditText)findViewById(R.id.receive_endmileage);
-        _receive_IntakeNumber = (EditText)findViewById(R.id.receive_intakenumber);
+        _receive_DrugTestDevice = findViewById(R.id.receive_drugtestdevice);
+        _receive_DrugTestResult = findViewById(R.id.receive_drugtestresult);
+        _receive_Silo = findViewById(R.id.receive_silo);
+        _receive_Temperature = findViewById(R.id.receive_temperature);
+        _receive_TopSeal = findViewById(R.id.receive_topseal);
+        _receive_BottomSeal = findViewById(R.id.receive_bottomseal);
+        _receive_ReceivedLBS = findViewById(R.id.receive_receivelbs);
+        _receive_ReceivedLBSConfirmation = findViewById(R.id.receive_receivelbs_confirm);
+        _receive_EndMileage = findViewById(R.id.receive_endmileage);
+        _receive_IntakeNumber = findViewById(R.id.receive_intakenumber);
 
         //Set the on click listener for page to the screen buttons
         _receive_save_button.setOnClickListener(this);
@@ -563,12 +563,6 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             _oUtils.insertActivity(this, "3", "ReceiveActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
         }
     }
-
-    //@Override
-    //public void onFocusChange(View v, boolean hasFocus)
-    //{
-
-    //}
     //endregion
 
     //region Routines

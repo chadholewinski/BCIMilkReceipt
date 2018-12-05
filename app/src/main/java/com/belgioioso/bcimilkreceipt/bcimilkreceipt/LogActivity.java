@@ -19,14 +19,12 @@ import android.widget.Toast;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbActivityHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
-import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class LogActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -54,26 +52,26 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
         _oUtils = new Utilities();
 
         //Instantiate the on screen edit texts
-        _actlog_StartDate = (EditText)findViewById(R.id.actlog_startdate);
-        _actlog_EndDate = (EditText)findViewById(R.id.actlog_enddate);
+        _actlog_StartDate = findViewById(R.id.actlog_startdate);
+        _actlog_EndDate = findViewById(R.id.actlog_enddate);
 
         //Instantiate the on screen buttons
-        _actlog_SearchButton = (Button)findViewById(R.id.actlog_searchbutton);
+        _actlog_SearchButton = findViewById(R.id.actlog_searchbutton);
 
         //Instantiate the on screen spinner
-        _actlog_ActType = (Spinner)findViewById(R.id.actlog_acttype);
+        _actlog_ActType = findViewById(R.id.actlog_acttype);
 
         //Instantiate the on screen list view
-        _actlog_ActivityRecords = (ListView)findViewById(R.id.actlog_activityrecords);
+        _actlog_ActivityRecords = findViewById(R.id.actlog_activityrecords);
 
         //Instantiate the on screen text views
-        _actlog_ActUsername_Record = (TextView)findViewById(R.id.actlog_actusername_record);
-        _actlog_ActType_Record = (TextView)findViewById(R.id.actlog_acttype_record);
-        _actlog_ActModule_Record = (TextView)findViewById(R.id.actlog_actmodule_record);
-        _actlog_ActRoutine_Record = (TextView)findViewById(R.id.actlog_actroutine_record);
-        _actlog_ActMessage_Record = (TextView)findViewById(R.id.actlog_actmessage_record);
-        _actlog_ActStackTrace_Record = (TextView)findViewById(R.id.actlog_actstacktrace_record);
-        _actlog_ActInsertDate_Record = (TextView)findViewById(R.id.actlog_actinsertdate_record);
+        _actlog_ActUsername_Record = findViewById(R.id.actlog_actusername_record);
+        _actlog_ActType_Record = findViewById(R.id.actlog_acttype_record);
+        _actlog_ActModule_Record = findViewById(R.id.actlog_actmodule_record);
+        _actlog_ActRoutine_Record = findViewById(R.id.actlog_actroutine_record);
+        _actlog_ActMessage_Record = findViewById(R.id.actlog_actmessage_record);
+        _actlog_ActStackTrace_Record = findViewById(R.id.actlog_actstacktrace_record);
+        _actlog_ActInsertDate_Record = findViewById(R.id.actlog_actinsertdate_record);
 
         //Set the onclick listener
         _actlog_SearchButton.setOnClickListener(this);

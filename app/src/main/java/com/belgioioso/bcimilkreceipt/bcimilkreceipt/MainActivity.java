@@ -1,14 +1,8 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,26 +10,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.belgioiososvc.bcimilkreceipt.bcimilkreceiptsvc.svcMilkReceipt;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener
@@ -66,15 +50,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener
         _oUtils = new Utilities();
 
         //Instantiate the save receipt and goto pickup buttons
-        _main_savereceipt_button = (Button)findViewById(R.id.main_savereceipt_button);
+        _main_savereceipt_button = findViewById(R.id.main_savereceipt_button);
 
         //Instantiate the main bottom message text view
-        main_Bottom_Message = (TextView)findViewById(R.id.main_bottom_message);
+        main_Bottom_Message = findViewById(R.id.main_bottom_message);
 
         //Instantiate the route, license and startmileage edit text fields
-        _route = (EditText)findViewById(R.id.main_route);
-        _license = (EditText)findViewById(R.id.main_license);
-        _startmileage = (EditText)findViewById(R.id.main_startmileage);
+        _route = findViewById(R.id.main_route);
+        _license = findViewById(R.id.main_license);
+        _startmileage = findViewById(R.id.main_startmileage);
 
         //Set the on click listener for page to the save receipt and goto pickup buttons
         _main_savereceipt_button.setOnClickListener(this);

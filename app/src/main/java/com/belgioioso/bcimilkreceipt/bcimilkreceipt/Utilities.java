@@ -5,12 +5,10 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
 import android.widget.Toast;
-
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbActivityHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

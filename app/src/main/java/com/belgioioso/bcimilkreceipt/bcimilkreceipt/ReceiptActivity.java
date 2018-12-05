@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -24,20 +23,11 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbReceive;
-import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class ReceiptActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -68,14 +58,14 @@ public class ReceiptActivity extends AppCompatActivity implements View.OnClickLi
         _oUtils = new Utilities();
 
         //Instantiate the new receipt and existing receipt buttons
-        _receipt_new_button = (Button)findViewById(R.id.receipt_new_button);
-        _receipt_existing_button = (Button)findViewById(R.id.receipt_existing_button);
+        _receipt_new_button = findViewById(R.id.receipt_new_button);
+        _receipt_existing_button = findViewById(R.id.receipt_existing_button);
 
         //Instantiate the existing tickets spinner
-        spn_Existing_Tickets = (Spinner)findViewById(R.id.receipt_existing_spinner);
+        spn_Existing_Tickets = findViewById(R.id.receipt_existing_spinner);
 
         //Instantiate the main bottom message text view
-        receipt_Bottom_Message = (TextView)findViewById(R.id.receipt_bottom_message);
+        receipt_Bottom_Message = findViewById(R.id.receipt_bottom_message);
 
         //Set the on click listener for page to the new receipt and existing receipt buttons
         _receipt_new_button.setOnClickListener(this);

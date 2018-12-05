@@ -1,8 +1,6 @@
 package com.belgioiososvc.bcimilkreceipt.bcimilkreceiptsvc;
 
-import android.os.Bundle;
 import android.util.Log;
-
 import com.belgioioso.bcimilkreceipt.bcimilkreceipt.Utilities;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbHeader;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;

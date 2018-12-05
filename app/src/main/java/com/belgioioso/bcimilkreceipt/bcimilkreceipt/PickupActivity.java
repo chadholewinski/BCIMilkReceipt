@@ -4,12 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -42,14 +38,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class PickupActivity extends AppCompatActivity implements View.OnClickListener//, LocationListener
+public class PickupActivity extends AppCompatActivity implements View.OnClickListener
 {
     private Button _pickup_scanproducer_button, _pickup_scanlabcode_button, _pickup_save_button, _pickup_gotoreceive_button, _pickup_previous_button, _pickup_next_button;
     private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals, _pickup_pickupcount_message;
     private EditText _pickup_producer, _pickup_tank, _pickup_labcode, _gaugerod_major, _gaugerod_minor, _convertedLBS, _convertedLBS_confirm, _temperature, _dfa_ticket;
     private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sProvider, _sUsername, _sTypeOfScan;
-    //private LocationManager _oLocationManager;
-    //private Location _oLocation;
+    private LocationManager _oLocationManager;
+    private Location _oLocation;
     private Utilities _oUtils;
     private dbProfile _oProfile;
     private Integer _iTotalPickupsOnTicket, _iCurrentPickup;
@@ -76,29 +72,29 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _oUtils = new Utilities();
 
         //Instantiate the on screen buttons
-        _pickup_scanproducer_button = (Button)findViewById(R.id.pickup_scanproducer_button);
-        _pickup_scanlabcode_button = (Button)findViewById(R.id.pickup_scanlabcode_button);
-        _pickup_save_button = (Button)findViewById(R.id.pickup_save_button);
-        _pickup_gotoreceive_button = (Button)findViewById(R.id.pickup_gotoreceive_button);
-        _pickup_previous_button = (Button)findViewById(R.id.pickup_previous_button);
-        _pickup_next_button = (Button)findViewById(R.id.pickup_next_button);
+        _pickup_scanproducer_button = findViewById(R.id.pickup_scanproducer_button);
+        _pickup_scanlabcode_button = findViewById(R.id.pickup_scanlabcode_button);
+        _pickup_save_button = findViewById(R.id.pickup_save_button);
+        _pickup_gotoreceive_button = findViewById(R.id.pickup_gotoreceive_button);
+        _pickup_previous_button = findViewById(R.id.pickup_previous_button);
+        _pickup_next_button = findViewById(R.id.pickup_next_button);
 
         //Instantiate the pickup bottom message and savemessage text view
-        _pickup_Bottom_Message = (TextView)findViewById(R.id.pickup_bottom_message);
-        _pickup_Bottom_SaveMessage = (TextView)findViewById(R.id.pickup_bottom_savemessage);
-        _pickup_Totals = (TextView)findViewById(R.id.pickup_totals);
-        _pickup_pickupcount_message = (TextView)findViewById(R.id.pickup_pickupcount_message);
+        _pickup_Bottom_Message = findViewById(R.id.pickup_bottom_message);
+        _pickup_Bottom_SaveMessage = findViewById(R.id.pickup_bottom_savemessage);
+        _pickup_Totals = findViewById(R.id.pickup_totals);
+        _pickup_pickupcount_message = findViewById(R.id.pickup_pickupcount_message);
 
         //Instantiate the pickup edit text boxes
-        _pickup_producer = (EditText)findViewById(R.id.producer);
-        _pickup_tank = (EditText)findViewById(R.id.tank);
-        _pickup_labcode = (EditText)findViewById(R.id.labcode);
-        _gaugerod_major = (EditText)findViewById(R.id.gaugerodmajor);
-        _gaugerod_minor = (EditText)findViewById(R.id.gaugerodminor);
-        _convertedLBS = (EditText)findViewById(R.id.convertedlbs);
-        _convertedLBS_confirm = (EditText)findViewById(R.id.convertedlbs_confirm);
-        _temperature = (EditText)findViewById(R.id.temperature);
-        _dfa_ticket = (EditText)findViewById(R.id.dfa_ticket);
+        _pickup_producer = findViewById(R.id.producer);
+        _pickup_tank = findViewById(R.id.tank);
+        _pickup_labcode = findViewById(R.id.labcode);
+        _gaugerod_major = findViewById(R.id.gaugerodmajor);
+        _gaugerod_minor = findViewById(R.id.gaugerodminor);
+        _convertedLBS = findViewById(R.id.convertedlbs);
+        _convertedLBS_confirm = findViewById(R.id.convertedlbs_confirm);
+        _temperature = findViewById(R.id.temperature);
+        _dfa_ticket = findViewById(R.id.dfa_ticket);
 
         //Set the on click listener for page to the screen buttons
         _pickup_scanproducer_button.setOnClickListener(this);
@@ -141,7 +137,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _pickup_producer.requestFocus();
 
         //Setup GPS provider
-        //setupGPS();
+        setupGPS();
     }
 
     /**
@@ -173,93 +169,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         //Display message to user
         Toast.makeText(PickupActivity.this, "Back button pressed: NOT ALLOWED!", Toast.LENGTH_SHORT).show();
     }
-    //endregion
-
-    //region GPS (Commented Out)
-//    @Override
-//    public void onLocationChanged(Location location)
-//    {
-//        dbGeoLocation oGeoLocation = new dbGeoLocation();
-//
-//        try
-//        {
-//            //Instantiate the database handler
-//            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
-//
-//            //Format the date for insert and modified
-//            DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-//            Date dDate = new Date();
-//
-//            double lat = location.getLatitude();
-//            double lng = location.getLongitude();
-//            double acy = location.getAccuracy();
-//            String brg = String.valueOf(location.getBearing());
-//            double spd = location.getSpeed();
-//            double alt = location.getAltitude();
-//
-//            _sLatitude = String.valueOf(lat);
-//            _sLongitude = String.valueOf(lng);
-//            _sAccurracy = String.valueOf(acy);
-//
-//            //Create a new headerID GUID
-//            UUID gID = UUID.randomUUID();
-//
-//            oGeoLocation.setPkGeoLocationID(gID.toString());
-//            oGeoLocation.setLatitude(lat);
-//            oGeoLocation.setLongitude(lng);
-//            oGeoLocation.setAccurracy(acy);
-//            oGeoLocation.setHeadingDirection(brg);
-//            oGeoLocation.setSpeed(spd);
-//            oGeoLocation.setAltitude(alt);
-//            oGeoLocation.setTransmitted(0);
-//            oGeoLocation.setTransmittedDate("1/1/1900");
-//            oGeoLocation.setInsertDate(dfDate.format(dDate).toString());
-//
-//            oDBHandler.addGeoLocation(oGeoLocation);
-//        }
-//        catch (Exception ex)
-//        {
-//            //Log error message to activity
-//            _oUtils.insertActivity(this, "3", "PickupActivity", "onLocationChanged", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-//        }
-//    }
-
-//    @Override
-//    public void onStatusChanged(String provider, int status, Bundle extras)
-//    {
-//        // TODO Auto-generated method stub
-//    }
-//
-//    @Override
-//    public void onProviderEnabled(String provider)
-//    {
-//        Toast.makeText(PickupActivity.this, "Enabled new provider " + provider, Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onProviderDisabled(String provider)
-//    {
-//        Toast.makeText(PickupActivity.this, "Disabled provider " + provider, Toast.LENGTH_SHORT).show();
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-//    {
-//        //Check if result code is
-//        if (requestCode == 1)
-//        {
-//            //Check the grantResults as permission granted
-//            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//            {
-//                //Display permission granted
-//                Toast.makeText(PickupActivity.this, "GPS not granted permissions", Toast.LENGTH_LONG).show();
-//            }
-//            else
-//            {
-//                _oLocation = getCurrentLocation();
-//            }
-//        }
-//    }
     //endregion
 
     //region User Methods
@@ -366,7 +275,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "onOptionsItemSelected", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "onOptionsItemSelected", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         //Return the value
@@ -658,7 +567,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             unlockUserInputs();
 
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "onClick", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "onClick", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
     //endregion
@@ -729,7 +638,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "onActivityResult", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "onActivityResult", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
@@ -817,82 +726,85 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "setupScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "setupScreen", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
-    //region GPS (COMMENTED OUT)
+    //region GPS
     /**
      * setupGPS
      *  - initialization of GPS services and listeners
      */
-    //private void setupGPS()
-    //{
-    //    boolean bEnabled;
+    private void setupGPS()
+    {
+        boolean bEnabled;
 
-    //    try
-    //    {
-    //        _oLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        try
+        {
+            _oLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
 
-    //        bEnabled = _oLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            bEnabled = _oLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-    //        if (!bEnabled)
-    //        {
-    //            Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            if (!bEnabled)
+            {
+                Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 
-    //            startActivity(gpsIntent);
-    //        }
+                startActivity(gpsIntent);
+            }
 
-    //        Criteria oCriteria = new Criteria();
-    //        _sProvider = _oLocationManager.getBestProvider(oCriteria, false);
+            Criteria oCriteria = new Criteria();
+            _sProvider = _oLocationManager.getBestProvider(oCriteria, false);
 
-    //        _oLocation = getCurrentLocation();
-    //    }
-    //    catch(Exception ex)
-    //    {
+            _oLocation = getCurrentLocation();
+        }
+        catch(Exception ex)
+        {
             //Log error message to activity
-    //        _oUtils.insertActivity(this, "3", "PickupActivity", "setupGPS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-    //    }
-    //}
+            _oUtils.insertActivity(this, "3", "PickupActivity", "setupGPS", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
+        }
+    }
 
     /**
      * getCurrentLocation
      *  - get the current location from GPS
      * @return (Location) - the current latitude/longitude location
      */
-    //private Location getCurrentLocation()
-    //{
-    //    try
-    //    {
-    //        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
-    //        {
+    private Location getCurrentLocation()
+    {
+        try
+        {
+            if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
+            {
 
-    //            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  }, 1 );
-    //        }
-    //        else
-    //        {
-    //            _oLocation = _oLocationManager.getLastKnownLocation(_sProvider);
+                ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  }, 1 );
+            }
+            else
+            {
+                _oLocation = _oLocationManager.getLastKnownLocation(_sProvider);
 
-    //            if (_oLocation != null)
-    //            {
-    //                onLocationChanged(_oLocation);
-    //            }
-    //            else
-    //            {
-    //                _sLatitude = "0";
-    //                _sLongitude = "0";
-    //                _sAccurracy = "0";
-    //            }
-    //        }
-    //    }
-    //    catch(Exception ex)
-    //    {
+                if (_oLocation != null)
+                {
+                    //Get the location coordinates
+                    _sLatitude = String.valueOf(_oLocation.getLatitude());
+                    _sLongitude = String.valueOf(_oLocation.getLongitude());
+                    _sAccurracy = String.valueOf(_oLocation.getAccuracy());
+                }
+                else
+                {
+                    _sLatitude = "0";
+                    _sLongitude = "0";
+                    _sAccurracy = "0";
+                }
+            }
+        }
+        catch(Exception ex)
+        {
             //Log error message to activity
-    //        _oUtils.insertActivity(this, "3", "PickupActivity", "getCurrentLocation", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
-    //    }
+            _oUtils.insertActivity(this, "3", "PickupActivity", "getCurrentLocation", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
+        }
 
-    //    return _oLocation;
-    //}
+        return _oLocation;
+    }
     //endregion
 
     /**
@@ -961,7 +873,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             unlockUserInputs();
 
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "saveNewPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "saveNewPickup", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         //Return the lineID
@@ -1025,7 +937,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             unlockUserInputs();
 
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "saveExistingPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "saveExistingPickup", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         //Return the lineID
@@ -1068,7 +980,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             unlockUserInputs();
 
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "deleteCurrentPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "deleteCurrentPickup", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
@@ -1112,7 +1024,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "checkConvertedLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "checkConvertedLBS", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
 
         //Return the check result
@@ -1206,7 +1118,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
             unlockUserInputs();
 
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "checkPickupForErrors", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "checkPickupForErrors", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
 
             bCheck = false;
         }
@@ -1248,7 +1160,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "getTotalPickupLBS", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "getTotalPickupLBS", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
 
             iTotalLBS = 0;
         }
@@ -1293,7 +1205,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch(Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "clearScreen", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
@@ -1325,7 +1237,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "lockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "lockUserInputs", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
@@ -1374,7 +1286,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "unlockUserInputs", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
@@ -1415,7 +1327,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         catch (Exception ex)
         {
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "loadPickup", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "PickupActivity", "loadPickup", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
     //endregion

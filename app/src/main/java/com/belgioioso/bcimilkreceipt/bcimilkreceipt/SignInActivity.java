@@ -13,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbActivityHeader;
@@ -57,13 +56,13 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
         _oUtils = new Utilities();
 
         //Instantiate the login button
-        _signin_login_button = (Button)findViewById(R.id.signin_login_button);
+        _signin_login_button = findViewById(R.id.signin_login_button);
 
         //Instantiate the progress bar label
-        _signin_progresslabel = (TextView)findViewById(R.id.signin_progresslabel);
+        _signin_progresslabel = findViewById(R.id.signin_progresslabel);
 
         //Instantiate the signin message label
-        _signin_message = (TextView)findViewById(R.id.signin_message);
+        _signin_message = findViewById(R.id.signin_message);
         _signin_message.setVisibility(View.INVISIBLE);
 
         //Set the on click listener for page to the login button

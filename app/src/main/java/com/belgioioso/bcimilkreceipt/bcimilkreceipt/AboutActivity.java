@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 
@@ -30,10 +29,10 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
         _oUtils = new Utilities();
 
-        _about_back_button = (Button)findViewById(R.id.about_back_button);
-        _about_cleandb_button = (Button)findViewById(R.id.about_cleandb_button);
-        txt_About_Label_5 = (TextView)findViewById(R.id.aboutlabel5);
-        txt_About_Label_6 = (TextView)findViewById(R.id.aboutlabel6);
+        _about_back_button = findViewById(R.id.about_back_button);
+        _about_cleandb_button = findViewById(R.id.about_cleandb_button);
+        txt_About_Label_5 = findViewById(R.id.aboutlabel5);
+        txt_About_Label_6 = findViewById(R.id.aboutlabel6);
 
         txt_About_Label_5.setText("Version: " + BuildConfig.VERSION_NAME);
         txt_About_Label_6.setText("Tablet Name: " + android.os.Build.SERIAL);

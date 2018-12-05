@@ -13,14 +13,8 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.UUID;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener
 {
@@ -46,31 +40,31 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         _oUtils = new Utilities();
 
         //Instantiate the on screen buttons
-        _settings_ButtonEditCancel = (Button)findViewById(R.id.settings_buttoneditcancel);
-        _settings_ButtonSave = (Button)findViewById(R.id.settings_buttonsave);
+        _settings_ButtonEditCancel = findViewById(R.id.settings_buttoneditcancel);
+        _settings_ButtonSave = findViewById(R.id.settings_buttonsave);
 
         //Instantiate the on screen text views
-        _settings_SettingsID = (TextView)findViewById(R.id.settings_settingsid);
-        _settings_TabletName = (TextView)findViewById(R.id.settings_tabletname);
-        _settings_MachineID = (TextView)findViewById(R.id.settings_machineid);
-        _settings_LastMilkReceiptID = (TextView)findViewById(R.id.settings_lastmilkreceiptid);
-        _settings_LastUserLogin = (TextView)findViewById(R.id.settings_lastuserlogin);
-        _settings_LastUserLoginDate = (TextView)findViewById(R.id.settings_lastuserlogindate);
-        _settings_LastProfileUploadDate = (TextView)findViewById(R.id.settings_lastprofileuploaddate);
-        _settings_CreatedDate = (TextView)findViewById(R.id.settings_createddate);
-        _settings_ModifiedDate = (TextView)findViewById(R.id.settings_modifieddate);
+        _settings_SettingsID = findViewById(R.id.settings_settingsid);
+        _settings_TabletName = findViewById(R.id.settings_tabletname);
+        _settings_MachineID = findViewById(R.id.settings_machineid);
+        _settings_LastMilkReceiptID = findViewById(R.id.settings_lastmilkreceiptid);
+        _settings_LastUserLogin = findViewById(R.id.settings_lastuserlogin);
+        _settings_LastUserLoginDate = findViewById(R.id.settings_lastuserlogindate);
+        _settings_LastProfileUploadDate = findViewById(R.id.settings_lastprofileuploaddate);
+        _settings_CreatedDate = findViewById(R.id.settings_createddate);
+        _settings_ModifiedDate = findViewById(R.id.settings_modifieddate);
 
         //Instantiate the on screen edit texts
-        _settings_WebServiceURL = (EditText)findViewById(R.id.settings_webserviceurl);
-        _settings_DrugTestDevice = (EditText)findViewById(R.id.settings_drugtestdevice);
-        _settings_ScanLoop = (EditText)findViewById(R.id.settings_scanloop);
+        _settings_WebServiceURL = findViewById(R.id.settings_webserviceurl);
+        _settings_DrugTestDevice = findViewById(R.id.settings_drugtestdevice);
+        _settings_ScanLoop = findViewById(R.id.settings_scanloop);
 
         //Instantiate the on screen switches
-        _settings_TrackPickupGeoLocation = (Switch)findViewById(R.id.settings_trackpickupgeolocation);
-        _settings_TrackRouteGeoLocation = (Switch)findViewById(R.id.settings_trackroutegeolocation);
-        _settings_EnableDebug = (Switch)findViewById(R.id.settings_enabledebug);
-        _settings_EnableAutoDBBackup = (Switch)findViewById(R.id.settings_enableautodbbackup);
-        _settings_DownloadNotCompletedData = (Switch)findViewById(R.id.settings_downloadnotcompleteddata);
+        _settings_TrackPickupGeoLocation = findViewById(R.id.settings_trackpickupgeolocation);
+        _settings_TrackRouteGeoLocation = findViewById(R.id.settings_trackroutegeolocation);
+        _settings_EnableDebug = findViewById(R.id.settings_enabledebug);
+        _settings_EnableAutoDBBackup = findViewById(R.id.settings_enableautodbbackup);
+        _settings_DownloadNotCompletedData = findViewById(R.id.settings_downloadnotcompleteddata);
 
         //Set the on click listener for page to the screen buttons
         _settings_ButtonEditCancel.setOnClickListener(this);
