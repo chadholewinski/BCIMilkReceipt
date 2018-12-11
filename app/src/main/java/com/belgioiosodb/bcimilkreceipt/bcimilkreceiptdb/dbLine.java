@@ -47,9 +47,9 @@ public class dbLine
     Date PickupDate;
     String DFATicket;
     String LabCode;
-    Double Latitude;
-    Double Longitude;
-    Double Accurracy;
+    String Latitude;
+    String Longitude;
+    String Accurracy;
     Integer Finished;
     Integer WaitingForScaleData;
     Integer Transmitted;
@@ -117,15 +117,15 @@ public class dbLine
         return LabCode;
     }
 
-    public Double getLatitude() {
+    public String getLatitude() {
         return Latitude;
     }
 
-    public Double getLongitude() {
+    public String getLongitude() {
         return Longitude;
     }
 
-    public Double getAccurracy() {
+    public String getAccurracy() {
         return Accurracy;
     }
 
@@ -209,15 +209,15 @@ public class dbLine
         LabCode = labCode;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(String latitude) {
         Latitude = latitude;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(String longitude) {
         Longitude = longitude;
     }
 
-    public void setAccurracy(Double accurracy) {
+    public void setAccurracy(String accurracy) {
         Accurracy = accurracy;
     }
 

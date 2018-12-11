@@ -1,13 +1,15 @@
 package com.belgioioso.bcimilkreceipt.bcimilkreceipt;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,11 @@ import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbGeoLocation;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbLine;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbProfile;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import java.text.DateFormat;
@@ -38,18 +45,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class PickupActivity extends AppCompatActivity implements View.OnClickListener
+public class PickupActivity extends AppCompatActivity implements View.OnClickListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 {
     private Button _pickup_scanproducer_button, _pickup_scanlabcode_button, _pickup_save_button, _pickup_gotoreceive_button, _pickup_previous_button, _pickup_next_button;
-    private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals, _pickup_pickupcount_message;
+    private TextView _pickup_Bottom_Message, _pickup_Bottom_SaveMessage, _pickup_Totals, _pickup_pickupcount_message, _pickup_location;
     private EditText _pickup_producer, _pickup_tank, _pickup_labcode, _gaugerod_major, _gaugerod_minor, _convertedLBS, _convertedLBS_confirm, _temperature, _dfa_ticket;
-    private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sProvider, _sUsername, _sTypeOfScan;
-    private LocationManager _oLocationManager;
-    private Location _oLocation;
+    private String _spkSettingsID, _spkProfileID, _spkHeaderID, _sCompany, _sDivision, _sType, _sLatitude, _sLongitude, _sAccurracy, _sUsername, _sTypeOfScan;
     private Utilities _oUtils;
     private dbProfile _oProfile;
     private Integer _iTotalPickupsOnTicket, _iCurrentPickup;
     private Map<Integer, String> _oAllPickupIDs = new HashMap<Integer, String>();
+    private GoogleApiClient _oGAC;
+    private LocationRequest _oLocationRequest;
+    private long _iUPDATE_INTERVAL = 20 * 1000;
+    private long _iFASTEST_INTERVAL = 2000;
+    static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
 
     //region Class Constructor Methods
     /**
@@ -84,6 +94,7 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         _pickup_Bottom_SaveMessage = findViewById(R.id.pickup_bottom_savemessage);
         _pickup_Totals = findViewById(R.id.pickup_totals);
         _pickup_pickupcount_message = findViewById(R.id.pickup_pickupcount_message);
+        _pickup_location = findViewById(R.id.pickup_location);
 
         //Instantiate the pickup edit text boxes
         _pickup_producer = findViewById(R.id.producer);
@@ -737,25 +748,22 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
      */
     private void setupGPS()
     {
-        boolean bEnabled;
-
         try
         {
-            _oLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-
-            bEnabled = _oLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-            if (!bEnabled)
+            if(!isLocationEnabled())
             {
-                Intent gpsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-
-                startActivity(gpsIntent);
+                showAlert();
             }
 
-            Criteria oCriteria = new Criteria();
-            _sProvider = _oLocationManager.getBestProvider(oCriteria, false);
-
-            _oLocation = getCurrentLocation();
+            _oLocationRequest = new LocationRequest();
+            _oLocationRequest.setInterval(_iUPDATE_INTERVAL);
+            _oLocationRequest.setFastestInterval(_iFASTEST_INTERVAL);
+            _oLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            _oGAC = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
         }
         catch(Exception ex)
         {
@@ -764,46 +772,128 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    /**
-     * getCurrentLocation
-     *  - get the current location from GPS
-     * @return (Location) - the current latitude/longitude location
-     */
-    private Location getCurrentLocation()
+    @Override
+    protected void onStart()
     {
-        try
+        _oGAC.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        _oGAC.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onLocationChanged(Location location)
+    {
+        if (location != null)
         {
-            if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED )
-            {
+            updateUI(location);
+        }
+    }
 
-                ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  }, 1 );
-            }
-            else
-            {
-                _oLocation = _oLocationManager.getLastKnownLocation(_sProvider);
+    @Override
+    public void onConnected(@Nullable Bundle bundle)
+    {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 
-                if (_oLocation != null)
+            return;
+        }
+
+        Location ll = LocationServices.FusedLocationApi.getLastLocation(_oGAC);
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(_oGAC, _oLocationRequest, this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:
+            {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    //Get the location coordinates
-                    _sLatitude = String.valueOf(_oLocation.getLatitude());
-                    _sLongitude = String.valueOf(_oLocation.getLongitude());
-                    _sAccurracy = String.valueOf(_oLocation.getAccuracy());
+                    Toast.makeText(this, "Permission was granted!", Toast.LENGTH_LONG).show();
+
+                    try
+                    {
+                        LocationServices.FusedLocationApi.requestLocationUpdates(_oGAC, _oLocationRequest, this);
+                    }
+                    catch (SecurityException e)
+                    {
+                        Toast.makeText(this, "SecurityException:\n" + e.toString(), Toast.LENGTH_LONG).show();
+                    }
                 }
                 else
                 {
-                    _sLatitude = "0";
-                    _sLongitude = "0";
-                    _sAccurracy = "0";
+                    Toast.makeText(this, "Permission denied!", Toast.LENGTH_LONG).show();
                 }
+
+                return;
             }
         }
-        catch(Exception ex)
-        {
-            //Log error message to activity
-            _oUtils.insertActivity(this, "3", "PickupActivity", "getCurrentLocation", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
-        }
+    }
 
-        return _oLocation;
+    @Override
+    public void onConnectionSuspended(int i) {}
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult)
+    {
+        Toast.makeText(this, "onConnectionFailed: \n" + connectionResult.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    private void updateUI(Location loc)
+    {
+        _sLatitude = Double.toString(loc.getLatitude());
+        _sLongitude = Double.toString(loc.getLongitude());
+        _sAccurracy = Double.toString(loc.getAccuracy());
+
+        _pickup_location.setText("Current Location: Lat: " + _sLatitude + " Long: " + _sLongitude + " Time: " + DateFormat.getTimeInstance().format(loc.getTime()));
+    }
+
+    private boolean isLocationEnabled()
+    {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    private void showAlert()
+    {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("Enable Location")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to use this app")
+
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt)
+                    {
+
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt)
+                    {
+
+                    }
+                });
+
+        dialog.show();
     }
     //endregion
 
@@ -843,9 +933,9 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setPickupDate(_oUtils.getFormattedDate(this, _sUsername));
                 oLine.setDFATicket(_dfa_ticket.getText().toString());
                 oLine.setLabCode(_pickup_labcode.getText().toString());
-                oLine.setLatitude(Double.parseDouble(_sLatitude));
-                oLine.setLongitude(Double.parseDouble(_sLongitude));
-                oLine.setAccurracy(Double.parseDouble(_sAccurracy));
+                oLine.setLatitude(_sLatitude);
+                oLine.setLongitude(_sLongitude);
+                oLine.setAccurracy(_sAccurracy);
                 oLine.setFinished(0);
                 oLine.setWaitingForScaleData(0);
                 oLine.setTransmitted(0);
@@ -914,9 +1004,6 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 oLine.setTemperature(Integer.parseInt(_temperature.getText().toString()));
                 oLine.setDFATicket(_dfa_ticket.getText().toString());
                 oLine.setLabCode(_pickup_labcode.getText().toString());
-                oLine.setLatitude(Double.parseDouble(_sLatitude));
-                oLine.setLongitude(Double.parseDouble(_sLongitude));
-                oLine.setAccurracy(Double.parseDouble(_sAccurracy));
                 oLine.setFinished(0);
                 oLine.setWaitingForScaleData(0);
                 oLine.setTransmitted(0);

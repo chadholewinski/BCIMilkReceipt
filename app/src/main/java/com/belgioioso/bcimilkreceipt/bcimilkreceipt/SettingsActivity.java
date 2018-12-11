@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbDatabaseHandler;
 import com.belgioiosodb.bcimilkreceipt.bcimilkreceiptdb.dbSettings;
 
+import static android.view.View.INVISIBLE;
+
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener
 {
     private Button _settings_ButtonEditCancel, _settings_ButtonSave;
@@ -65,6 +67,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         _settings_EnableDebug = findViewById(R.id.settings_enabledebug);
         _settings_EnableAutoDBBackup = findViewById(R.id.settings_enableautodbbackup);
         _settings_DownloadNotCompletedData = findViewById(R.id.settings_downloadnotcompleteddata);
+
+        //Hide the TrackRouteGeoLocation
+        _settings_TrackRouteGeoLocation.setVisibility(INVISIBLE);
 
         //Set the on click listener for page to the screen buttons
         _settings_ButtonEditCancel.setOnClickListener(this);

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class dbDatabaseHandler extends SQLiteOpenHelper
 {
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String DATABASE_NAME = "MilkReceipt.db";
 
     //region Class Constructor Methods
@@ -128,9 +128,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.LINE_COLUMN_PICKUPDATE + " DATE, " +
                 oLine.LINE_COLUMN_DFATICKET + " TEXT, " +
                 oLine.LINE_COLUMN_LABCODE + " TEXT, " +
-                oLine.LINE_COLUMN_LATITUDE + " FLOAT, " +
-                oLine.LINE_COLUMN_LONGITUDE + " FLOAT, " +
-                oLine.LINE_COLUMN_ACCURRACY + " FLOAT, " +
+                oLine.LINE_COLUMN_LATITUDE + " TEXT, " +
+                oLine.LINE_COLUMN_LONGITUDE + " TEXT, " +
+                oLine.LINE_COLUMN_ACCURRACY + " TEXT, " +
                 oLine.LINE_COLUMN_FINISHED + " INTEGER, " +
                 oLine.LINE_COLUMN_WAITINGFORSCALEDATA + " INTEGER, " +
                 oLine.LINE_COLUMN_TRANSMITTED + " INTEGER, " +
@@ -459,7 +459,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oHeader.setTransmittedDate(dDate);
@@ -524,7 +524,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oHeader.setTransmittedDate(dDate);
@@ -595,7 +595,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oHeader.setTransmittedDate(dDate);
@@ -670,7 +670,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oHeader.setTransmittedDate(dDate);
@@ -745,7 +745,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oHeader.setTransmittedDate(dDate);
@@ -817,7 +817,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     // - Delete all header records
     public boolean deleteHeaderAll()
     {
-        boolean result = false;
+        boolean result;
         dbHeader oHeader = new dbHeader();
 
         //Instantiate the database connection
@@ -973,9 +973,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
             oLine.setDFATicket(cursor.getString(12));
             oLine.setLabCode(cursor.getString(13));
-            oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
-            oLine.setLongitude(Double.parseDouble(cursor.getString(15)));
-            oLine.setAccurracy(Double.parseDouble(cursor.getString(16)));
+            oLine.setLatitude(cursor.getString(14));
+            oLine.setLongitude(cursor.getString(15));
+            oLine.setAccurracy(cursor.getString(16));
             oLine.setFinished(Integer.parseInt(cursor.getString(17)));
             oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
             oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
@@ -989,7 +989,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oLine.setPickupDate(dDate);
@@ -1016,7 +1016,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     public ArrayList<dbLine> findLinesByHeaderID(String psHeaderID)
     {
         String query;
-        ArrayList<dbLine> oLines = new ArrayList<dbLine>();
+        ArrayList<dbLine> oLines = new ArrayList<>();
         dbLine oLine = new dbLine();
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
@@ -1054,9 +1054,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
                 oLine.setDFATicket(cursor.getString(12));
                 oLine.setLabCode(cursor.getString(13));
-                oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
-                oLine.setLongitude(Double.parseDouble(cursor.getString(15)));
-                oLine.setAccurracy(Double.parseDouble(cursor.getString(16)));
+                oLine.setLatitude(cursor.getString(14));
+                oLine.setLongitude(cursor.getString(15));
+                oLine.setAccurracy(cursor.getString(16));
                 oLine.setFinished(Integer.parseInt(cursor.getString(17)));
                 oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
                 oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
@@ -1070,7 +1070,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oLine.setPickupDate(dDate);
@@ -1142,9 +1142,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
                 oLine.setDFATicket(cursor.getString(12));
                 oLine.setLabCode(cursor.getString(13));
-                oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
-                oLine.setLongitude(Double.parseDouble(cursor.getString(15)));
-                oLine.setAccurracy(Double.parseDouble(cursor.getString(16)));
+                oLine.setLatitude(cursor.getString(14));
+                oLine.setLongitude(cursor.getString(15));
+                oLine.setAccurracy(cursor.getString(16));
                 oLine.setFinished(Integer.parseInt(cursor.getString(17)));
                 oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
                 oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
@@ -1158,7 +1158,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oLine.setPickupDate(dDate);
@@ -1230,9 +1230,9 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 oLine.setTemperature(Integer.parseInt(cursor.getString(10)));
                 oLine.setDFATicket(cursor.getString(12));
                 oLine.setLabCode(cursor.getString(13));
-                oLine.setLatitude(Double.parseDouble(cursor.getString(14)));
-                oLine.setLongitude(Double.parseDouble(cursor.getString(15)));
-                oLine.setAccurracy(Double.parseDouble(cursor.getString(16)));
+                oLine.setLatitude(cursor.getString(14));
+                oLine.setLongitude(cursor.getString(15));
+                oLine.setAccurracy(cursor.getString(16));
                 oLine.setFinished(Integer.parseInt(cursor.getString(17)));
                 oLine.setWaitingForScaleData(Integer.parseInt(cursor.getString(18)));
                 oLine.setTransmitted(Integer.parseInt(cursor.getString(19)));
@@ -1246,7 +1246,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oLine.setPickupDate(dDate);
@@ -1319,7 +1319,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     // - Delete all line records
     public boolean deleteLineAll()
     {
-        boolean result = false;
+        boolean result;
         dbLine oLine = new dbLine();
 
         //Instantiate the database connection
@@ -1482,7 +1482,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oReceive.setReceiveDateTime(dDate);
@@ -1509,7 +1509,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     public ArrayList<dbReceive> findReceivesByHeaderID(String psHeaderID)
     {
         String query;
-        ArrayList<dbReceive> oReceives = new ArrayList<dbReceive>();
+        ArrayList<dbReceive> oReceives = new ArrayList<>();
         dbReceive oReceive = new dbReceive();
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
@@ -1559,7 +1559,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oReceive.setReceiveDateTime(dDate);
@@ -1644,7 +1644,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oReceive.setReceiveDateTime(dDate);
@@ -1729,7 +1729,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oReceive.setReceiveDateTime(dDate);
@@ -1802,7 +1802,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     // - Delete all receive records
     public boolean deleteReceiveAll()
     {
-        boolean result = false;
+        boolean result;
         dbReceive oReceive = new dbReceive();
 
         //Instantiate the database connection
@@ -1949,7 +1949,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oProfile.setLastSignInDate(dDate);
@@ -2016,7 +2016,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oProfile.setLastSignInDate(dDate);
@@ -2260,7 +2260,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oSettings.setLastUserLoginDate(dDate);
@@ -2334,7 +2334,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oSettings.setLastUserLoginDate(dDate);
@@ -2363,7 +2363,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     public List<dbSettings> findSettingsByNameAll(String psName)
     {
         String query;
-        List<dbSettings> olSettings = new ArrayList<dbSettings>();
+        List<dbSettings> olSettings = new ArrayList<>();
         dbSettings oSettings = new dbSettings();
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
@@ -2414,7 +2414,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
                 }
                 catch(ParseException pe)
                 {
-                    Date dDate = new Date();
+                    Date dDate;
                     dDate = Calendar.getInstance().getTime();
 
                     oSettings.setLastUserLoginDate(dDate);
@@ -2489,7 +2489,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     // - Delete all settings records
     public boolean deleteSettingsAll()
     {
-        boolean result = false;
+        boolean result;
         dbSettings oSettings = new dbSettings();
 
         //Instantiate the database connection
@@ -2622,7 +2622,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             }
             catch(ParseException pe)
             {
-                Date dDate = new Date();
+                Date dDate;
                 dDate = Calendar.getInstance().getTime();
 
                 oActivity.setTransmittedDate(dDate);
@@ -2647,7 +2647,7 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
     public List<dbActivityHeader> findActivityByDateType(String psStartDate, String psEndDate, String psActTypeID)
     {
         String query;
-        List<dbActivityHeader> olActivity = new ArrayList<dbActivityHeader>();
+        List<dbActivityHeader> olActivity = new ArrayList<>();
         dbActivityHeader oActivity = new dbActivityHeader();
         DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
