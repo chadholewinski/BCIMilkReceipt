@@ -105,6 +105,8 @@
                 android:maxLength="4"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="350dp"
                 android:hint="enter producer"
@@ -129,6 +131,8 @@
                 android:maxLength="2"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="350dp"
                 android:hint="enter tank"
@@ -171,8 +175,11 @@
                 android:maxLength="3"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:hint="enter major"
                 android:layout_marginLeft="30dp"
+                android:nextFocusDown="@id/gaugerodminor"
                 app:layout_constraintTop_toBottomOf="@id/gaugerod_label"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -195,8 +202,11 @@
                 android:maxLength="2"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:hint="enter minor"
                 android:layout_marginRight="30dp"
+                android:nextFocusDown="@id/convertedlbs"
                 app:layout_constraintTop_toBottomOf="@id/gaugerod_label"
                 app:layout_constraintRight_toRightOf="parent"/>
 
@@ -218,8 +228,11 @@
                 android:maxLength="5"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:hint="enter converted lbs"
+                android:nextFocusDown="@id/convertedlbs_confirm"
                 app:layout_constraintTop_toBottomOf="@id/convertedlbs_label"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -242,8 +255,11 @@
                 android:maxLength="5"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginRight="30dp"
                 android:hint="enter lbs confirmation"
+                android:nextFocusDown="@id/temperature"
                 app:layout_constraintTop_toBottomOf="@id/convertedlbs_label"
                 app:layout_constraintRight_toRightOf="parent"/>
 
@@ -286,8 +302,11 @@
                 android:maxLength="3"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:hint="enter temperature"
+                android:nextFocusDown="@id/dfa_ticket"
                 app:layout_constraintTop_toBottomOf="@id/temperature_label"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -297,8 +316,11 @@
                 android:id="@+id/dfa_ticket"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginRight="30dp"
                 android:hint="enter dfa ticket #"
+                android:nextFocusDown="@id/labcode"
                 app:layout_constraintTop_toBottomOf="@id/dfa_ticket_label"
                 app:layout_constraintRight_toRightOf="parent"/>
 
@@ -330,6 +352,8 @@
                 android:id="@+id/labcode"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:hint="enter lab code"
                 app:layout_constraintTop_toBottomOf="@id/labcode_label"

@@ -257,7 +257,7 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
                 {
                     sActivityType = "2";
                 }
-                else if (_actlog_ActType.getSelectedItem() == "Debug")
+                else if (_actlog_ActType.getSelectedItem() == "Error")
                 {
                     sActivityType = "3";
                 }
@@ -268,6 +268,9 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
 
                 //Clear out the activity header id list
                 _olActivityHeaderIDs = new ArrayList<>();
+
+                //Clear the list records
+                _actlog_ActivityRecords.setAdapter(null);
 
                 //Clear the detail text views
                 _actlog_ActUsername_Record.setText("Username: ");

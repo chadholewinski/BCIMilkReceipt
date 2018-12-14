@@ -131,8 +131,12 @@
                 android:id="@+id/receive_drugtestdevice"
                 android:maxLength="150"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
+                android:inputType="text"
                 android:hint="enter test device"
                 android:layout_marginLeft="30dp"
+                android:nextFocusDown="@id/receive_drugtestresult"
                 app:layout_constraintTop_toBottomOf="@id/receive_drugtestlabel"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -155,8 +159,11 @@
                 android:maxLength="5"
                 android:inputType="numberSigned"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:hint="enter test result"
                 android:layout_marginRight="30dp"
+                android:nextFocusDown="@id/receive_silo"
                 app:layout_constraintTop_toBottomOf="@id/receive_drugtestlabel"
                 app:layout_constraintRight_toRightOf="parent"/>
 
@@ -199,6 +206,8 @@
                 android:maxLength="1"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:hint="enter receive silo"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
@@ -223,6 +232,8 @@
                 android:maxLength="2"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:hint="enter receive temperature"
@@ -245,8 +256,12 @@
                 android:id="@+id/receive_topseal"
                 android:maxLength="10"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
+                android:inputType="text"
                 android:layout_marginLeft="30dp"
                 android:hint="enter top seal"
+                android:nextFocusDown="@id/receive_bottomseal"
                 app:layout_constraintTop_toBottomOf="@id/receive_sealslabel"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -268,8 +283,12 @@
                 android:id="@+id/receive_bottomseal"
                 android:maxLength="10"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
+                android:inputType="text"
                 android:layout_marginRight="30dp"
                 android:hint="enter bottom seal"
+                android:nextFocusDown="@id/receive_receivelbs"
                 app:layout_constraintTop_toBottomOf="@id/receive_sealslabel"
                 app:layout_constraintRight_toRightOf="parent"/>
 
@@ -291,8 +310,11 @@
                 android:maxLength="5"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginLeft="30dp"
                 android:hint="enter received lbs"
+                android:nextFocusDown="@id/receive_receivelbs_confirm"
                 app:layout_constraintTop_toBottomOf="@id/receive_receivelbslabel"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -315,8 +337,11 @@
                 android:maxLength="5"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginRight="30dp"
                 android:hint="enter lbs confirmation"
+                android:nextFocusDown="@id/receive_endmileage"
                 app:layout_constraintTop_toBottomOf="@id/receive_receivelbslabel"
                 app:layout_constraintRight_toRightOf="parent"/>
 
@@ -350,8 +375,11 @@
                 android:maxLength="7"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:hint="enter end mileage"
                 android:layout_marginLeft="30dp"
+                android:nextFocusDown="@id/receive_intakenumber"
                 app:layout_constraintTop_toBottomOf="@id/receive_endmileagelabel"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
@@ -374,6 +402,8 @@
                 android:maxLength="15"
                 android:inputType="number"
                 android:text=""
+                android:lines="1"
+                android:maxLines="1"
                 android:layout_marginRight="30dp"
                 android:hint="enter intake number"
                 app:layout_constraintTop_toBottomOf="@id/receive_endmileagelabel"
