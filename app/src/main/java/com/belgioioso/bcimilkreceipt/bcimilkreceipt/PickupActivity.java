@@ -204,11 +204,21 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                     //Instantiate a new intent of LogActivity
                     Intent activity_intent = new Intent(this, LogActivity.class);
 
+                    //Instantiate the bundle object
+                    Bundle oActBundle = new Bundle();
+
+                    //Set the profileID and settingsID in the bundle
+                    oActBundle.putString("pkProfileID", _spkProfileID);
+                    oActBundle.putString("pkSettingsID", _spkSettingsID);
+
+                    //Setup bundle into intent
+                    activity_intent.putExtras(oActBundle);
+
                     //Navigate to the activity log screen
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "PickupActivity", "onOptionsItemSelected", _sUsername, "Pickup menu activity log selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "Pickup menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;

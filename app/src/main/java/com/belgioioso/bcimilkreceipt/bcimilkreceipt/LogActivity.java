@@ -367,6 +367,11 @@ public class LogActivity extends AppCompatActivity implements View.OnClickListen
                 ArrayAdapter<String> itemsActivity = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, olActivity);
                 _actlog_ActivityRecords.setAdapter(itemsActivity);
             }
+            else
+            {
+                //Clear the list view of records
+                _actlog_ActivityRecords.setAdapter(null);
+            }
         }
         catch(Exception ex)
         {

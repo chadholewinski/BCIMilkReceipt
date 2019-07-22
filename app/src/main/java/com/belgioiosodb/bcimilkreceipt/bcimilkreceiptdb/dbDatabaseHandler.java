@@ -2666,7 +2666,8 @@ public class dbDatabaseHandler extends SQLiteOpenHelper
             //Move to the first record
             cursor.moveToFirst();
 
-            while(!cursor.isAfterLast()) {
+            while(!cursor.isAfterLast())
+            {
                 //Instantiate new activity object
                 oActivity = new dbActivityHeader();
                 

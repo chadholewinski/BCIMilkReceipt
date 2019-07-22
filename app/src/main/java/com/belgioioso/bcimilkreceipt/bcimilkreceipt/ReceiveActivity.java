@@ -189,11 +189,21 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     //Instantiate a new intent of LogActivity
                     Intent activity_intent = new Intent(this, LogActivity.class);
 
+                    //Instantiate the bundle object
+                    Bundle oActBundle = new Bundle();
+
+                    //Set the profileID and settingsID in the bundle
+                    oActBundle.putString("pkProfileID", _spkProfileID);
+                    oActBundle.putString("pkSettingsID", _spkSettingsID);
+
+                    //Setup bundle into intent
+                    activity_intent.putExtras(oActBundle);
+
                     //Navigate to the activity log screen
                     startActivity(activity_intent);
 
                     //Log message to activity
-                    _oUtils.insertActivity(this, "1", "ReceiveActivity", "onOptionsItemSelected", _sUsername, "Receive menu activity log selected", "");
+                    _oUtils.insertActivity(this, "1", "ReceiptActivity", "onOptionsItemSelected", _sUsername, "Receive menu activity log selected", "");
 
                     //Set the return value to true
                     bReturn = true;
