@@ -245,6 +245,14 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
 
                                         //Run the deletion process
                                         deleteCurrentPickup(sLineID);
+
+                                        //Format the date for insert and modified
+                                        DateFormat dfDate = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
+                                        Date dDate = new Date();
+
+                                        //Display update successful message on bottom of screen
+                                        _pickup_Bottom_SaveMessage.setText("Pickup deleted successfully at: " + dfDate.format(dDate));
+                                        _pickup_Bottom_SaveMessage.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.valueText_Lime));
                                     }
                                 })
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

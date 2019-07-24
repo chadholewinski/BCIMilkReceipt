@@ -939,7 +939,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
                 List<dbReceive> olReceive;
                 olReceive = oDBHandler.findReceivesByHeaderID(_spkHeaderID);
-                _oAllReceiveIDs = new HashMap<Integer, String>();
+                _oAllReceiveIDs = new HashMap<>();
 
                 if (olReceive.size() > 0)
                 {
@@ -1001,7 +1001,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 //Instantiate a new settings object
-                dbSettings oSettings = new dbSettings();
+                dbSettings oSettings;
 
                 //Get the settings object from database
                 oSettings = oDBHandler.findSettingsByID(_spkSettingsID);
@@ -1037,7 +1037,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             unlockUserInputs();
 
             //Log error message to activity
-            _oUtils.insertActivity(this, "3", "ReceiveActivity", "runSaveProcess", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+            _oUtils.insertActivity(this, "3", "ReceiveActivity", "runSaveProcess", _sUsername, ex.getMessage(), ex.getStackTrace().toString());
         }
     }
 
@@ -1342,7 +1342,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             //Check that the drug test result is entered
-            if (_receive_DrugTestResult.getText().length() < 1)
+            if (_receive_DrugTestResult.getText().length() < 4)
             {
                 bCheck = true;
 
@@ -1404,15 +1404,29 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             Integer iTotalLBSLeft = getTotalLBSLeftOnTicket();
             Integer iTotalPickupLBSOnTicket = getTotalPickupLBS(olLine);
 
-            //Check if received lbs is greater than what is available
-            if ((iEnteredLBS > iTotalLBSLeft && iTotalPickupLBSOnTicket > 0) || (iEnteredLBS > iTotalLBSLeft && iTotalPickupLBSOnTicket == 0))
+            if (_iCurrentReceive <= _iTotalReceiveCount && _iCurrentReceive > 0)
             {
-                //Set flag as error
-                bCheck = true;
+                if ((iEnteredLBS + iTotalLBSLeft) > iTotalPickupLBSOnTicket)
+                {
+                    //Set flag as error
+                    bCheck = true;
 
-                //Set error for received LBS entered greater than available
-                _receive_ReceivedLBS.setError("Received LBS Must Be Less Than Equal to Available LBS");
-                _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                    //Set error for received LBS entered greater than available
+                    _receive_ReceivedLBS.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                    _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                }
+            }
+            else
+            {
+                //Check if received lbs is greater than what is available
+                if ((iEnteredLBS > iTotalLBSLeft && iTotalPickupLBSOnTicket > 0) || (iEnteredLBS > iTotalLBSLeft && iTotalPickupLBSOnTicket == 0)) {
+                    //Set flag as error
+                    bCheck = true;
+
+                    //Set error for received LBS entered greater than available
+                    _receive_ReceivedLBS.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                    _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                }
             }
 
             //Get the start mileage
@@ -2053,11 +2067,11 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                 //Check if the scale meter is set to 0 (Meter) or 1 (Scale)
                 if (oReceive.getScaleMeter() == 0)
                 {
-                    _receive_scalemeter.setSelection(0);
+                    _receive_scalemeter.setSelection(1);
                 }
                 else
                 {
-                    _receive_scalemeter.setSelection(1);
+                    _receive_scalemeter.setSelection(0);
                 }
             }
         }

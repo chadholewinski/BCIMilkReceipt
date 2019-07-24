@@ -98,6 +98,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         //Setup the screen
         setupScreen();
+
+        //_settings_EnableDebug.setChecked(true);
     }
 
     /**
@@ -285,7 +287,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
      */
     private void setupScreen()
     {
-        dbSettings oSettings = new dbSettings();
+        dbSettings oSettings;
 
         try
         {
@@ -305,11 +307,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 _settings_WebServiceURL.setText(oSettings.getWebServiceURL());
                 _settings_DrugTestDevice.setText(oSettings.getDrugTestDevice());
                 _settings_ScanLoop.setText(oSettings.getScanLoop().toString());
-                _settings_TrackPickupGeoLocation.setChecked(Boolean.getBoolean(oSettings.getTrackPickupGeoLocation().toString()));
-                _settings_TrackRouteGeoLocation.setChecked(Boolean.getBoolean(oSettings.getTrackRouteGeoLocation().toString()));
-                _settings_EnableDebug.setChecked(Boolean.getBoolean(oSettings.getDebug().toString()));
-                _settings_EnableAutoDBBackup.setChecked(Boolean.getBoolean(oSettings.getAutoDBBackup().toString()));
-                _settings_DownloadNotCompletedData.setChecked(Boolean.getBoolean(oSettings.getDownloadNotCompletedData().toString()));
+                _settings_TrackPickupGeoLocation.setChecked(oSettings.getTrackPickupGeoLocation() == 1 ? true : false);
+                _settings_TrackRouteGeoLocation.setChecked(oSettings.getTrackRouteGeoLocation() == 1 ? true : false);
+                _settings_EnableDebug.setChecked(oSettings.getDebug() == 1 ? true : false);
+                _settings_EnableAutoDBBackup.setChecked(oSettings.getAutoDBBackup() == 1 ? true : false);
+                _settings_DownloadNotCompletedData.setChecked(oSettings.getDownloadNotCompletedData() == 1 ? true : false);
                 _settings_LastUserLogin.setText("Last User Login: " + oSettings.getLastUserLoginID());
                 _settings_LastUserLoginDate.setText("Last User Login Date: " + oSettings.getLastUserLoginDate());
                 _settings_LastProfileUploadDate.setText("Last Profile Upload Date: " + oSettings.getLastProfileUpdate());
@@ -323,6 +325,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             
             //Disable the controls on the screen
             disableControls();
+
         }
         catch (Exception ex)
         {
@@ -383,7 +386,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     private void saveSettings()
     {
-        dbSettings oSettings = new dbSettings();
+        dbSettings oSettings;
 
         try
         {
