@@ -718,6 +718,13 @@ public class PickupActivity extends AppCompatActivity implements View.OnClickLis
                 _iCurrentPickup = olLine.size() + 1;
                 _iTotalPickupsOnTicket = olLine.size();
             }
+            else
+            {
+                //No pickups found, so re-initialize pickup counts
+                _iCurrentPickup = 0;
+                _iTotalPickupsOnTicket = 0;
+                _oAllPickupIDs = new HashMap<Integer, String>();
+            }
 
             //Display the pickup info on UI
             _pickup_Totals.setText("Total Pickups: " + iPickups + " --- Total LBS: " + iTotalLBS);

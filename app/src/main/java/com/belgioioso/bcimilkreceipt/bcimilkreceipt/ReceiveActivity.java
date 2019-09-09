@@ -372,6 +372,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                                     //Disable the save button
                                     _receive_save_button.setEnabled(true);
+
+                                    //Unlock user inputs
+                                    unlockUserInputs();
                                 }
                             });
 
@@ -405,6 +408,9 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
 
                                     //Disable the save button
                                     _receive_save_button.setEnabled(true);
+
+                                    //Unlock user inputs
+                                    unlockUserInputs();
                                 }
                             });
 
@@ -1412,8 +1418,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     bCheck = true;
 
                     //Set error for received LBS entered greater than available
-                    _receive_ReceivedLBS.setError("Received LBS Must Be Less Than Equal to Available LBS");
-                    _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                    _receive_ReceivedLBS.setError("Received LBS Must Be Less Than OR Equal to Available LBS");
+                    _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than OR Equal to Available LBS");
                 }
             }
             else
@@ -1424,8 +1430,8 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     bCheck = true;
 
                     //Set error for received LBS entered greater than available
-                    _receive_ReceivedLBS.setError("Received LBS Must Be Less Than Equal to Available LBS");
-                    _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than Equal to Available LBS");
+                    _receive_ReceivedLBS.setError("Received LBS Must Be Less Than OR Equal to Available LBS");
+                    _receive_ReceivedLBSConfirmation.setError("Received LBS Must Be Less Than OR Equal to Available LBS");
                 }
             }
 
@@ -1449,7 +1455,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
                     bCheck = true;
 
                     //Set error for end mileage less than start mileage
-                    _receive_EndMileage.setError("End Mileage Must Be More Than Start Mileage");
+                    _receive_EndMileage.setError("End Mileage Must Be Greater Than Start Mileage");
                 }
             }
         }
@@ -1978,9 +1984,22 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     {
         try
         {
-            //Lock out the user inputs on the screen
+            //Unlock the user inputs on the screen
             _receive_save_button.setEnabled(true);
-            _receive_finishticket_button.setEnabled(true);
+
+            //Check if there are LBS left on ticket yet
+            if (getTotalLBSLeftOnTicket() > 0)
+            {
+                //LBS still available, do not unlock finish button
+                _receive_finishticket_button.setEnabled(false);
+            }
+            else
+            {
+                //LBS is zero unlock finish button
+                _receive_finishticket_button.setEnabled(true);
+            }
+
+            //Unlock the user inputs on the screen
             _receive_DrugTestDevice.setEnabled(true);
             _receive_DrugTestResult.setEnabled(true);
             _receive_Silo.setEnabled(true);
