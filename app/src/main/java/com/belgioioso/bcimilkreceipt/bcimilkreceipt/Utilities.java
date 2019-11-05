@@ -453,6 +453,9 @@ public class Utilities
             File backupDB = new File(sPath, "MilkReceipt.db"); //where you want to copy the database to
             File currentDB = poContext.getDatabasePath("MilkReceipt.db"); //databaseName=your current application database name, for example "my_data.db"
 
+            //Log message to activity
+            insertActivity(poContext, "1", "Utilities", "copyDBFile", psUsername, "Copying database file to: " + sPath, "");
+
             //Check if the current DB file exists
             if (currentDB.exists())
             {

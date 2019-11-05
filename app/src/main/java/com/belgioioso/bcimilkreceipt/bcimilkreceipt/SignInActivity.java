@@ -37,7 +37,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
     private TextView _signin_progresslabel, _signin_message;
     private String _spkSettingsID;
     private Utilities _oUtils;
-    private String _sWSURL = "http://10.1.2.44/MilkReceiptREST/MilkReceiptService.svc";
+    private String _sWSURL = "http://10.1.2.8/MilkReceiptREST/MilkReceiptService.svc"; //10.1.2.44(DEVSVR) 10.1.2.8(WEBSVR1)
 
     //region Class Constructor Methods
     /**
@@ -73,6 +73,7 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
         //Sync data to the web service
         syncToWebService();
+        //generateActivityForTesting();
 
         //Instantiate a new settings object
         dbSettings oSettings = new dbSettings();
@@ -446,6 +447,15 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
             _signin_login_button.setEnabled(true);
         }
     }
+
+    public void generateActivityForTesting()
+    {
+        for (int i=0; i<4000; i++)
+        {
+            //Log activity
+            _oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "generateActivityForTesting", "N/A","Activity Record: " + i, "");
+        }
+    }
     //endregion
 
     //region Class PostSettings Background Task
@@ -767,11 +777,17 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Check if the header array is null or empty
                 if (olHeader == null || olHeader.isEmpty())
                 {
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostHeader_doInBackground", "N/A","No header records found for transmittal", "");
+
                     //Return 0
                     sResult = "0";
                 }
                 else
                 {
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostHeader_doInBackground", "N/A", olHeader.size() + " header records found for transmittal", "");
+
                     //Instantiate the JSON Array
                     jaParams = new JSONArray();
 
@@ -803,6 +819,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     //Post the header data to the web service
                     sResult = oService.postJSONData(psURL[0], jaParams);
+
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostHeader_doInBackground", "N/A", "Header postJSON result: " + sResult, "");
 
                     //Check if the result of posted header records is the same as what was sent
                     if (Integer.parseInt(sResult) == olHeader.size())
@@ -887,11 +906,17 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Check if line array is null or empty
                 if (olLine == null || olLine.isEmpty())
                 {
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostLine_doInBackground", "N/A","No line records found for transmittal", "");
+
                     //Return 0
                     sResult = "0";
                 }
                 else
                 {
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostLine_doInBackground", "N/A", olLine.size() + " line records found for transmittal", "");
+
                     //Instantiate the JSON Array
                     jaParams = new JSONArray();
 
@@ -932,6 +957,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     //Post the line data to the web service
                     sResult = oService.postJSONData(psURL[0], jaParams);
+
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostLine_doInBackground", "N/A", "Line postJSON result: " + sResult, "");
 
                     //Check if the result of posted line records is the same as what was sent
                     if (Integer.parseInt(sResult) == olLine.size())
@@ -1016,11 +1044,17 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Check if the receives array is null or empty
                 if (olReceive == null || olReceive.isEmpty())
                 {
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostReceive_doInBackground", "N/A","No receive records found for transmittal", "");
+
                     //Return 0
                     sResult = "0";
                 }
                 else
                 {
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostReceive_doInBackground", "N/A", olReceive.size() + " receive records found for transmittal", "");
+
                     //Instantiate the JSON Array
                     jaParams = new JSONArray();
 
@@ -1058,6 +1092,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
 
                     //Post the receive data to the web service
                     sResult = oService.postJSONData(psURL[0], jaParams);
+
+                    //Log activity
+                    //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostReceive_doInBackground", "N/A", "Receive postJSON result: " + sResult, "");
 
                     //Check if the result of posted receive records is the same as what was sent
                     if (Integer.parseInt(sResult) == olReceive.size())
@@ -1121,12 +1158,18 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                 //Instantiate the database handler
                 dbDatabaseHandler oDBHandler = new dbDatabaseHandler(getApplicationContext(), null);
 
+                //Get the list of activity records from database
                 olActivity = oDBHandler.findActivityNonTransmitted(getApplicationContext(), "N/A");
 
+                //Check if the activity list is created
                 if (olActivity != null)
                 {
+                    //Check if the activity list is empty
                     if (!olActivity.isEmpty())
                     {
+                        //Log activity
+                        //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostActivity_doInBackground", "N/A", olActivity.size() + " activity records found for transmittal", "");
+
                         //Instantiate the JSON Array
                         jaParams = new JSONArray();
 
@@ -1157,6 +1200,9 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                         //Post the receive data to the web service
                         sResult = oService.postJSONData(psURL[0], jaParams);
 
+                        //Log activity
+                        //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostActivity_doInBackground", "N/A", "Activity postJSON result: " + sResult, "");
+
                         //Check if the result of posted receive records is the same as what was sent
                         if (Integer.parseInt(sResult) == olActivity.size())
                         {
@@ -1179,12 +1225,18 @@ public class SignInActivity extends AppCompatActivity implements OnClickListener
                     {
                         //Set the return status
                         sResult = "0";
+
+                        //Log activity
+                        //_oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostActivity_doInBackground", "N/A","No activity records found for transmittal", "");
                     }
                 }
                 else
                 {
                     //Set the return status
                     sResult = "0";
+
+                    //Log activity
+                    _oUtils.insertActivity(getApplicationContext(), "1", "SignInActivity", "PostActivity_doInBackground", "N/A","No activity records found for transmittal", "");
                 }
             }
             catch(Exception ex)

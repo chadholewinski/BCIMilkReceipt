@@ -1484,21 +1484,34 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
     {
         String sIPAddress;
         Boolean bValid = false;
+        Integer iFirstDecimal = 0;
         Integer iNextDecimal = 0;
+        Integer iFinalDecimal = 0;
         String sPlantCode;
+        String sPlantLookup;
 
         try
         {
             //Get the IP address of the tablet
             sIPAddress = _oUtils.getWiFiIPAddress(this, _sUsername);
+            //sIPAddress = "192.168.10.35";  //Freedom = 10
+
+            //Log message to activity
+            //_oUtils.insertActivity(this, "1", "ReceiveActivity", "checkIPtoSelectedReceivePlant", _sUsername, "Current IP Address for tablet: " + sIPAddress, "");
 
             //Find the next decimal point then get the 2nd octet of the ip address
-            iNextDecimal = sIPAddress.indexOf('.', 5);
-            sPlantCode = sIPAddress.substring(5, iNextDecimal);
-            String sPlantLookup = _oPlantLookup.get(psPlant);
+            iFirstDecimal = sIPAddress.indexOf('.',0);
+            iNextDecimal = sIPAddress.indexOf('.', iFirstDecimal + 1);
+            iFinalDecimal = sIPAddress.indexOf('.',iNextDecimal + 1);
+
+            //Get the plant code from IP address
+            sPlantCode = sIPAddress.substring(iNextDecimal + 1, iFinalDecimal);
+
+            //Get the plant code from lookup hash table
+            sPlantLookup = _oPlantLookup.get(psPlant);
 
             //Check if the plant does not have a lookup value
-            if (sPlantLookup.trim() == "")
+            if (sPlantLookup.trim().equals(""))
             {
                 //No lookup value means not our plant
                 bValid = true;
@@ -1506,7 +1519,7 @@ public class ReceiveActivity extends AppCompatActivity implements View.OnClickLi
             else
             {
                 //Check if the plant code in IP matches plant code in lookup table
-                if (sPlantCode == sPlantLookup)
+                if (sPlantCode.equals(sPlantLookup))
                 {
                     //Match
                     bValid = true;

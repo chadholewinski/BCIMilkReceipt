@@ -20,7 +20,7 @@ import static android.view.View.INVISIBLE;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener
 {
-    private Button _settings_ButtonEditCancel, _settings_ButtonSave;
+    private Button _settings_ButtonEditCancel, _settings_ButtonSave, _settings_ButtonCleanDB;
     private TextView _settings_SettingsID, _settings_TabletName, _settings_MachineID, _settings_LastMilkReceiptID, _settings_LastUserLogin, _settings_LastUserLoginDate, _settings_LastProfileUploadDate, _settings_CreatedDate, _settings_ModifiedDate;
     private EditText _settings_WebServiceURL, _settings_DrugTestDevice, _settings_ScanLoop;
     private Switch _settings_TrackPickupGeoLocation, _settings_TrackRouteGeoLocation, _settings_EnableDebug, _settings_EnableAutoDBBackup, _settings_DownloadNotCompletedData;
@@ -44,6 +44,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         //Instantiate the on screen buttons
         _settings_ButtonEditCancel = findViewById(R.id.settings_buttoneditcancel);
         _settings_ButtonSave = findViewById(R.id.settings_buttonsave);
+        _settings_ButtonCleanDB = findViewById(R.id.settings_cleandb_button);
 
         //Instantiate the on screen text views
         _settings_SettingsID = findViewById(R.id.settings_settingsid);
@@ -74,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         //Set the on click listener for page to the screen buttons
         _settings_ButtonEditCancel.setOnClickListener(this);
         _settings_ButtonSave.setOnClickListener(this);
+        _settings_ButtonCleanDB.setOnClickListener(this);
 
         //Setup the bundle object
         Bundle oBundle = getIntent().getExtras();
@@ -271,6 +273,14 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 //Disable all on screen controls
                 disableControls();
             }
+            else if (v.getId() == R.id.settings_cleandb_button)
+            {
+                //Log message to activity
+                _oUtils.insertActivity(this, "1", "SettingsActivity", "onClick", _sUsername, "Settings clean db button pressed", "");
+
+                //Clean DB
+                CleanDB();
+            }
         }
         catch(Exception ex)
         {
@@ -421,6 +431,31 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         {
             //Log error message to activity
             _oUtils.insertActivity(this, "3", "SettingsActivity", "saveSettings", _sUsername, ex.getMessage().toString(), ex.getStackTrace().toString());
+        }
+    }
+
+    /**
+     * CleanDB
+     *  - Clean up the user created data in database
+     */
+    private void CleanDB()
+    {
+        try
+        {
+            //Instantiate the database handler
+            dbDatabaseHandler oDBHandler = new dbDatabaseHandler(this, null);
+
+            //Delete all user created data from database
+            oDBHandler.deleteHeaderAll();
+            oDBHandler.deleteLineAll();
+            oDBHandler.deleteReceiveAll();
+            oDBHandler.deleteActivityAll();
+            //oDBHandler.deleteSettingsAll();
+        }
+        catch(Exception ex)
+        {
+            //Log error message to activity
+            _oUtils.insertActivity(this, "3", "SettingsActivity", "CleanDB", "N/A", ex.getMessage(), ex.getStackTrace().toString());
         }
     }
     //endregion
